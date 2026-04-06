@@ -3,55 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الأهرام</title>
+<title>الأهرام - نظام البيع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 body{font-family:Cairo;margin:0;background:#f5f7fa}
-.header{height:160px;position:relative}
-.header img{width:100%;height:100%;object-fit:cover}
-.overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4)}
-.title{position:absolute;top:10px;right:10px;color:#fff}
-.ticker{background:#E53935;color:#fff;padding:10px;text-align:center}
-.search{width:90%;margin:10px auto;display:block;padding:10px}
-.tiers{display:flex;flex-wrap:wrap;gap:5px;padding:10px}
-.tiers button{flex:1;padding:8px;border:none;border-radius:20px;background:#0B3D91;color:#fff}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
-.card{background:#fff;padding:10px;border-radius:12px}
-.bottom{position:fixed;bottom:0;width:100%;background:#fff;display:flex;justify-content:space-between;padding:10px}
+
+/* HEADER */
+.header{background:#0B3D91;color:#fff;padding:12px;text-align:center;font-size:18px}
+
+/* TIER POPUP */
+.tier-popup{
+position:fixed;inset:0;
+background:#0008;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+.tier-box{
+background:#fff;
+padding:20px;
+border-radius:12px;
+text-align:center;
+width:90%;
+}
+.tier-box button{
+margin:5px;
+padding:10px;
+border:none;
+background:#0B3D91;
+color:#fff;
+border-radius:10px;
+width:100%;
+}
+
+/* BANNER */
+.banner{
+background:#FFD600;
+padding:10px;
+text-align:center;
+font-weight:bold;
+}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
+}
+.card{
+background:#fff;
+padding:15px;
+border-radius:10px;
+text-align:center;
+cursor:pointer;
+font-weight:bold;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
 </head>
 
 <body>
 
-<div class="header">
-<img id="img">
-<div class="overlay"></div>
-<div class="title">الأهرام للتجارة والتوزيع</div>
-</div>
+<div class="header">الأهرام للتجارة والتوزيع</div>
 
-<div class="ticker" id="news">جاري التحميل...</div>
+<div id="banner" class="banner"></div>
 
-<input class="search" placeholder="بحث..." oninput="search(this.value)">
-
-<div class="tiers" id="tiers"></div>
 <div id="app"></div>
 
-<div class="bottom">
-<div id="total">0 جنيه</div>
-<button onclick="review()">مراجعة</button>
+<!-- Tier Popup -->
+<div id="tierPopup" class="tier-popup">
+<div class="tier-box">
+<h3>اختار الشريحة</h3>
+<div id="tierBtns"></div>
+</div>
 </div>
 
 <script>
 
 let products=[],tiers=[],settings=[];
-let cart={},tier=null;
+let tier=null;
 
-/* تحميل CSV */
+/* CSV LOAD */
 function loadCSV(url){
 return new Promise((resolve)=>{
 Papa.parse(url,{
@@ -63,52 +101,46 @@ complete:(res)=>resolve(res.data)
 });
 }
 
-/* تحميل البيانات */
+/* LOAD DATA */
 Promise.all([
-
-/* PRODUCTS */
 loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIBDH5bvuDjt6_VNA69Z5iSDfpnjtEQcyaRLSjxKhcoh6AEqYWBDu9rIrfwsYgZRDYcXtNcT4PeGcw/pub?gid=1311908073&output=csv"),
-
-/* TIERS */
 loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIBDH5bvuDjt6_VNA69Z5iSDfpnjtEQcyaRLSjxKhcoh6AEqYWBDu9rIrfwsYgZRDYcXtNcT4PeGcw/pub?gid=1316070187&output=csv"),
-
-/* SETTINGS */
 loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIBDH5bvuDjt6_VNA69Z5iSDfpnjtEQcyaRLSjxKhcoh6AEqYWBDu9rIrfwsYgZRDYcXtNcT4PeGcw/pub?gid=1273210397&output=csv")
+])
+.then(([p,t,s])=>{
 
-]).then(([p,t,s])=>{
-
-/* DEBUG مهم */
-console.log("PRODUCTS:",p);
-
-products = p.filter(x=>x.status && x.status.trim()==="active");
-tiers = t.filter(x=>x.tier_active=="1");
+products = p.filter(x=>x.status==="active");
+tiers = t.filter(x=>x.tier_active==="1");
 settings = s;
 
-/* HEADER */
-let header = settings.find(x=>x.type==="company_image");
-if(header) document.getElementById("img").src = header.value;
+/* LOAD TIERS */
+loadTiers();
 
-/* NEWS */
-let newsList = settings.filter(x=>x.type==="news").map(x=>x.value);
-let i=0;
-setInterval(()=>{
-document.getElementById("news").innerText=newsList[i]||"";
-i=(i+1)%newsList.length;
-},3000);
+});
 
-/* TIERS */
-let c=document.getElementById("tiers");
+/* TIER UI */
+function loadTiers(){
+let box=document.getElementById("tierBtns");
+
 tiers.forEach(t=>{
 let b=document.createElement("button");
-b.innerText=t.tier_name;
-b.onclick=()=>{tier=t;showBrands();};
-c.appendChild(b);
-});
-
-/* START */
+b.innerText=`${t.tier_name} (${t.tier_discount}%)`;
+b.onclick=()=>{
+tier=t;
+localStorage.setItem("tier",JSON.stringify(t));
+document.getElementById("tierPopup").style.display="none";
+showBanner();
 showBrands();
-
+};
+box.appendChild(b);
 });
+}
+
+/* BANNER */
+function showBanner(){
+document.getElementById("banner").innerText=
+`أنت الآن في شريحة: ${tier.tier_name} (خصم ${tier.tier_discount}%)`;
+}
 
 /* BRANDS */
 function showBrands(){
@@ -118,7 +150,7 @@ app.innerHTML="";
 let brands=[...new Set(products.map(p=>p.company))];
 
 if(!brands.length){
-app.innerHTML="<h3 style='text-align:center'>⚠️ لا يوجد منتجات</h3>";
+app.innerHTML="<h3 style='text-align:center'>لا يوجد منتجات</h3>";
 return;
 }
 
@@ -128,51 +160,12 @@ grid.className="grid";
 brands.forEach(b=>{
 let c=document.createElement("div");
 c.className="card";
-c.innerHTML=`<h4>${b}</h4>`;
-c.onclick=()=>showProducts(b);
+c.innerHTML=`${b}`;
+c.onclick=()=>alert("المرحلة القادمة: عرض المنتجات");
 grid.appendChild(c);
 });
 
 app.appendChild(grid);
-}
-
-/* PRODUCTS */
-function showProducts(company){
-let app=document.getElementById("app");
-app.innerHTML=`<div onclick="showBrands()">⬅ رجوع</div>`;
-
-let list=products.filter(p=>p.company==company);
-
-let grid=document.createElement("div");
-grid.className="grid";
-
-list.forEach(p=>{
-let c=document.createElement("div");
-c.className="card";
-c.innerHTML=`<h4>${p.name}</h4>`;
-grid.appendChild(c);
-});
-
-app.appendChild(grid);
-}
-
-/* SEARCH */
-function search(q){
-if(!q) return showBrands();
-let list=products.filter(p=>p.name?.includes(q));
-let app=document.getElementById("app");
-app.innerHTML="";
-list.forEach(p=>{
-let c=document.createElement("div");
-c.className="card";
-c.innerHTML=`<h4>${p.name}</h4>`;
-app.appendChild(c);
-});
-}
-
-/* REVIEW */
-function review(){
-alert("تم");
 }
 
 </script>
