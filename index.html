@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>الأهرام</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
@@ -11,42 +12,39 @@
 body{font-family:Cairo;margin:0;background:#f5f7fa}
 
 /* HEADER */
-.header{background:#0B3D91;color:#fff;padding:12px;text-align:center}
+.header{position:relative;height:180px}
+.header img{width:100%;height:100%;object-fit:cover}
+.overlay{position:absolute;inset:0;background:#0006}
+.title{position:absolute;top:10px;right:10px;color:#fff}
 
-/* BACK BTN */
-.back{
-background:#E53935;color:#fff;
-padding:10px;text-align:center;margin:10px;
-border-radius:10px;font-weight:bold;
-}
+/* NEWS */
+.news{background:#E53935;color:#fff;text-align:center;padding:10px}
+
+/* TIERS */
+.tiers{display:flex;flex-wrap:wrap;gap:5px;padding:10px}
+.tiers button{flex:1;padding:8px;border:none;border-radius:20px;background:#0B3D91;color:#fff}
+.cancel{background:#000!important}
+
+/* BANNER */
+.banner{background:#FFD600;padding:8px;text-align:center;font-weight:bold}
 
 /* GRID */
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
+.card{background:#fff;padding:10px;border-radius:10px;text-align:center}
+.card img{width:100%;height:100px;object-fit:contain}
 
-.card{background:#fff;padding:10px;border-radius:10px}
+/* BACK */
+.back{background:#E53935;color:#fff;padding:10px;margin:10px;border-radius:10px;text-align:center}
 
 /* INPUT */
-input,select{
-width:100%;padding:8px;margin-top:5px;border-radius:8px;border:1px solid #ccc
-}
+select,input{width:100%;padding:6px;margin-top:5px;border-radius:8px}
 
-/* REVIEW */
-.review{background:#fff;margin:10px;padding:10px;border-radius:10px}
+/* TOAST */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);
+background:green;color:#fff;padding:10px 20px;border-radius:20px;display:none}
 
 /* FOOTER */
-.footer{
-position:fixed;bottom:0;width:100%;
-background:#fff;padding:10px;
-display:flex;justify-content:space-between;
-}
-
-/* ALERT */
-.toast{
-position:fixed;top:20px;left:50%;
-transform:translateX(-50%);
-background:green;color:#fff;padding:10px 20px;
-border-radius:20px;display:none;
-}
+.footer{position:fixed;bottom:0;width:100%;background:#fff;display:flex;justify-content:space-between;padding:10px}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -54,40 +52,84 @@ border-radius:20px;display:none;
 
 <body>
 
-<div class="header">الأهرام للتجارة والتوزيع</div>
+<div class="header">
+<img id="headerImg">
+<div class="overlay"></div>
+<div class="title">الأهرام للتجارة والتوزيع</div>
+</div>
 
-<div class="back" onclick="showBrands()">⬅ اضغط للرجوع للخلف</div>
+<div class="news" id="news"></div>
+<div id="banner"></div>
+<div class="tiers" id="tiers"></div>
 
 <div id="app"></div>
 
 <div class="footer">
 <div onclick="showBrands()">⬅ رجوع</div>
-<div onclick="review()">🧾 مراجعة</div>
+<div onclick="alert('قريباً')">🧾 مراجعة</div>
 </div>
 
 <div class="toast" id="toast">✔ تم الإضافة للسلة</div>
 
 <script>
 
-let products=[],tiers=[];
+let products=[],tiers=[],settings=[];
 let cart={},tier=null;
 
-/* LOAD CSV */
+/* LOAD */
 function loadCSV(url){
 return new Promise(r=>{
 Papa.parse(url,{download:true,header:true,complete:(res)=>r(res.data)});
 });
 }
 
-/* DATA */
 Promise.all([
 loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIBDH5bvuDjt6_VNA69Z5iSDfpnjtEQcyaRLSjxKhcoh6AEqYWBDu9rIrfwsYgZRDYcXtNcT4PeGcw/pub?gid=1311908073&output=csv"),
-loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIBDH5bvuDjt6_VNA69Z5iSDfpnjtEQcyaRLSjxKhcoh6AEqYWBDu9rIrfwsYgZRDYcXtNcT4PeGcw/pub?gid=1316070187&output=csv")
-]).then(([p,t])=>{
+loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIBDH5bvuDjt6_VNA69Z5iSDfpnjtEQcyaRLSjxKhcoh6AEqYWBDu9rIrfwsYgZRDYcXtNcT4PeGcw/pub?gid=1316070187&output=csv"),
+loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIBDH5bvuDjt6_VNA69Z5iSDfpnjtEQcyaRLSjxKhcoh6AEqYWBDu9rIrfwsYgZRDYcXtNcT4PeGcw/pub?gid=1273210397&output=csv")
+]).then(([p,t,s])=>{
+
 products=p.filter(x=>x.status==="active");
-tiers=t;
-showBrands();
+tiers=t.filter(x=>x.tier_active==="1");
+settings=s;
+
+/* HEADER */
+document.getElementById("headerImg").src=settings.find(x=>x.type==="company_image")?.value||"";
+
+/* NEWS */
+let newsList=settings.filter(x=>x.type==="news").map(x=>x.value);
+let i=0;
+setInterval(()=>{
+document.getElementById("news").innerText=newsList[i]||"";
+i=(i+1)%newsList.length;
+},3000);
+
+/* TIERS */
+let tDiv=document.getElementById("tiers");
+
+tiers.forEach(t=>{
+let b=document.createElement("button");
+b.innerText=t.tier_name;
+b.onclick=()=>selectTier(t);
+tDiv.appendChild(b);
 });
+
+let c=document.createElement("button");
+c.innerText="إلغاء";
+c.className="cancel";
+c.onclick=()=>{tier=null;localStorage.clear();showBrands()};
+tDiv.appendChild(c);
+
+showBrands();
+
+});
+
+/* TIER */
+function selectTier(t){
+tier=t;
+localStorage.setItem("tier",JSON.stringify(t));
+document.getElementById("banner").innerText=`أنت على شريحة ${t.tier_name}`;
+}
 
 /* BRANDS */
 function showBrands(){
@@ -96,47 +138,57 @@ app.innerHTML="";
 let brands=[...new Set(products.map(p=>p.company))];
 
 brands.forEach(b=>{
-app.innerHTML+=`<div class="card" onclick="showProducts('${b}')">${b}</div>`;
+let logo=products.find(p=>p.company==b)?.brand_image;
+app.innerHTML+=`
+<div class="card" onclick="showProducts('${b}')">
+<img src="${logo}">
+<h4>${b}</h4>
+</div>`;
 });
 }
 
 /* PRODUCTS */
 function showProducts(company){
 let app=document.getElementById("app");
-app.innerHTML="";
+app.innerHTML=`<div class="back" onclick="showBrands()">⬅ رجوع</div>`;
 
 products.filter(p=>p.company==company).forEach(p=>{
 app.innerHTML+=`
 <div class="card">
+<img src="${p.image}">
 <h4>${p.name}</h4>
+<div>${p.price_carton} جنيه</div>
 
-<select onchange="setUnit('${p.code}',this.value)">
+<select onchange="setUnit('${p.code}',this)">
 <option disabled selected>اختر الوحدة</option>
 <option value="carton">كرتونة</option>
 <option value="dozen">دستة</option>
 <option value="piece">قطعة</option>
 </select>
 
-<input type="number" placeholder="الكمية"
+<input type="number" placeholder="الكمية" disabled
+onfocus="checkUnit('${p.code}')"
 oninput="setQty('${p.code}',this.value)">
 </div>`;
 });
 }
 
 /* CART */
-function setUnit(code,unit){
+function setUnit(code,el){
 if(!cart[code]) cart[code]={};
-cart[code].unit=unit;
+cart[code].unit=el.value;
+el.nextElementSibling.disabled=false;
+}
+
+function checkUnit(code){
+if(!cart[code]?.unit) alert("اختر الوحدة أولا");
 }
 
 function setQty(code,qty){
-if(!cart[code]?.unit) return alert("اختر الوحدة أولا");
-
 let p=products.find(x=>x.code==code);
 let price=p["price_"+cart[code].unit];
 
 cart[code]={...cart[code],qty:+qty,price,name:p.name};
-
 toast();
 }
 
@@ -145,59 +197,6 @@ function toast(){
 let t=document.getElementById("toast");
 t.style.display="block";
 setTimeout(()=>t.style.display="none",1500);
-}
-
-/* REVIEW */
-function review(){
-let app=document.getElementById("app");
-let total=0;
-let html="<h3>مراجعة الطلب</h3>";
-
-for(let i in cart){
-let c=cart[i];
-let sum=c.qty*c.price;
-total+=sum;
-
-html+=`
-<div class="review">
-[${i}] ${c.name}<br>
-${c.qty} × ${c.unit}<br>
-${sum} جنيه
-<input type="number" value="${c.qty}" onchange="setQty('${i}',this.value)">
-</div>`;
-}
-
-html+=`<h3>الإجمالي: ${total}</h3>
-
-<input id="name" placeholder="الاسم">
-<input id="phone" placeholder="الموبايل">
-<input id="biz" placeholder="اسم النشاط">
-<input id="loc" placeholder="اللوكيشن">
-
-<button onclick="send(${total})">إرسال</button>
-`;
-
-app.innerHTML=html;
-}
-
-/* SEND */
-function send(total){
-
-let name=document.getElementById("name").value;
-let phone=document.getElementById("phone").value;
-
-if(!name||!phone) return alert("ادخل البيانات");
-
-let msg="طلب:%0A";
-
-for(let i in cart){
-let c=cart[i];
-msg+=`[${i}] ${c.name} - ${c.qty} ${c.unit} = ${c.qty*c.price}%0A`;
-}
-
-msg+=`%0Aالإجمالي: ${total}`;
-
-window.open("https://wa.me/201552670465?text="+msg);
 }
 
 </script>
