@@ -2,74 +2,27 @@
 <html lang="ar" dir="rtl">
 <head>
 
-<script>
-if(!location.search.includes("v=")){
-  location.href = location.href + "?v=1";
-}
-</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alahram Store</title>
+
+<title>الأهرام للتجارة والتوزيع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-font-family:Cairo;
-margin:0;
-background:#f5f7fa;
-}
+body{font-family:Cairo;margin:0;background:#f5f7fa}
 
 /* HEADER */
 .header{
-position:relative;
 height:180px;
-}
-.header img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-.overlay{
-position:absolute;
-inset:0;
-background:linear-gradient(to top,#000000cc,#00000033);
-}
-.title{
-position:absolute;
-bottom:10px;
-right:15px;
+background:#0B3D91;
 color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
 font-size:20px;
 font-weight:bold;
 }
-
-/* NEWS */
-.news{
-background:#e53935;
-color:#fff;
-padding:10px;
-text-align:center;
-font-weight:bold;
-}
-
-/* TIERS */
-.tiers{
-display:flex;
-gap:6px;
-padding:10px;
-overflow-x:auto;
-}
-.tiers button{
-padding:8px 14px;
-border:none;
-border-radius:20px;
-background:#0b3d91;
-color:#fff;
-white-space:nowrap;
-}
-.cancel{background:#000!important}
 
 /* GRID */
 .grid{
@@ -82,21 +35,23 @@ padding:10px;
 /* CARD */
 .card{
 background:#fff;
+padding:15px;
 border-radius:14px;
-padding:12px;
 text-align:center;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
 transition:0.2s;
 }
 .card:active{
-transform:scale(0.97);
+transform:scale(0.95);
 }
+
 .card img{
 width:100%;
 height:110px;
 object-fit:contain;
 margin-bottom:5px;
 }
+
 .card h4{
 margin:5px 0;
 font-size:14px;
@@ -108,20 +63,10 @@ position:fixed;
 bottom:0;
 width:100%;
 background:#fff;
+padding:10px;
 display:flex;
 justify-content:space-between;
-padding:10px;
-border-top:1px solid #eee;
-}
-
-/* BUTTON */
-.btn{
-background:#e53935;
-color:#fff;
-padding:10px;
-border-radius:20px;
-text-align:center;
-margin:10px;
+border-top:1px solid #ddd;
 }
 </style>
 
@@ -132,24 +77,18 @@ margin:10px;
 <body>
 
 <div class="header">
-<img id="headerImg">
-<div class="overlay"></div>
-<div class="title">الأهرام للتجارة والتوزيع</div>
+الأهرام للتجارة والتوزيع
 </div>
-
-<div class="news" id="news"></div>
-
-<div class="tiers" id="tiers"></div>
 
 <div id="app"></div>
 
 <div class="footer">
-<div onclick="showBrands()">🏠 الرئيسية</div>
 <div onclick="location.reload()">🔄 تحديث</div>
 </div>
 
 <script>
 
+/* 🔥 كسر الكاش النهائي */
 function fix(url){
 return url + "&t=" + Date.now();
 }
@@ -159,62 +98,42 @@ return new Promise(r=>{
 Papa.parse(fix(url),{
 download:true,
 header:true,
+skipEmptyLines:true,
 complete:(res)=>r(res.data)
 });
 });
 }
 
-let products=[],tiers=[],settings=[];
+/* LOAD PRODUCTS ONLY (بداية نظيفة) */
+loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=2123604928&output=csv")
 
-Promise.all([
-loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=2123604928&output=csv"),
-loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=688371996&output=csv"),
-loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1922249138&output=csv")
-]).then(([p,t,s])=>{
+.then(products=>{
 
-products=p.filter(x=>x.status==="active");
-tiers=t;
-settings=s;
+/* فلترة */
+products = products.filter(x => (x.status || "").trim() === "active");
 
-/* HEADER */
-document.getElementById("headerImg").src=settings.find(x=>x.type==="company_image")?.value||"";
-
-/* NEWS */
-let n=settings.filter(x=>x.type==="news").map(x=>x.value);
-document.getElementById("news").innerText=n[0]||"";
-
-/* TIERS */
-let box=document.getElementById("tiers");
-tiers.forEach(t=>{
-let b=document.createElement("button");
-b.innerText=t.tier_name;
-box.appendChild(b);
-});
-
-/* BRANDS */
-showBrands();
-
-});
-
-/* BRANDS */
-function showBrands(){
 let app=document.getElementById("app");
 app.innerHTML="<div class='grid'>";
 
+/* استخراج البراندات */
 let brands=[...new Set(products.map(p=>p.company))];
 
 brands.forEach(b=>{
-let logo=products.find(p=>p.company==b)?.brand_image||"";
+
+let logo = products.find(p=>p.company==b)?.brand_image || "";
 
 app.innerHTML+=`
 <div class="card">
 <img src="${logo}">
 <h4>${b}</h4>
-</div>`;
+</div>
+`;
+
 });
 
 app.innerHTML+="</div>";
-}
+
+});
 
 </script>
 
