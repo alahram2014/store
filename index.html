@@ -4,10 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>الأهرام للتجارة والتوزيع</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
 <style>
 :root{
   --blue:#0B3D91;
@@ -591,29 +589,23 @@ body.offerMode .tiersWrap{
 }
 </style>
 </head>
-
 <body>
 <div class="header">
   <div class="headerMeta">
     <div class="companyTitle">الأهرام للتجارة والتوزيع</div>
   </div>
-
   <div class="hero">
     <img id="headerImg" alt="company header">
   </div>
-
   <div class="news" id="news"></div>
-
   <div class="tiersWrap" id="tiersWrap">
     <div class="tiers" id="tiersBar"></div>
     <div class="tierBanner" id="tierBanner"></div>
   </div>
-
   <div class="contactRow">
     <a class="contactBtn phone" href="tel:01040880002">📞 اتصال</a>
     <a class="contactBtn wa" href="https://wa.me/201040880002" target="_blank" rel="noopener">واتساب 💬</a>
   </div>
-
   <div class="back" id="backBtn" onclick="goBack()">⬅ اضغط للرجوع</div>
 </div>
 
@@ -679,6 +671,7 @@ const loadJSON = (k, fallback) => {
     return fallback;
   }
 };
+
 function stripDiacritics(str) {
   return clean(str).normalize("NFKD").replace(/[\u064B-\u065F\u0670\u0640]/g, "");
 }
@@ -767,10 +760,19 @@ function isActiveProduct(product) {
   return s === "active" || s === "فعال";
 }
 function getDisplayName(product) {
+  const explicitName = clean(
+    product.name ||
+    product.product_name ||
+    product.item_name ||
+    product.item ||
+    product.title
+  );
+
   if (isOfferProduct(product)) {
-    return clean(product.offer_label || product.offer_name || product.offer || product.name || "عرض");
+    return explicitName || clean(product.offer_label || product.offer_name || product.offer || "عرض");
   }
-  return clean(product.name);
+
+  return explicitName || clean(product.offer_label || product.offer_name || product.offer || "صنف");
 }
 function getOriginalPrice(product, unit) {
   if (unit === "offer") return toNum(product.price_offer || product.offer_price || product.priceعرض);
@@ -780,6 +782,33 @@ function getDiscountedPrice(base) {
   const d = selectedTier ? toNum(selectedTier.tier_discount) : 0;
   if (!selectedTier || d <= 0) return base;
   return Math.max(0, base - (base * d / 100));
+}
+
+function isAddableToCart(product) {
+  const raw =
+    product.allow_cart ??
+    product.add_to_cart ??
+    product.can_add_to_cart ??
+    product.orderable ??
+    product.can_order ??
+    product.buyable ??
+    product.purchasable ??
+    product.cartable ??
+    product.allow_order;
+
+  if (raw === undefined || raw === null || clean(raw) === "") return true;
+
+  const s = normalizeLoose(raw).replace(/\s+/g, "");
+  const falseList = ["0","false","no","n","لا","غيرمتاح","ممنوع","disabled","off","inactive","غيرمسموح"];
+  const trueList = ["1","true","yes","y","نعم","متاح","مسموح","allow","allowed","available","active","فعال","ok","on"];
+
+  if (falseList.includes(s)) return false;
+  if (trueList.includes(s)) return true;
+
+  if (raw === 0 || raw === "0") return false;
+  if (raw === 1 || raw === "1") return true;
+
+  return true;
 }
 
 function getSubtotal() {
@@ -1002,6 +1031,9 @@ function renderHome() {
 
 function clearSearch() {
   searchQuery = "";
+  clearTimeout(searchTimer);
+  const input = document.getElementById("searchInput");
+  if (input) input.value = "";
   renderSearchAndBrands();
   document.getElementById("searchInput")?.focus();
 }
@@ -1049,6 +1081,7 @@ function renderProductCard(p, index = 0) {
   const uiKey = p.__uiKey || safeKey(p, index);
   const productImg = clean(p.image) || PLACEHOLDERS.product(getDisplayName(p));
   const active = isActiveProduct(p);
+  const addable = isAddableToCart(p);
   const offer = isOfferProduct(p);
   const displayName = getDisplayName(p);
   const cartonBase = getOriginalPrice(p, "carton");
@@ -1076,13 +1109,9 @@ function renderProductCard(p, index = 0) {
            </div>`
         : `<div class="cartonPrice">سعر الكرتونة: ${cartonBase ? cartonBase.toLocaleString("en-US") : "غير متاح"} جنيه</div>`);
 
-  const offerNotice = offer
-    ? `<div class="offerNotice" style="margin:0">هذا عرض خاص من صفقة اليوم، ويمكن شراء أكثر من عرض حسب الرغبة.</div>`
-    : "";
-
   const unitSelect = offer
     ? ""
-    : `<select class="unitSelect" id="unit_${uiKey}" onchange="selectUnit('${uiKey}', this.value)">
+    : `<select class="unitSelect" id="unit_${uiKey}" onchange="selectUnit('${uiKey}', this.value)" ${!addable ? "disabled" : ""}>
          <option value="">اختر الوحدة</option>
          ${["carton","dozen","piece"]
            .filter(u => getOriginalPrice(p, u) > 0)
@@ -1090,21 +1119,22 @@ function renderProductCard(p, index = 0) {
            .join("")}
        </select>`;
 
-  const qtyEnabled = true;
   const qtyInit = qtyValue ? qtyValue : "";
+  const addBtnText = addable ? "أضف للسلة" : "غير متاح للطلب";
+
   return `
     <div class="card productCard" id="card_${uiKey}">
       <img class="productImg" src="${productImg}" alt="${escapeAttr(displayName)}" onerror="this.src='${PLACEHOLDERS.product(displayName)}'">
       <div class="productName">${displayName}${code ? ` (${code})` : ""}</div>
       ${priceLine}
-      ${offerNotice}
+      ${!addable ? `<div class="stockBadge inactive">غير متاح للطلب</div>` : ""}
       ${unitSelect}
       <div class="qtyWrap">
-        <button class="qtyBtn" id="minus_${uiKey}" onclick="changeQty('${uiKey}', -1)">-</button>
-        <input class="qtyInput" id="qty_${uiKey}" inputmode="numeric" value="${escapeAttr(qtyInit)}" placeholder="" oninput="draftQty('${uiKey}', this.value)">
-        <button class="qtyBtn" id="plus_${uiKey}" onclick="changeQty('${uiKey}', 1)">+</button>
+        <button class="qtyBtn" id="minus_${uiKey}" onclick="changeQty('${uiKey}', -1)" ${!addable ? "disabled" : ""}>-</button>
+        <input class="qtyInput" id="qty_${uiKey}" inputmode="numeric" value="${escapeAttr(qtyInit)}" placeholder="" oninput="draftQty('${uiKey}', this.value)" ${!addable ? "disabled" : ""}>
+        <button class="qtyBtn" id="plus_${uiKey}" onclick="changeQty('${uiKey}', 1)" ${!addable ? "disabled" : ""}>+</button>
       </div>
-      <button class="addBtn" onclick="addToCart('${uiKey}')">أضف للسلة</button>
+      <button class="addBtn" onclick="addToCart('${uiKey}')" ${!addable ? "disabled" : ""}>${addBtnText}</button>
     </div>
   `;
 }
@@ -1160,6 +1190,7 @@ function selectUnit(uiKey, unit, silent = false) {
   const product = products.find((x, i) => safeKey(x, i) === clean(uiKey) || clean(x.__uiKey) === clean(uiKey));
   if (!product) return;
   if (isOfferProduct(product)) return;
+  if (!isAddableToCart(product)) return;
 
   const u = clean(unit);
   drafts[uiKey] = drafts[uiKey] || {};
@@ -1203,6 +1234,11 @@ function addToCart(uiKey) {
   const product = products.find((x, i) => safeKey(x, i) === clean(uiKey) || clean(x.__uiKey) === clean(uiKey));
   if (!product) {
     notify("خطأ في المنتج", "error");
+    return;
+  }
+
+  if (!isAddableToCart(product)) {
+    notify("هذا الصنف غير متاح للإضافة للسلة", "error");
     return;
   }
 
