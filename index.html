@@ -1,355 +1,359 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>الأهرام للتجارة والتوزيع</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-
-<style>
-body{font-family:Cairo;margin:0;background:#111;color:#fff}
-
-/* HEADER */
-.header{
-position:relative;height:180px
-}
-.header img{
-width:100%;height:100%;object-fit:cover
-}
-.overlay{
-position:absolute;inset:0;background:#000a
-}
-.title{
-position:absolute;bottom:10px;right:10px;font-weight:bold
-}
-
-/* NEWS */
-.news{
-background:#FFD600;color:#000;padding:8px;text-align:center;font-weight:bold
-}
-
-/* TIERS */
-.tiers{
-display:flex;gap:6px;padding:10px;overflow-x:auto
-}
-.tier{
-background:#222;padding:6px 12px;border-radius:20px;border:1px solid #555
-}
-.tier.active{
-background:#FFD600;color:#000
-}
-
-/* GRID */
-.grid{
-display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px
-}
-
-/* CARD */
-.card{
-background:#1c1c1c;padding:10px;border-radius:12px;text-align:center
-}
-.card img{width:100%;height:100px;object-fit:contain}
-
-/* PRICE */
-.price{color:#FFD600;font-weight:bold}
-
-/* UNIT */
-.units button{
-margin:2px;padding:5px;border:none;border-radius:6px;background:#333;color:#fff
-}
-.units .active{background:#FFD600;color:#000}
-
-/* QTY */
-.qty{
-display:flex;justify-content:center;align-items:center;gap:10px;margin-top:5px
-}
-.qty button{padding:5px 10px}
-
-/* FOOTER */
-.footer{
-position:fixed;bottom:0;width:100%;background:#000;padding:10px;
-display:flex;justify-content:space-between
-}
-
-/* BTN */
-.btn{
-background:#FFD600;color:#000;padding:10px;border-radius:8px;margin:10px;text-align:center
-}
-
-/* TOAST */
-.toast{
-position:fixed;top:20px;left:50%;transform:translateX(-50%);
-background:#2e7d32;color:#fff;padding:10px;border-radius:20px;display:none
-}
-</style>
-
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
+<style>
+:root{
+  --bg:#0f1b2d;          /* كحلي */
+  --card:#16243a;
+  --accent:#ff7a00;      /* برتقالي */
+  --text:#ffffff;
+  --muted:#9aa7bd;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Cairo;background:var(--bg);color:var(--text)}
+
+/* Header */
+.header{position:relative;height:170px}
+.header img{width:100%;height:100%;object-fit:cover}
+.overlay{position:absolute;inset:0;background:#0007}
+.title{position:absolute;bottom:10px;right:12px;font-weight:700}
+
+/* News */
+.news{background:var(--accent);color:#000;padding:8px;text-align:center;font-weight:700}
+
+/* Tiers */
+.tiers{display:flex;gap:8px;overflow-x:auto;padding:10px}
+.tier{background:var(--card);border:1px solid #2a3b57;padding:6px 12px;border-radius:20px;white-space:nowrap}
+.tier.active{background:var(--accent);color:#000}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
+
+/* Card */
+.card{background:var(--card);border-radius:12px;padding:10px;overflow:hidden}
+.card img{width:100%;height:110px;object-fit:contain}
+.name{font-size:14px;min-height:38px}
+.price{color:var(--accent);font-weight:700;margin:6px 0}
+
+/* Controls */
+.select, .qty-btn, .btn{
+  width:100%;padding:8px;border-radius:8px;border:none
+}
+.select{background:#0f1b2d;color:#fff;border:1px solid #2a3b57}
+.qty{display:flex;gap:8px;align-items:center;justify-content:center;margin:6px 0}
+.qty button{background:#243657;color:#fff;border:none;border-radius:6px;padding:6px 10px}
+.btn{background:var(--accent);color:#000;font-weight:700;margin-top:6px}
+
+/* Footer */
+.footer{
+ position:fixed;bottom:0;width:100%;
+ background:#0b1424;border-top:1px solid #22314d;
+ display:flex;justify-content:space-between;align-items:center;
+ padding:10px;z-index:10
+}
+.f-btn{color:#fff}
+.total{font-weight:700}
+
+/* Toast */
+.toast{
+ position:fixed;top:20px;left:50%;transform:translateX(-50%);
+ background:#2e7d32;color:#fff;padding:10px 14px;border-radius:20px;display:none;z-index:20
+}
+
+/* Review */
+.section{padding:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.input{width:100%;padding:10px;border-radius:8px;border:1px solid #2a3b57;background:#0f1b2d;color:#fff}
+.full{grid-column:1/-1}
+.big-btn{background:var(--accent);color:#000;padding:12px;border-radius:10px;text-align:center;font-weight:700;margin-top:10px}
+.link{color:#9ad; text-align:center;margin-top:6px}
+</style>
 </head>
 
 <body>
 
 <div class="header">
-<img id="headerImg">
-<div class="overlay"></div>
-<div class="title">الأهرام للتجارة والتوزيع</div>
+  <img id="headerImg">
+  <div class="overlay"></div>
+  <div class="title">الأهرام للتجارة والتوزيع</div>
 </div>
 
-<div class="news" id="news"></div>
+<div class="news" id="news">...</div>
 <div class="tiers" id="tiers"></div>
-
 <div id="app"></div>
 
 <div class="footer">
-<div onclick="goBack()">⬅ رجوع</div>
-<div id="totalBox">0 جنيه</div>
-<div onclick="review()">🧾 مراجعة</div>
+  <div class="f-btn" onclick="goBack()">⬅ رجوع</div>
+  <div class="total" id="totalBox">0 جنيه</div>
+  <div class="f-btn" onclick="openReview()">🧾 مراجعة</div>
 </div>
 
 <div class="toast" id="toast">✔ تمت الإضافة</div>
 
 <script>
-
-function fix(u){return u+"&t="+Date.now()}
-
-function loadCSV(url){
-return new Promise(r=>{
-Papa.parse(fix(url),{download:true,header:true,complete:(res)=>r(res.data)});
-});
-}
+const URLS={
+ products:"https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=2123604928&output=csv",
+ tiers:"https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=688371996&output=csv",
+ settings:"https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1922249138&output=csv"
+};
+const fix=u=>u+"&t="+Date.now();
+const num=v=>isNaN(parseFloat(v))?0:parseFloat(v);
 
 let products=[],tiers=[],settings=[];
 let cart=JSON.parse(localStorage.getItem("cart")||"{}");
 let tier=JSON.parse(localStorage.getItem("tier")||"null");
-let lastPage="brands";
+let customer=JSON.parse(localStorage.getItem("customer")||"{}");
+let lastPage={type:"brands",value:null};
 
-Promise.all([
-loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=2123604928&output=csv"),
-loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=688371996&output=csv"),
-loadCSV("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1922249138&output=csv")
-]).then(([p,t,s])=>{
+function loadCSV(url){return new Promise(r=>{
+ Papa.parse(fix(url),{download:true,header:true,complete:(res)=>r(res.data||[])});
+});}
 
-products=p.filter(x=>(x.status||"").trim()=="active");
-tiers=t.filter(x=>x.tier_active=="1");
-settings=s;
+Promise.all([loadCSV(URLS.products),loadCSV(URLS.tiers),loadCSV(URLS.settings)])
+.then(([p,t,s])=>{
+ products=p.filter(x=>(x.status||"").trim()=="active");
+ tiers=t.filter(x=>String(x.tier_active||"").trim()=="1");
+ settings=s;
 
-/* HEADER IMAGE */
-document.getElementById("headerImg").src=settings.find(x=>x.type=="company_image")?.value||"";
+ // header image
+ const img=settings.find(x=>x.type=="company_image")?.value||"";
+ document.getElementById("headerImg").src=img;
 
-/* NEWS */
-let raw=settings.filter(x=>x.type=="news").map(x=>x.value).join("،");
-let list=raw.split("،").filter(x=>x.trim());
-let i=0;
-setInterval(()=>{
-document.getElementById("news").innerText=list[i];
-i=(i+1)%list.length;
-},3000);
+ // news
+ const raw=settings.filter(x=>x.type=="news").map(x=>x.value).join("،");
+ const list=raw.split("،").map(x=>x.trim()).filter(Boolean);
+ let i=0;
+ if(list.length){
+   setInterval(()=>{
+     document.getElementById("news").innerText=list[i];
+     i=(i+1)%list.length;
+   },3000);
+ }else{
+   document.getElementById("news").innerText="";
+ }
 
-/* TIERS */
-let box=document.getElementById("tiers");
-tiers.forEach(t=>{
-let d=document.createElement("div");
-d.className="tier";
-d.innerText=t.tier_name;
-
-d.onclick=()=>{
-tier=t;
-localStorage.setItem("tier",JSON.stringify(t));
-cart={};
-localStorage.setItem("cart","{}");
-};
-
-box.appendChild(d);
+ renderTiers();
+ showBrands();
+ updateTotal();
 });
 
-showBrands();
-updateTotal();
+function renderTiers(){
+ const box=document.getElementById("tiers"); box.innerHTML="";
+ tiers.forEach(t=>{
+  const d=document.createElement("div");
+  d.className="tier"+(tier&&tier.tier_name==t.tier_name?" active":"");
+  d.innerText=t.tier_name;
+  d.onclick=()=>{
+    tier=t; localStorage.setItem("tier",JSON.stringify(t));
+    cart={}; localStorage.setItem("cart","{}");
+    renderTiers(); updateTotal();
+  };
+  box.appendChild(d);
+ });
+}
 
-});
-
-/* BRANDS */
 function showBrands(){
-lastPage="brands";
-let app=document.getElementById("app");
-app.innerHTML="<div class='grid'>";
-
-let brands=[...new Set(products.map(p=>p.company))];
-
-brands.forEach(b=>{
-if(tier && b=="صفقة اليوم") return;
-let img=products.find(p=>p.company==b)?.brand_image||"";
-
-app.innerHTML+=`<div class="card" onclick="showProducts('${b}')"><img src="${img}"><h4>${b}</h4></div>`;
-});
-
-app.innerHTML+="</div>";
+ lastPage={type:"brands"};
+ const app=document.getElementById("app");
+ const brands=[...new Set(products.map(p=>p.company).filter(Boolean))];
+ app.innerHTML='<div class="grid">'+brands.map(b=>{
+   if(tier && b=="صفقة اليوم") return "";
+   const img=products.find(p=>p.company==b)?.brand_image||"";
+   return `<div class="card" onclick="showProducts('${b}')">
+     <img src="${img}">
+     <div class="name">${b}</div>
+   </div>`;
+ }).join("")+'</div>';
 }
 
-/* PRODUCTS */
 function showProducts(company){
-lastPage=company;
+ lastPage={type:"products",value:company};
+ if(company=="صفقة اليوم" && tier){
+   tier=null; localStorage.removeItem("tier");
+   cart={}; localStorage.setItem("cart","{}");
+   alert("تم إلغاء الشريحة");
+ }
+ const app=document.getElementById("app");
+ const list=products.filter(p=>p.company==company);
+ app.innerHTML='<div class="grid">'+list.map(p=>{
+   const units=[
+     {k:"carton",n:"كرتونة",v:num(p.price_carton)},
+     {k:"dozen",n:"دستة",v:num(p.price_dozen)},
+     {k:"piece",n:"قطعة",v:num(p.price_piece)}
+   ].filter(u=>u.v>0);
 
-if(company=="صفقة اليوم" && tier){
-tier=null;
-localStorage.removeItem("tier");
-cart={};
-localStorage.setItem("cart","{}");
-alert("تم إلغاء الشريحة");
+   return `<div class="card">
+     <img src="${p.image}">
+     <div class="name">${p.name}</div>
+     <div class="price">${num(p.price_carton)||units[0]?.v||0} جنيه</div>
+
+     <select class="select" id="u_${p.code}">
+       <option value="">اختر الوحدة</option>
+       ${units.map(u=>`<option value="${u.k}">${u.n}</option>`).join("")}
+     </select>
+
+     <div class="qty">
+       <button onclick="qChange('${p.code}',-1)">-</button>
+       <span id="q_${p.code}">1</span>
+       <button onclick="qChange('${p.code}',1)">+</button>
+     </div>
+
+     <button class="btn" onclick="addToCart('${p.code}')">🛒 أضف للسلة</button>
+   </div>`;
+ }).join("")+'</div>';
 }
 
-let app=document.getElementById("app");
-app.innerHTML="<div class='grid'>";
-
-products.filter(p=>p.company==company).forEach(p=>{
-
-app.innerHTML+=`
-<div class="card">
-<img src="${p.image}">
-<h4>${p.name}</h4>
-<div class="price">${p.price_carton} جنيه</div>
-
-<div class="units">
-${["carton","dozen","piece"].map(u=>{
-if(p["price_"+u]>0){
-return `<button onclick="setUnit('${p.code}','${u}',this)">${u=="carton"?"كرتونة":u=="dozen"?"دستة":"قطعة"}</button>`;
-}
-return "";
-}).join("")}
-</div>
-
-<div class="qty">
-<button onclick="changeQty('${p.code}',-1)">-</button>
-<span id="q_${p.code}">1</span>
-<button onclick="changeQty('${p.code}',1)">+</button>
-</div>
-
-<div class="btn" onclick="addCart('${p.code}')">🛒 أضف للسلة</div>
-</div>
-`;
-});
-
-app.innerHTML+="</div>";
+function qChange(code,delta){
+ const el=document.getElementById("q_"+code);
+ let q=parseInt(el.innerText||"1")+delta;
+ if(q<1) q=1;
+ el.innerText=q;
 }
 
-/* CART */
-function setUnit(code,unit,el){
-document.querySelectorAll(`#q_${code}`).forEach(()=>{});
-if(!cart[code]) cart[code]={qty:1};
-cart[code].unit=unit;
+function addToCart(code){
+ const p=products.find(x=>x.code==code);
+ const unit=document.getElementById("u_"+code).value;
+ if(!unit) return alert("اختر الوحدة");
+
+ const q=parseInt(document.getElementById("q_"+code).innerText||"1");
+ const price=num(p["price_"+unit]);
+
+ if(price<=0) return alert("سعر غير متاح");
+
+ cart[code]={code,name:p.name,unit,qty:q,price};
+ localStorage.setItem("cart",JSON.stringify(cart));
+ showToast(); updateTotal();
 }
 
-function changeQty(code,val){
-let el=document.getElementById("q_"+code);
-let q=+el.innerText+val;
-if(q<1) q=1;
-el.innerText=q;
-if(cart[code]) cart[code].qty=q;
+function showToast(){
+ const t=document.getElementById("toast");
+ t.style.display="block"; setTimeout(()=>t.style.display="none",1200);
 }
 
-function addCart(code){
-let p=products.find(x=>x.code==code);
-if(!cart[code]?.unit) return alert("اختر الوحدة");
-
-let q=document.getElementById("q_"+code).innerText;
-let price=p["price_"+cart[code].unit];
-
-cart[code]={code,name:p.name,qty:+q,unit:cart[code].unit,price};
-
-localStorage.setItem("cart",JSON.stringify(cart));
-toast();
-updateTotal();
-}
-
-/* TOTAL */
 function updateTotal(){
-let total=0;
-for(let i in cart){
-total+=cart[i].qty*cart[i].price;
-}
-document.getElementById("totalBox").innerText=total+" جنيه";
+ let total=0;
+ Object.values(cart).forEach(c=> total+=c.qty*c.price);
+ document.getElementById("totalBox").innerText=(isNaN(total)?0:total)+" جنيه";
 }
 
-/* REVIEW */
-function review(){
-let app=document.getElementById("app");
-let total=0;
+function openReview(){
+ lastPage={type:"review"};
+ const app=document.getElementById("app");
 
-let html="";
+ let total=0, before=0;
+ let html='<div class="section">';
 
-for(let i in cart){
-let c=cart[i];
-let sum=c.qty*c.price;
-total+=sum;
+ Object.values(cart).forEach(c=>{
+  const sum=c.qty*c.price; before+=sum;
+  html+=`
+  <div class="card">
+    [${c.code}] ${c.name}<br>
+    ${unitAr(c.unit)} × ${c.qty}<br>
+    ${sum} جنيه
+    <div class="qty">
+      <button onclick="editQty('${c.code}',-1)">-</button>
+      <span>${c.qty}</span>
+      <button onclick="editQty('${c.code}',1)">+</button>
+    </div>
+    <div class="link" onclick="removeItem('${c.code}')">حذف</div>
+  </div>`;
+ });
 
-html+=`
-<div class="card">
-[${c.code}] ${c.name}<br>
-${c.unit} × ${c.qty}<br>
-${sum} جنيه
-<div class="qty">
-<button onclick="changeCart('${i}',-1)">-</button>
-<span>${c.qty}</span>
-<button onclick="changeCart('${i}',1)">+</button>
-</div>
-<div onclick="removeItem('${i}')">❌ حذف</div>
-</div>`;
+ total=before;
+ let discount=0, remain=0;
+
+ if(tier){
+   const min=num(tier.tier_min);
+   const dis=num(tier.tier_discount);
+   if(before>=min){
+     discount=before*(dis/100);
+     total=before-discount;
+   }else{
+     remain=min-before;
+   }
+   html+=`<div class="card">
+     الشريحة: ${tier.tier_name}<br>
+     الخصم: ${dis}%<br>
+     ${remain>0?`المتبقي لتحقيق الشريحة: ${remain} جنيه`:`تم تطبيق الخصم`}
+   </div>`;
+ }
+
+ html+=`<div class="card">
+   قبل الخصم: ${before} جنيه<br>
+   بعد الخصم: ${total} جنيه
+ </div>`;
+
+ // form
+ html+=`
+ <div class="card">
+  <div class="row">
+    <input class="input" id="name" placeholder="الاسم" value="${customer.name||""}">
+    <input class="input" id="phone" placeholder="الموبايل" value="${customer.phone||""}">
+    <input class="input full" id="business" placeholder="اسم النشاط" value="${customer.business||""}">
+    <input class="input full" id="address" placeholder="العنوان" value="${customer.address||""}">
+    <input class="input full" id="location" placeholder="رابط اللوكيشن" value="${customer.location||""}">
+  </div>
+  <div class="big-btn" onclick="sendOrder(${total})">إرسال الطلب الآن</div>
+  <div class="link" onclick="goBack()">⬅ الرجوع للتسوق</div>
+ </div>`;
+
+ html+='</div>';
+ app.innerHTML=html;
 }
 
-html+=`<div class="btn" onclick="checkout(${total})">إتمام الطلب</div>`;
-
-app.innerHTML=html;
+function unitAr(u){
+ return u=="carton"?"كرتونة":u=="dozen"?"دستة":"قطعة";
 }
 
-/* EDIT CART */
-function changeCart(code,val){
-cart[code].qty+=val;
-if(cart[code].qty<1) cart[code].qty=1;
-localStorage.setItem("cart",JSON.stringify(cart));
-review();
-updateTotal();
+function editQty(code,delta){
+ if(!cart[code]) return;
+ cart[code].qty+=delta;
+ if(cart[code].qty<1) cart[code].qty=1;
+ localStorage.setItem("cart",JSON.stringify(cart));
+ openReview(); updateTotal();
 }
 
 function removeItem(code){
-delete cart[code];
-localStorage.setItem("cart",JSON.stringify(cart));
-review();
-updateTotal();
+ delete cart[code];
+ localStorage.setItem("cart",JSON.stringify(cart));
+ openReview(); updateTotal();
 }
 
-/* CHECKOUT */
-function checkout(total){
-let name=prompt("الاسم");
-let phone=prompt("رقم الهاتف");
-let address=prompt("العنوان");
+function sendOrder(total){
+ const data={
+  name:document.getElementById("name").value.trim(),
+  phone:document.getElementById("phone").value.trim(),
+  business:document.getElementById("business").value.trim(),
+  address:document.getElementById("address").value.trim(),
+  location:document.getElementById("location").value.trim()
+ };
+ if(!data.name||!data.phone||!data.address){
+   alert("من فضلك املأ البيانات الأساسية");
+   return;
+ }
+ customer=data; localStorage.setItem("customer",JSON.stringify(customer));
 
-let msg="طلب:%0A";
+ let msg="طلب جديد:%0A";
+ Object.values(cart).forEach(c=>{
+  msg+=`[${c.code}] ${c.name}%0A${unitAr(c.unit)} × ${c.qty} = ${c.qty*c.price}%0A`;
+ });
+ msg+=`%0Aالإجمالي: ${total}%0A${data.name}%0A${data.phone}%0A${data.address}%0A${data.business}%0A${data.location}`;
 
-for(let i in cart){
-let c=cart[i];
-msg+=`[${c.code}] ${c.name}%0A${c.unit} × ${c.qty} = ${c.qty*c.price}%0A`;
+ window.open("https://wa.me/201552670465?text="+msg);
 }
 
-msg+=`%0Aالإجمالي: ${total}%0A${name}%0A${phone}%0A${address}`;
-
-window.open("https://wa.me/201552670465?text="+msg);
-}
-
-/* TOAST */
-function toast(){
-let t=document.getElementById("toast");
-t.style.display="block";
-setTimeout(()=>t.style.display="none",1500);
-}
-
-/* BACK */
 function goBack(){
-if(lastPage=="brands") return;
-showProducts(lastPage);
+ if(lastPage.type=="brands") return showBrands();
+ if(lastPage.type=="products") return showProducts(lastPage.value);
+ showBrands();
 }
-
 </script>
 
 </body>
