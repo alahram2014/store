@@ -10,28 +10,88 @@
 
 <style>
 body{margin:0;font-family:Cairo;background:#f5f7fa}
+
+/* HEADER */
 .header{position:sticky;top:0;background:#0B3D91;color:#fff}
 .header img{width:100%;height:120px;object-fit:cover}
-.title{text-align:center;padding:5px}
+.title{text-align:center;padding:6px;font-weight:bold}
 .news{background:#ff7a00;padding:6px;text-align:center}
 
-.tiersBox{display:flex;gap:6px;padding:8px;background:#fff;overflow:auto}
-.tier{padding:6px 10px;border:1px solid #ddd;border-radius:20px}
-.tier.active{background:#0B3D91;color:#fff}
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
+}
 
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
-.card{background:#fff;border-radius:10px;padding:10px;text-align:center}
-.card img{width:100%;height:100px;object-fit:contain}
+/* CARD */
+.card{
+background:#fff;
+border-radius:12px;
+padding:10px;
+text-align:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.1)
+}
+.card img{
+width:100%;
+height:100px;
+object-fit:contain;
+}
 
-.price{color:red;font-weight:bold}
-.qty{display:flex;justify-content:center;gap:5px;margin:5px}
-.qty input{width:50px;text-align:center;background:#eee}
+/* BRAND */
+.brand{
+padding:20px;
+font-weight:bold;
+}
 
-.btn{background:#ff7a00;color:#fff;padding:6px;border-radius:6px}
+/* PRICE */
+.price{color:#e53935;font-weight:bold;margin:5px}
 
-.footer{position:fixed;bottom:0;width:100%;background:#fff;display:flex;justify-content:space-between;padding:10px}
+/* SELECT */
+select{width:100%;padding:6px;border-radius:6px}
 
-.toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:green;color:#fff;padding:10px;display:none}
+/* QTY */
+.qty{
+display:flex;
+justify-content:center;
+gap:6px;
+margin-top:5px
+}
+.qty input{
+width:60px;
+text-align:center;
+border-radius:6px;
+border:1px solid #ccc;
+background:#eee;
+}
+.qty button{
+padding:6px;
+border:none;
+background:#ddd;
+border-radius:6px;
+}
+
+/* BTN */
+.btn{
+background:#ff7a00;
+color:#fff;
+padding:8px;
+border-radius:8px;
+margin-top:6px;
+}
+
+/* FOOTER */
+.footer{
+position:fixed;
+bottom:0;
+width:100%;
+background:#fff;
+display:flex;
+justify-content:space-between;
+padding:10px;
+border-top:1px solid #ddd
+}
 </style>
 </head>
 
@@ -41,7 +101,6 @@ body{margin:0;font-family:Cairo;background:#f5f7fa}
 <img id="headerImg">
 <div class="title">الأهرام للتجارة والتوزيع</div>
 <div class="news" id="news"></div>
-<div class="tiersBox" id="tiersBox"></div>
 </div>
 
 <div id="app"></div>
@@ -52,12 +111,10 @@ body{margin:0;font-family:Cairo;background:#f5f7fa}
 <div onclick="review()">🧾 مراجعة</div>
 </div>
 
-<div class="toastBox" id="toastBox">✔ تمت الإضافة</div>
-
 <script>
 
-let products=[], tiersData=[], settings=[];
-let cart={}, state={};
+let products=[],settings=[];
+let cart={},state={};
 
 const fix=u=>u+"&t="+Date.now();
 const num=v=>parseFloat(v)||0;
@@ -70,15 +127,13 @@ Papa.parse(fix(url),{download:true,header:true,complete:res=>r(res.data||[])});
 
 Promise.all([
 load("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=2123604928&output=csv"),
-load("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=688371996&output=csv"),
 load("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1922249138&output=csv")
-]).then(([p,t,s])=>{
+]).then(([p,s])=>{
 
 products=p.filter(x=>x.company && x.status=="active");
-tiersData=t.filter(x=>x.tier_active=="1");
 settings=s;
 
-headerImg.src=settings.find(x=>x.type=="company_image")?.value || "";
+headerImg.src=settings.find(x=>x.type=="company_image")?.value||"";
 
 let newsArr=settings.filter(x=>x.type=="news").map(x=>x.value);
 let i=0;
@@ -87,31 +142,21 @@ news.innerText=newsArr[i]||"";
 i=(i+1)%newsArr.length;
 },3000);
 
-/* TIERS */
-let tiersBox=document.getElementById("tiersBox");
-tiersData.forEach(t=>{
-let d=document.createElement("div");
-d.className="tier";
-d.innerText=t.tier_name;
-d.onclick=()=>{
-state.tier=t;
-};
-tiersBox.appendChild(d);
-});
-
 showBrands();
 
 });
 
-/* BRANDS */
+/* BRANDS GRID */
 function showBrands(){
-app.innerHTML="<div class='grid'>";
 let brands=[...new Set(products.map(p=>p.company))];
 
+app.innerHTML="<div class='grid'>";
 brands.forEach(b=>{
-app.innerHTML+=`<div class="card" onclick="showProducts('${b}')">${b}</div>`;
+app.innerHTML+=`
+<div class="card brand" onclick="showProducts('${b}')">
+${b}
+</div>`;
 });
-
 app.innerHTML+="</div>";
 }
 
@@ -137,7 +182,7 @@ ${units.map(u=>`<option value="${u}">${u}</option>`).join("")}
 
 <div class="qty">
 <button disabled id="m_${p.code}" onclick="change('${p.code}',-1)">-</button>
-<input disabled id="q_${p.code}">
+<input disabled id="q_${p.code}" placeholder="0">
 <button disabled id="p_${p.code}" onclick="change('${p.code}',1)">+</button>
 </div>
 
@@ -149,17 +194,22 @@ ${units.map(u=>`<option value="${u}">${u}</option>`).join("")}
 app.innerHTML+="</div>";
 }
 
-/* SELECT */
+/* SELECT UNIT */
 function selectUnit(code,unit){
 let p=products.find(x=>x.code==code);
-
 state[code]={unit};
 
-document.getElementById("price_"+code).innerText=num(p["price_"+unit])+" جنيه";
+let price=num(p["price_"+unit]);
+document.getElementById("price_"+code).innerText=price+" جنيه";
 
-document.getElementById("q_"+code).disabled=false;
-document.getElementById("m_"+code).disabled=false;
-document.getElementById("p_"+code).disabled=false;
+let q=document.getElementById("q_"+code);
+let m=document.getElementById("m_"+code);
+let pbtn=document.getElementById("p_"+code);
+
+q.disabled=false;
+q.style.background="#fff";
+m.disabled=false;
+pbtn.disabled=false;
 }
 
 /* QTY */
@@ -181,7 +231,6 @@ let qty=parseInt(document.getElementById("q_"+code).value)||1;
 
 cart[code]={qty,price:num(p["price_"+st.unit])};
 
-showToast();
 updateTotal();
 }
 
@@ -190,13 +239,6 @@ function updateTotal(){
 let t=0;
 Object.values(cart).forEach(c=>t+=c.qty*c.price);
 totalBox.innerText=t+" جنيه";
-}
-
-/* TOAST */
-function showToast(){
-let t=document.getElementById("toastBox");
-t.style.display="block";
-setTimeout(()=>t.style.display="none",1000);
 }
 
 /* REVIEW */
