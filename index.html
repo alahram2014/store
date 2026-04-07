@@ -20,14 +20,12 @@
 body{margin:0;font-family:Cairo;background:var(--bg)}
 
 /* HEADER */
-.header{
-position:sticky;top:0;z-index:1000;background:var(--blue);color:#fff;
-}
+.header{position:sticky;top:0;z-index:1000;background:var(--blue);color:#fff}
 .header img{width:100%;height:120px;object-fit:cover}
-.title{padding:5px;text-align:center;font-weight:bold}
+.title{text-align:center;padding:5px;font-weight:bold}
 
 /* NEWS */
-.news{background:var(--orange);color:#fff;text-align:center;padding:6px;font-size:14px}
+.news{background:var(--orange);color:#fff;text-align:center;padding:6px}
 
 /* TIERS */
 .tiers{display:flex;gap:6px;padding:8px;overflow-x:auto;background:#fff}
@@ -35,7 +33,7 @@ position:sticky;top:0;z-index:1000;background:var(--blue);color:#fff;
 .tier.active{background:var(--blue);color:#fff}
 
 /* BACK */
-.back{padding:8px;text-align:center;background:#fff;color:var(--blue);font-weight:bold;display:none}
+.back{padding:8px;text-align:center;background:#fff;color:var(--blue);display:none;font-weight:bold}
 
 /* GRID */
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
@@ -47,27 +45,22 @@ position:sticky;top:0;z-index:1000;background:var(--blue);color:#fff;
 /* PRICE */
 .price{color:var(--red);font-weight:bold}
 
+/* QTY */
+.qty{display:flex;justify-content:center;align-items:center;gap:5px;margin:5px}
+.qty input{width:50px;text-align:center}
+.qty button{padding:5px}
+
 /* BTN */
 .btn{background:var(--orange);color:#fff;padding:8px;border-radius:8px;margin-top:5px}
 
-/* QTY */
-.qty{display:flex;justify-content:center;gap:10px;margin:5px}
-.qty button{padding:5px}
-
 /* FOOTER */
-.footer{
-position:fixed;bottom:0;width:100%;background:#fff;
-display:flex;justify-content:space-between;padding:10px;border-top:1px solid #ddd
-}
+.footer{position:fixed;bottom:0;width:100%;background:#fff;display:flex;justify-content:space-between;padding:10px;border-top:1px solid #ddd}
 
-/* FORM */
+/* INPUT */
 .input{width:100%;padding:8px;margin:5px 0;border-radius:6px;border:1px solid #ccc}
 
 /* TOAST */
-.toast{
-position:fixed;top:20px;left:50%;transform:translateX(-50%);
-background:#2e7d32;color:#fff;padding:10px;border-radius:20px;display:none
-}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#2e7d32;color:#fff;padding:10px;border-radius:20px;display:none}
 </style>
 </head>
 
@@ -76,7 +69,7 @@ background:#2e7d32;color:#fff;padding:10px;border-radius:20px;display:none
 <div class="header">
 <img id="headerImg">
 <div class="title">الأهرام للتجارة والتوزيع</div>
-<div class="news" id="news"></div>
+<div class="news" id="news">...</div>
 <div class="tiers" id="tiers"></div>
 <div class="back" id="backBtn" onclick="goBack()">⬅ اضغط للرجوع</div>
 </div>
@@ -94,17 +87,18 @@ background:#2e7d32;color:#fff;padding:10px;border-radius:20px;display:none
 <script>
 
 const fix=u=>u+"&t="+Date.now();
-const num=v=>isNaN(parseFloat(v))?0:parseFloat(v);
+const num=v=>parseFloat(v)||0;
 
 let products=[],tiers=[],settings=[];
 let cart=JSON.parse(localStorage.getItem("cart")||"{}");
 let tier=JSON.parse(localStorage.getItem("tier")||"null");
 let customer=JSON.parse(localStorage.getItem("customer")||"{}");
+
 let currentPage="brands",lastCompany=null;
 
 /* LOAD */
 function load(url){return new Promise(r=>{
-Papa.parse(fix(url),{download:true,header:true,complete:(res)=>r(res.data)});
+Papa.parse(fix(url),{download:true,header:true,complete:(res)=>r(res.data||[])});
 });}
 
 Promise.all([
@@ -112,19 +106,27 @@ load("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4
 load("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=688371996&output=csv"),
 load("https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1922249138&output=csv")
 ]).then(([p,t,s])=>{
-products=p.filter(x=>x.status=="active");
-tiers=t.filter(x=>x.tier_active=="1");
+
+products=p.filter(x=>(x.status||"").trim()=="active");
+tiers=t.filter(x=>String(x.tier_active||"")=="1");
 settings=s;
 
-document.getElementById("headerImg").src=settings.find(x=>x.type=="company_image")?.value||"";
+/* HEADER */
+let img=settings.find(x=>x.type=="company_image")?.value;
+document.getElementById("headerImg").src=img||"https://via.placeholder.com/600x200";
 
-/* NEWS */
-let news=settings.filter(x=>x.type=="news").map(x=>x.value).join("،").split("،");
+/* NEWS FIX */
+let raw=settings.filter(x=>x.type=="news").map(x=>x.value).join("،");
+let list=raw.split("،").filter(x=>x.trim());
 let i=0;
+if(list.length){
 setInterval(()=>{
-document.getElementById("news").innerText=news[i]||"";
-i=(i+1)%news.length;
+document.getElementById("news").innerText=list[i];
+i=(i+1)%list.length;
 },3000);
+}else{
+document.getElementById("news").innerText="";
+}
 
 /* TIERS */
 let box=document.getElementById("tiers");
@@ -137,7 +139,7 @@ d.onclick=()=>{
 tier=t;
 localStorage.setItem("tier",JSON.stringify(t));
 cart={};localStorage.setItem("cart","{}");
-updateTotal();showBrands();
+showBrands();updateTotal();
 };
 
 box.appendChild(d);
@@ -191,9 +193,9 @@ ${units.map(u=>`<option value="${u}">${u=="carton"?"كرتونة":u=="dozen"?"د
 </select>
 
 <div class="qty">
-<button onclick="q('${p.code}',-1)">-</button>
-<span id="q_${p.code}">1</span>
-<button onclick="q('${p.code}',1)">+</button>
+<button onclick="change('${p.code}',-1)">-</button>
+<input id="q_${p.code}" value="1">
+<button onclick="change('${p.code}',1)">+</button>
 </div>
 
 <div class="btn" onclick="add('${p.code}')">🛒 أضف للسلة</div>
@@ -204,21 +206,27 @@ ${units.map(u=>`<option value="${u}">${u=="carton"?"كرتونة":u=="dozen"?"د
 app.innerHTML+="</div>";
 }
 
-/* CART */
-function q(code,val){
+/* QTY */
+function change(code,val){
 let el=document.getElementById("q_"+code);
-let v=parseInt(el.innerText)+val;
+let v=parseInt(el.value)||1;
+v+=val;
 if(v<1)v=1;
-el.innerText=v;
+el.value=v;
 }
 
+/* ADD */
 function add(code){
-let p=products.find(x=>x.code==code);
+code=String(code).trim();
+let p=products.find(x=>String(x.code).trim()==code);
+if(!p)return alert("خطأ في المنتج");
+
 let unit=document.getElementById("u_"+code).value;
 if(!unit)return alert("اختر الوحدة");
 
-let qty=parseInt(document.getElementById("q_"+code).innerText);
+let qty=parseInt(document.getElementById("q_"+code).value)||1;
 let price=num(p["price_"+unit]);
+if(!price)return alert("السعر غير متاح");
 
 cart[code]={code,name:p.name,unit,qty,price};
 localStorage.setItem("cart",JSON.stringify(cart));
@@ -226,12 +234,14 @@ localStorage.setItem("cart",JSON.stringify(cart));
 toast();updateTotal();
 }
 
+/* TOAST */
 function toast(){
 let t=document.getElementById("toast");
 t.style.display="block";
 setTimeout(()=>t.style.display="none",1000);
 }
 
+/* TOTAL */
 function updateTotal(){
 let total=0;
 Object.values(cart).forEach(c=>total+=c.qty*c.price);
@@ -279,20 +289,6 @@ html+=`
 app.innerHTML=html;
 }
 
-/* EDIT */
-function edit(code,val){
-cart[code].qty+=val;
-if(cart[code].qty<1)cart[code].qty=1;
-localStorage.setItem("cart",JSON.stringify(cart));
-review();updateTotal();
-}
-
-function removeItem(code){
-delete cart[code];
-localStorage.setItem("cart",JSON.stringify(cart));
-review();updateTotal();
-}
-
 /* LOCATION */
 function getLocation(){
 navigator.geolocation.getCurrentPosition(pos=>{
@@ -308,9 +304,8 @@ function send(total){
 let name=document.getElementById("name").value;
 let phone=document.getElementById("phone").value;
 let address=document.getElementById("address").value;
-let business=document.getElementById("business").value;
 
-customer={name,phone,address,business,...customer};
+customer={name,phone,address,...customer};
 localStorage.setItem("customer",JSON.stringify(customer));
 
 let msg="طلب:%0A";
