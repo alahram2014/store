@@ -1,1 +1,2920 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الأهرام للتجارة والتوزيع</title>
+<meta name="theme-color" content="#0B3D91" />
+<link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+:root{--blue:#0B3D91;--blue2:#1852b6;--red:#E53935;--orange:#FF7A00;--gold:#c79b18;--gold2:#f0d46c;--gray:#7A8596;--bg:#F5F7FA;--card:#fff;--line:#e7e9ee;--text:#172233}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+button,input,select{font-family:inherit}
+.header{position:sticky;top:0;z-index:1000;background:linear-gradient(180deg,#0B3D91,#09357c);color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.hero{position:relative;height:176px;overflow:hidden;background:linear-gradient(135deg,#0B3D91,#0a2b66)}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.58),rgba(0,0,0,.06))}
+.heroOverlay{position:absolute;top:12px;right:12px;z-index:2;display:flex;justify-content:flex-end;align-items:flex-start}
+.heroTitle{font-weight:700;font-size:17px;color:#fff;background:rgba(255,255,255,.16);backdrop-filter:blur(10px);padding:10px 14px;border-radius:16px;text-shadow:0 1px 3px rgba(0,0,0,.36);box-shadow:0 6px 18px rgba(0,0,0,.14)}
+.news{background:var(--orange);color:#fff;padding:7px 10px;text-align:center;font-weight:700;font-size:13px;min-height:30px;display:flex;align-items:center;justify-content:center;line-height:1.35}
+.topActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 10px 10px;background:rgba(255,255,255,.04)}
+.actionBtn{border:none;border-radius:14px;min-height:44px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;gap:6px}
+.actionBtn.tier{background:linear-gradient(135deg,#1fb7a9,#0f8f83);color:#fff;border:1px solid rgba(255,255,255,.28);box-shadow:0 10px 22px rgba(15,143,131,.22)}
+.actionBtn.offer{background:linear-gradient(135deg,#c79b18,#f0d46c);color:#5a4300}
+.actionBtn.active{outline:2px solid rgba(255,255,255,.55);outline-offset:1px}
+.back{display:none;position:fixed;top:12px;right:12px;z-index:1500;background:linear-gradient(135deg,#ffffff,#dbeafe);color:#0a2f75;padding:10px 14px;border:1px solid #8fb0e6;border-radius:999px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(11,61,145,.22);user-select:none;letter-spacing:.1px}
+#app{padding:10px;padding-bottom:120px}
+.searchBar{margin:0 0 10px 0}.searchRow{display:grid;grid-template-columns:1fr 84px 56px;gap:8px}
+.searchInput,.unitSelect,.qtyInput,.reviewQtyInput,.input{width:100%;height:42px;border-radius:10px;border:1px solid #d7dce5;padding:0 12px;font-size:14px;outline:none;background:#fff}
+.searchBtn,.clearBtn,.mainBtn,.addBtn,.qtyBtn,.footerBtn,.smallBtn,.tierCardBtn,.quickContact,.miniDanger{border:none;border-radius:10px;font-weight:700;cursor:pointer}
+.searchBtn,.clearBtn{color:#fff;height:42px}.searchBtn{background:var(--blue)}.clearBtn{background:#6b7280}
+.searchHint{margin:0 0 10px 0;color:var(--blue);font-weight:700;text-align:center}
+.sectionTitle{margin:12px 0 8px;font-weight:700;color:#39485f;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center;box-shadow:0 2px 10px rgba(16,24,40,.04);overflow:hidden}
+.pageCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 2px 10px rgba(16,24,40,.04);margin-bottom:10px}
+.pageCard.blue{background:linear-gradient(180deg,#f4f8ff,#ffffff);border-color:#dce7ff}
+.pageCard.gold{background:linear-gradient(180deg,#fff8df,#fffef7);border-color:#ead08a}
+.pageCardTitle{font-weight:700;font-size:15px;margin-bottom:6px;color:#173a84}
+.pageCardSub{font-size:13px;line-height:1.7;color:#435166}
+.pageList{margin:8px 0 0;padding:0 18px 0 0}.pageList li{margin:4px 0;line-height:1.6}
+.contactDock{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px}
+.quickContact{min-height:44px;border-radius:14px;background:#fff;border:1px solid var(--line);box-shadow:0 4px 10px rgba(16,24,40,.06);display:flex;align-items:center;justify-content:center;font-size:18px}
+.quickContact.phone{color:#173a84}.quickContact.wa{color:#1f8b4c}.quickContact.fb{color:#0B3D91;font-weight:700}
+.quickContact svg{width:20px;height:20px;display:block;flex:0 0 auto}
+.quickContact .waSvg{width:22px;height:22px}
+.tierPageActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 12px}
+.vipLaunchBtn{min-height:40px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd85c,#c79b18);color:#5a4300;font-family:inherit;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(184,138,0,.18)}
+.vipPage{background:linear-gradient(180deg,#2f2416 0%, #f5ecd5 12%, #fbf4e2 44%, #f4ead0 100%)}
+.vipPage .header{background:linear-gradient(180deg,#6d4c2f,#4e381f)}
+.vipPage .pageCard,.vipPage .card{border-color:#e1c777;box-shadow:0 8px 20px rgba(184,138,0,.10)}
+.vipPage .brandCard{background:linear-gradient(180deg,#fffef8,#fff7de);border-color:#e7cf87}
+.vipPage .brandCard .brandName{color:#5a4300}
+.vipPage .pageCard.blue{background:linear-gradient(180deg,#fffaf0,#ffffff);border-color:#e7cf87}
+.vipPage .footer{background:#fff8ea}
+
+.brandCard{min-height:118px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.brandCard .brandImg{width:100%;height:66px;object-fit:contain}
+.brandCard .brandName{font-weight:700;font-size:13px;line-height:1.3}
+.productCard{min-height:260px;display:flex;flex-direction:column;gap:6px}
+.productCard.offerCard{background:linear-gradient(180deg,#fffdf0,#fff4c8);border-color:#e0c46c;box-shadow:0 8px 20px rgba(184,138,0,.12)}
+.productImg{width:100%;height:88px;object-fit:contain;border-radius:10px;background:#f7f9fc}
+.productName{font-weight:700;font-size:13px;line-height:1.32;min-height:34px}
+.offerLabel{font-weight:700;font-size:12px;line-height:1.3;color:#8b6500;min-height:18px}
+.stockBadge{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:700;margin:0 auto}
+.stockBadge.active{background:#e8f5ee;color:#16824b}.stockBadge.inactive{background:#fff0f0;color:#bf2c2c}
+.cartonPrice{font-weight:700;font-size:12px;line-height:1.25;min-height:18px;color:var(--red);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.price{color:var(--red);font-weight:700;font-size:14px;min-height:22px}.price.offer{color:#8b6500}
+.unitSelect{height:36px;padding:0 10px;font-size:13px;color:#1f2a3a}
+.qtyWrap{display:grid;grid-template-columns:34px 1fr 34px;gap:5px;align-items:center}
+.qtyBtn{width:34px;height:34px;border:none;border-radius:10px;background:#e9edf3;color:#1f2a3a;font-size:18px;font-weight:700}
+.qtyBtn:disabled,.unitSelect:disabled,.qtyInput:disabled,.addBtn:disabled{opacity:.55;cursor:not-allowed}.qtyInput{text-align:center}
+.addBtn{margin-top:auto;background:linear-gradient(135deg,var(--orange),#ff9a3a);color:#fff;padding:10px 12px;min-height:40px}
+.addBtn.offer{background:linear-gradient(135deg,#c79b18,#f0d46c);color:#5a4300}
+.tiersGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tierCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;box-shadow:0 2px 10px rgba(16,24,40,.04);text-align:right}
+.tierCard.active{border-color:#0B3D91;box-shadow:0 10px 22px rgba(11,61,145,.14)}
+.tierCard.locked{background:linear-gradient(180deg,#fbfcff,#f3f7ff)}
+.tierCardName{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;font-size:14px;margin-bottom:6px;color:#173a84}
+.tierBadge{font-size:11px;font-weight:700;border-radius:999px;padding:4px 8px;background:#eef4ff;color:#10306a}
+.tierCardMeta{font-size:12px;line-height:1.7;color:#435166}
+.tierCardBtn{width:100%;min-height:38px;margin-top:10px;background:linear-gradient(135deg,#0B3D91,#1852b6);color:#fff}
+.tierCardBtn.locked{background:linear-gradient(135deg,#7a5a00,#c59a14);color:#fff}
+.footer{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:92px 1fr 108px;align-items:center;gap:8px;padding:10px;box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.footerBtn{text-align:center;font-weight:700;color:#1f2a3a;cursor:pointer;user-select:none;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#eff3f8;font-size:15px}
+.footerBtn.primary{background:linear-gradient(135deg,#1f8b4c,#2da35d);color:#fff}
+.footerTotal{text-align:center;font-weight:700;color:var(--blue);font-size:15px}
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:2000;min-width:180px;max-width:90vw;background:#1f8b4c;color:#fff;padding:10px 14px;border-radius:999px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.18);display:none;font-size:14px}.toast.error{background:#c0392b}.toast.info{background:#0B3D91}
+.reviewWrap{display:flex;flex-direction:column;gap:10px}.reviewSummary,.reviewItem,.formCard,.emptyState{background:#fff;border:1px solid var(--line);border-radius:14px}.reviewSummary{padding:12px;line-height:1.8}
+.reviewSummaryTop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.reviewItem{padding:10px;line-height:1.7}.reviewItemTop{font-weight:700}
+.reviewControls{display:grid;grid-template-columns:34px 1fr 34px;gap:5px;align-items:center;margin-top:8px}.reviewQtyInput{text-align:center}.reviewAction{margin-top:8px;text-align:center;color:var(--red);font-weight:700;cursor:pointer;user-select:none}
+.formCard{padding:12px}.input{margin-bottom:8px}.input:focus,.unitSelect:focus,.qtyInput:focus,.reviewQtyInput:focus,.searchInput:focus{border-color:#8fb0e6;box-shadow:0 0 0 3px rgba(11,61,145,.08)}
+.mainBtn{width:100%;border:none;border-radius:12px;min-height:46px;font-size:16px;font-weight:700;cursor:pointer}.mainBtn.primary{background:linear-gradient(135deg,var(--orange),#ff9a3a);color:#fff}.mainBtn.secondary{background:#eff3f8;color:#1f2a3a}
+.smallBtn{min-height:38px;padding:0 12px;background:#f0f4fb;color:#173a84;border:1px solid #d9e6ff}.miniDanger{min-height:36px;padding:0 12px;background:linear-gradient(135deg,#ff6d66,#e53935);color:#fff;border:none;font-size:13px}
+.locationStatus{margin-top:6px;font-size:13px;color:var(--gray);min-height:20px}.emptyState{padding:20px;text-align:center;color:var(--gray)}
+.designSignature{margin:10px 0 0;background:#fff;border:1px solid var(--line);border-radius:12px;text-align:center;padding:8px 10px;color:#4b5563;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.hidden{display:none!important}
+body.compact .hero{display:none}body.compact .news{font-size:12px;min-height:28px;padding:6px 8px}body.compact .topActions{padding:6px 8px 8px}body.compact .back{top:10px;right:10px;padding:8px 11px;font-size:13px}body.compact #app{padding-top:8px}body.compact .actionBtn{min-height:40px;font-size:13px}
+body.offerPage{background:linear-gradient(180deg,#f7ecd0,#f7f1dc 35%,#f4f0e3)}body.offerPage .header{background:linear-gradient(180deg,#8b6500,#5a4300)}body.offerPage .actionBtn.offer{outline:2px solid rgba(255,255,255,.4)}body.offerPage .productCard.offerCard{background:linear-gradient(180deg,#fffef7,#fff4c8)}body.offerPage .card,body.offerPage .pageCard{border-color:#ead08a}
+body.tierPage{background:linear-gradient(180deg,#eef4ff,#f9fbff 45%,#f4f8ff)}body.tierPage .header{background:linear-gradient(180deg,#0B3D91,#0a2b66)}body.tierPage .pageCard.blue{background:linear-gradient(180deg,#f2f6ff,#ffffff)}
+@media (min-width:700px){.grid,.tiersGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.topActions{grid-template-columns:repeat(2,minmax(0,240px));justify-content:center}.topActions{justify-items:center}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hero">
+    <img id="headerImg" alt="company header" fetchpriority="high" loading="eager">
+    <div class="heroOverlay"><div class="heroTitle">الأهرام للتجارة والتوزيع</div></div>
+  </div>
+  <div class="news" id="news"></div>
+  <div class="topActions">
+    <button class="actionBtn tier" id="tierActionBtn" onclick="openTiersPage()">💰 شرائح الجملة VIP</button>
+    <button class="actionBtn offer" id="offerActionBtn" onclick="openOffersPage()">🔥 صفقة اليوم</button>
+  </div>
+  <div class="back" id="backBtn" onclick="goBack()">↩ رجوع</div>
+</div>
+<div id="app"><div class="emptyState">جارٍ التحميل...</div></div>
+<div class="footer">
+  <div class="footerBtn" id="footerBack" onclick="goBack()">رجوع</div>
+  <div class="footerTotal" id="totalBox">0 جنيه</div>
+  <div class="footerBtn primary" id="footerPrimary" onclick="openReview()">إتمام الشراء</div>
+</div>
+<div class="toast" id="toastBox"></div>
+<script>
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwaWPLXheiziFzHZAgW8yBPoFvJqOfsLR8dDnYwZJWGdw46HSnbWqxJHbq6WpN519cz/exec";
+const URLS = {
+  products: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1503749054&output=csv",
+  tiers: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1417829941&output=csv",
+  settings: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=47255050&output=csv"
+};
+const PLACEHOLDERS = { header:"https://via.placeholder.com/1200x500/f5f7fa/0B3D91?text=Alahram+Store", brand:n=>`https://via.placeholder.com/400x250/f5f7fa/0B3D91?text=${encodeURIComponent(n||"Brand")}`, product:n=>`https://via.placeholder.com/400x250/f7f9fc/0B3D91?text=${encodeURIComponent(n||"Product")}` };
+const UNIT_NAMES = { carton:"كرتونة", dozen:"دستة", piece:"قطعة", offer:"عرض" };
+const LS = { cart:"alahram_cart_v10", tier:"alahram_tier_v10", customer:"alahram_customer_v10", drafts:"alahram_drafts_v10", unlocks:"alahram_tier_unlocks_v10", analytics:"alahram_events_v10", latestOrder:"alahram_latest_order_v10" };
+const el = { headerImg:document.getElementById("headerImg"), news:document.getElementById("news"), backBtn:document.getElementById("backBtn"), app:document.getElementById("app"), totalBox:document.getElementById("totalBox"), toastBox:document.getElementById("toastBox"), footerPrimary:document.getElementById("footerPrimary"), footerBack:document.getElementById("footerBack"), tierActionBtn:document.getElementById("tierActionBtn"), offerActionBtn:document.getElementById("offerActionBtn") };
+const clean = v => (v ?? "").toString().trim();
+const toNum = v => {
+  const raw = clean(v).replace(/[٬،\s]/g, "");
+  if (!raw) return 0;
+  const normalized = raw.includes(",") && !raw.includes(".")
+    ? raw.replace(",", ".")
+    : raw.replace(/,/g, "");
+  const n = parseFloat(normalized);
+  return Number.isFinite(n) ? n : 0;
+};
+const saveJSON = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+const loadJSON = (k,f) => { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : f; } catch { return f; } };
+const stripDiacritics = s => clean(s).normalize("NFKD").replace(/[\u064B-\u065F\u0670\u0640]/g, "");
+const normalizeLoose = s => stripDiacritics(s).toLowerCase().replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ؤ/g,"و").replace(/ئ/g,"ي").replace(/ة/g,"ه").replace(/[^\w\u0600-\u06FF ]+/g," ").replace(/\s+/g," ").trim();
+const normalizeCompact = s => normalizeLoose(s).replace(/\s+/g, "");
+const escapeHtml = v => String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"','&quot;');
+const escapeAttr = escapeHtml;
+const formatMoney = n => Math.round(toNum(n)).toLocaleString("en-US");
+const formatPercent = n => {
+  const value = toNum(n);
+  return Number.isInteger(value) ? String(value) : String(value);
+};
+
+let products = [], tiersData = [], settings = [];
+let cart = loadJSON(LS.cart, {}), selectedTier = loadJSON(LS.tier, null), customer = loadJSON(LS.customer, {}), drafts = loadJSON(LS.drafts, {}), unlockedTiers = loadJSON(LS.unlocks, {}), analytics = loadJSON(LS.analytics, []);
+let currentPage = "home", lastCompany = null, reviewReturn = { type:"home", value:null }, searchQuery = "", searchTimer = null, brandPageStyle = "standard", brandReturnTarget = "home";
+
+function persistAll(){ saveJSON(LS.cart, cart); saveJSON(LS.tier, selectedTier); saveJSON(LS.customer, customer); saveJSON(LS.drafts, drafts); saveJSON(LS.unlocks, unlockedTiers); saveJSON(LS.analytics, analytics.slice(-500)); }
+function logEvent(type, data = {}){ analytics.push({ type, time:Date.now(), page:currentPage, ...data }); if(analytics.length > 500) analytics = analytics.slice(-500); saveJSON(LS.analytics, analytics); }
+function notify(message, kind = "ok"){ el.toastBox.textContent = message; el.toastBox.className = `toast ${kind}`; el.toastBox.style.display = "block"; clearTimeout(window.__toastTimer); window.__toastTimer = setTimeout(()=>el.toastBox.style.display = "none", 1400); }
+function loadCSV(url){ return new Promise(resolve => Papa.parse(`${url}&t=${Date.now()}`, { download:true, header:true, skipEmptyLines:true, complete:res => resolve(res.data || []) })); }
+function applyBrandStyle(){ document.body.classList.toggle("vipPage", brandPageStyle === "vip"); }
+function setMode(page){ currentPage = page; document.body.className = document.body.className.replace(/\bhomeMode\b|\btierPage\b|\bofferPage\b|\bvipPage\b|\bpurchaseMode\b|\bcompact\b/g, "").trim(); if(page !== "home") document.body.classList.add("compact"); if(page === "tiers") document.body.classList.add("tierPage"); if(page === "offers") document.body.classList.add("offerPage"); applyBrandStyle(); }
+function scrollTop(){ window.scrollTo({ top:0, behavior:"auto" }); }
+function syncFooter(){ el.footerPrimary.textContent = currentPage === "review" ? "إرسال الطلب" : "إتمام الشراء"; el.footerPrimary.onclick = currentPage === "review" ? sendOrder : openReview; }
+function updateFooterTotal(){ el.totalBox.textContent = `${formatMoney(getPayableTotal())} جنيه`; }
+function renderPageCard(title, subtitle, tone="blue", extra=""){ return `<div class="pageCard ${tone}"><div class="pageCardTitle">${escapeHtml(title)}</div><div class="pageCardSub">${escapeHtml(subtitle || "")}</div>${extra}</div>`; }
+function renderTextBlock(text){ const lines = clean(text).split(/\n|،|;/g).map(s=>clean(s)).filter(Boolean); return lines.length ? `<ul class="pageList">${lines.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>` : ""; }
+function getSettingText(keys=[]){ const out = settings.filter(row => { const hay = normalizeLoose([row.type,row.key,row.name,row.title].filter(Boolean).join(" ")); return keys.some(k => hay.includes(normalizeLoose(k))); }).map(row => clean(row.value)).filter(Boolean); return out.join("\n"); }
+function splitSettingsTypes(keys=[]){ return getSettingText(keys); }
+function getProductCode(p){ return clean(p.codo || p.code || p.CODO || p.CODE || p.product_code || p.productCode || p.sku || ""); }
+function getCompany(p){ return clean(p.company || p.company_name || p.brand || ""); }
+function isOfferProduct(p){ return getCompany(p) === "صفقة اليوم"; }
+function isActiveProduct(p){ const s = clean(p.status).toLowerCase(); return s === "active" || s === "فعال" || s === "1" || s === "yes" || s === "true"; }
+function getOfferLabel(p){ return clean(p.offer_label || p.offer_name || p.offer || ""); }
+function getDisplayName(p){ return clean(p.name || p.product_name || p.item_name || p.item || p.title) || getOfferLabel(p) || "صنف"; }
+function getProductKey(p){ return clean(p.id || p.product_id || p.sku || `${getProductCode(p)}_${getDisplayName(p)}_${getCompany(p)}`) || `${getDisplayName(p)}_${getCompany(p)}`; }
+function getAvailableUnits(p){ return ["carton","dozen","piece"].filter(u => getOriginalPrice(p,u) > 0); }
+function getPrimaryUnit(p){ const u = getAvailableUnits(p); return u.includes("carton") ? "carton" : (u[0] || ""); }
+function getOriginalPrice(p, unit){ const map = { carton:["price_carton","carton_price","سعر الكرتونة","سعر الكرتونه","سعر كرتونة","سعر كرتونه"], dozen:["price_dozen","dozen_price","سعر الدستة","سعر الدسته","سعر دستة","سعر دسته"], piece:["price_piece","piece_price","سعر القطعة","سعر القطعه","سعر قطعة","سعر قطعه"], offer:["price_offer","offer_price","priceعرض","سعر العرض","سعر العرض الخاص"] }; for(const key of (map[unit] || [])){ if(p[key] !== undefined && p[key] !== null && clean(p[key]) !== "") return toNum(p[key]); } return 0; }
+function getDiscountedPrice(base){ if(!selectedTier) return toNum(base); const d = toNum(selectedTier.tier_discount); if(d <= 0) return toNum(base); return Math.max(0, toNum(base) - (toNum(base) * d / 100)); }
+function isAddableToCart(p){ const raw = p.allow_cart ?? p.add_to_cart ?? p.can_add_to_cart ?? p.orderable ?? p.can_order ?? p.buyable ?? p.purchasable ?? p.cartable ?? p.allow_order; if(raw === undefined || raw === null || clean(raw) === "") return true; const s = normalizeLoose(raw).replace(/\s+/g,""); const F = ["0","false","no","n","لا","غيرمتاح","ممنوع","disabled","off","inactive","غيرمسموح"]; const T = ["1","true","yes","y","نعم","متاح","مسموح","allow","allowed","available","active","فعال","ok","on"]; if(F.includes(s)) return false; if(T.includes(s)) return true; if(raw === 0 || raw === "0") return false; if(raw === 1 || raw === "1") return true; return true; }
+function getSubtotal(){ return Object.values(cart).reduce((sum,item)=>sum + (toNum(item.qty) * toNum(item.price)), 0); }
+function getTierMin(){ return selectedTier ? toNum(selectedTier.tier_min) : 0; }
+function getTierDiscount(){ return selectedTier ? toNum(selectedTier.tier_discount) : 0; }
+function isTierSatisfied(){ return !selectedTier || getSubtotal() >= getTierMin(); }
+function getDiscountAmount(){ return (!selectedTier || !isTierSatisfied()) ? 0 : getSubtotal() * (getTierDiscount()/100); }
+function getPayableTotal(){ return Math.max(0, getSubtotal() - getDiscountAmount()); }
+function hasOfferItems(){ return Object.values(cart).some(item => clean(item.company) === "صفقة اليوم" || clean(item.unit) === "offer"); }
+function clearCart(){ cart = {}; drafts = {}; persistAll(); updateFooterTotal(); notify("تم تصفير السلة", "info"); logEvent("clear_cart"); }
+function clearCartConfirm(){ if(confirm("تأكيد تصفير السلة؟")){ clearCart(); renderReview(); } }
+function setHeaderImage(url){ const finalUrl = clean(url) || PLACEHOLDERS.header; const pre = new Image(); pre.onload = ()=>{ el.headerImg.src = finalUrl; }; pre.onerror = ()=>{ el.headerImg.src = PLACEHOLDERS.header; }; pre.src = finalUrl; const link = document.createElement("link"); link.rel = "preload"; link.as = "image"; link.href = finalUrl; document.head.appendChild(link); }
+function renderContactDock(){
+  return `<div class="contactDock">
+    <a class="quickContact phone" href="tel:01040880002" title="اتصال" aria-label="اتصال">📞</a>
+    <a class="quickContact wa" href="https://wa.me/201040880002" target="_blank" rel="noopener" title="واتساب" aria-label="واتساب">
+      <svg class="waSvg" viewBox="0 0 32 32" aria-hidden="true">
+        <path fill="currentColor" d="M19.11 17.27c-.29-.14-1.72-.85-1.99-.95-.27-.1-.46-.14-.66.14-.2.29-.76.95-.93 1.14-.17.2-.34.22-.63.08-.29-.14-1.22-.45-2.33-1.42-.86-.77-1.44-1.71-1.61-2-.17-.29-.02-.45.13-.59.13-.13.29-.34.44-.5.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.14-.66-1.59-.91-2.18-.24-.58-.49-.5-.66-.51l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.03 1.01-1.03 2.46s1.06 2.85 1.2 3.05c.14.2 2.08 3.18 5.03 4.46.7.3 1.25.49 1.68.63.71.23 1.36.2 1.87.12.57-.09 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.12-.26-.19-.55-.33z"/>
+        <path fill="currentColor" d="M16.02 2.67C8.74 2.67 2.82 8.56 2.82 15.82c0 2.28.59 4.5 1.72 6.45L3 30l7.87-1.49a13.1 13.1 0 0 0 5.15 1.05c7.28 0 13.2-5.89 13.2-13.14S23.3 2.67 16.02 2.67zm0 23.89c-1.67 0-3.3-.43-4.71-1.25l-.34-.2-4.67.88.89-4.55-.22-.35a10.5 10.5 0 0 1-1.57-5.55c0-5.79 4.76-10.49 10.62-10.49s10.62 4.7 10.62 10.49-4.76 10.52-10.62 10.52z"/>
+      </svg>
+    </a>
+    <a class="quickContact fb" href="https://www.facebook.com/alahram2014" target="_blank" rel="noopener" title="فيسبوك" aria-label="فيسبوك">f</a>
+  </div>`;
+}
+function getBrandOrder(){ const seen = new Set(); const brands = []; for(const p of products){ const c = clean(p.company); if(!c || c === "صفقة اليوم" || seen.has(c)) continue; seen.add(c); brands.push(c); } return brands; }
+function filterProductsByCompany(company){ return products.filter(p => clean(p.company) === clean(company)); }
+function buildSearchScore(p, raw){ const qLoose = normalizeLoose(raw), q = normalizeCompact(raw); if(!q) return 0; const code = getProductCode(p), name = getDisplayName(p), company = getCompany(p); const nameC = normalizeCompact(name), codeC = normalizeCompact(code), companyC = normalizeCompact(company); const all = [nameC,codeC,companyC,normalizeCompact(String(getOriginalPrice(p,"carton"))),normalizeCompact(String(getOriginalPrice(p,"dozen"))),normalizeCompact(String(getOriginalPrice(p,"piece"))),normalizeCompact(String(getOriginalPrice(p,"offer"))),normalizeCompact(getOfferLabel(p))].join(" "); let score = 0; if(nameC === q || codeC === q) score += 1500; if(nameC.startsWith(q)) score += 1200; if(codeC.startsWith(q)) score += 1100; if(companyC.startsWith(q)) score += 800; if(nameC.includes(q)) score += 700; if(codeC.includes(q)) score += 550; if(companyC.includes(q)) score += 300; if(all.includes(q)) score += 150; const tokens = qLoose.split(" ").filter(Boolean); if(tokens.length > 1){ let allFound = true, points = 0; for(const tok of tokens){ const t = normalizeCompact(tok); const hitName = nameC.includes(t), hitCode = codeC.includes(t), hitCompany = companyC.includes(t); if(!hitName && !hitCode && !hitCompany){ allFound = false; break; } if(nameC.startsWith(t)) points += 50; else if(nameC.includes(t)) points += 25; else if(companyC.includes(t)) points += 10; } if(allFound) score += 250 + points; } return score; }
+function sortSearchResults(list, raw){ return list.map(p=>({p,score:buildSearchScore(p,raw)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score || clean(a.p.name).localeCompare(clean(b.p.name),"ar")).map(x=>x.p); }
+function getTierPassword(t){ return clean(t.tier_password || t.password || t.secret_code || t.code || t.pin || ""); }
+function isProtectedTier(t){ return !!getTierPassword(t); }
+function isTierUnlocked(t){ if(!isProtectedTier(t)) return true; const id = clean(t.tier_id || t.id || t.tier_name); return !!unlockedTiers[id]; }
+function unlockTier(t){ const id = clean(t.tier_id || t.id || t.tier_name); unlockedTiers[id] = true; persistAll(); }
+function promptTierUnlock(t){ const secret = window.prompt(`أدخل الرقم السري للشريحة: ${t.tier_name}`); if(secret === null) return; if(clean(secret) === getTierPassword(t)){ unlockTier(t); notify("تم فتح الشريحة", "ok"); chooseTier(t); } else { notify("الرقم السري غير صحيح", "error"); } }
+function chooseTier(t){ if(isProtectedTier(t) && !isTierUnlocked(t)) return promptTierUnlock(t); if(hasOfferItems()){ clearCart(); notify("تم تفريغ السلة لأن العروض لا تُجمع مع الشرائح", "info"); } selectedTier = t; persistAll(); renderTierBanner(); if(currentPage === "home") renderHome(); else if(currentPage === "tiers") renderTiersPage(); else if(currentPage === "products") renderBrandProducts(lastCompany); else if(currentPage === "offers") renderOffersPage(); else if(currentPage === "review") renderReview(); updateFooterTotal(); logEvent("select_tier", { tier:t.tier_name }); }
+function clearTier(){ selectedTier = null; persistAll(); renderTierBanner(); if(currentPage === "home") renderHome(); else if(currentPage === "tiers") renderTiersPage(); else if(currentPage === "products") renderBrandProducts(lastCompany); else if(currentPage === "offers") renderOffersPage(); else if(currentPage === "review") renderReview(); updateFooterTotal(); notify("تم إلغاء الشريحة", "info"); logEvent("clear_tier"); }
+function renderTierBanner(){ const wrap = document.getElementById("tierBanner") || null; if(!selectedTier){ document.getElementById("tierBanner")?.replaceChildren(); const tierWrap = document.getElementById("tiersWrap"); if(tierWrap) tierWrap.style.display = "none"; return; } const tierWrap = document.getElementById("tiersWrap"); if(tierWrap) tierWrap.style.display = "block"; if(wrap){ const min = getTierMin(); wrap.style.display = "block"; wrap.innerHTML = `<div class="tierBannerRow"><div>الشريحة الحالية: <b>${escapeHtml(selectedTier.tier_name)}</b> — الخصم <b>${formatPercent(getTierDiscount())}%</b> — الحد الأدنى <b>${formatMoney(min)} جنيه</b></div><button class="tierBannerAction" onclick="clearTier()">إلغاء الشريحة</button></div>`; } }
+function renderBrandsGrid(list){ return `<div class="grid">${list.map(b=>{ const sample = products.find(p=>clean(p.company)===b); const img = clean(sample?.brand_image) || PLACEHOLDERS.brand(b); return `<div class="card brandCard" data-company="${escapeAttr(b)}"><img class="brandImg" src="${img}" alt="${escapeAttr(b)}" onerror="this.src='${PLACEHOLDERS.brand(b)}'"><div class="brandName">${escapeHtml(b)}</div></div>`; }).join("")}</div>`; }
+function bindBrandCards(){ document.querySelectorAll(".brandCard").forEach(card => { card.onclick = () => { const company = clean(card.getAttribute("data-company")); if(company) renderBrandProducts(company, brandReturnTarget); }; }); }
+function safeKey(p, index=0){ const base = clean(getProductCode(p)) || clean(p.name) || clean(p.company) || "item"; return `${base}_${index}`.replace(/\s+/g,"_").replace(/[^\w\u0600-\u06FF]+/g,"_"); }
+function buildAvailableUnitsOptions(p, selectedUnit=""){ return getAvailableUnits(p).map(u=>`<option value="${u}" ${selectedUnit===u?"selected":""}>${UNIT_NAMES[u]}</option>`).join(""); }
+function buildPrimaryPriceLine(p, uiKey){ const units = getAvailableUnits(p); if(!units.length) return ""; const primaryUnit = getPrimaryUnit(p); const base = getOriginalPrice(p, primaryUnit); const selectedUnit = clean(drafts[uiKey]?.unit) || primaryUnit; const selPrice = getOriginalPrice(p, selectedUnit) || base; const shown = selectedTier ? getDiscountedPrice(selPrice) : selPrice; const unitName = UNIT_NAMES[selectedUnit] || UNIT_NAMES[primaryUnit] || "الوحدة"; return `<div class="cartonPrice" id="price_${uiKey}">سعر ${unitName}: ${formatMoney(shown)} جنيه</div>` + (selectedTier ? `<div class="cartonPrice" style="color:#1f6d3c">بعد الخصم: ${formatMoney(getDiscountedPrice(base))} جنيه</div>` : ""); }
+function renderProductCard(p, index=0){ const uiKey = p.__uiKey || safeKey(p,index); const img = clean(p.image) || PLACEHOLDERS.product(getDisplayName(p)); const active = isActiveProduct(p); const addable = isAddableToCart(p); const offer = isOfferProduct(p); const displayName = getDisplayName(p); const selectedUnit = clean(drafts[uiKey]?.unit); const qtyValue = clean(drafts[uiKey]?.qty); const offerLabel = getOfferLabel(p); const units = getAvailableUnits(p); if(!active){ return `<div class="card productCard"><img class="productImg" src="${img}" alt="${escapeAttr(displayName)}" onerror="this.src='${PLACEHOLDERS.product(displayName)}'"><div class="productName">${escapeHtml(displayName)}</div><div class="stockBadge inactive">نفذت الكمية سيصل قريبًا</div></div>`; } const priceLine = offer ? (()=>{ const offerPrice = getOriginalPrice(p,"offer") || getOriginalPrice(p,"carton") || getOriginalPrice(p,"piece") || getOriginalPrice(p,"dozen"); return offerPrice > 0 ? `<div class="price offer" id="price_${uiKey}">سعر العرض: ${formatMoney(offerPrice)} جنيه</div>` : ""; })() : buildPrimaryPriceLine(p, uiKey); const unitSelect = offer ? "" : (units.length ? `<select class="unitSelect" id="unit_${uiKey}" onchange="selectUnit('${uiKey}', this.value)" ${!addable?"disabled":""}><option value="">اختر الوحدة</option>${buildAvailableUnitsOptions(p, selectedUnit)}</select>` : ""); const controls = (units.length || offer) ? `<div class="qtyWrap"><button class="qtyBtn" id="minus_${uiKey}" onclick="changeQty('${uiKey}', -1)" ${!addable?"disabled":""}>-</button><input class="qtyInput" id="qty_${uiKey}" inputmode="numeric" value="${escapeAttr(qtyValue)}" oninput="draftQty('${uiKey}', this.value)" ${!addable?"disabled":""}><button class="qtyBtn" id="plus_${uiKey}" onclick="changeQty('${uiKey}', 1)" ${!addable?"disabled":""}>+</button></div><button class="addBtn ${offer?"offer":""}" onclick="addToCart('${uiKey}')" ${!addable?"disabled":""}>أضف للسلة</button>` : ""; return `<div class="card productCard ${offer?"offerCard":""}" id="card_${uiKey}"><img class="productImg" src="${img}" alt="${escapeAttr(displayName)}" onerror="this.src='${PLACEHOLDERS.product(displayName)}'"><div class="productName">${escapeHtml(displayName)}</div>${offer ? `<div class="offerLabel">${escapeHtml(offerLabel || "عرض خاص")}</div>` : ""}${priceLine}${(!addable && units.length) ? `<div class="stockBadge inactive">غير متاح للطلب</div>` : ""}${unitSelect}${controls}</div>`; }
+function renderProductsGrid(list){ return list.length ? `<div class="grid">${list.map((p,i)=>renderProductCard(p,i)).join("")}</div>` : `<div class="emptyState">لا توجد عناصر للعرض</div>`; }
+function renderHome(){
+  brandPageStyle = "standard";
+  brandReturnTarget = "home";
+  setMode("home");
+  applyBrandStyle();
+  scrollTop();
+  document.title = "الأهرام للتجارة والتوزيع";
+  logEvent("page_home");
+  el.backBtn.style.display = "none";
+  el.app.innerHTML = `<div class="searchBar"><div class="searchRow"><input class="searchInput" id="searchInput" placeholder="ابحث باسم الصنف أو الكود أو الرقم..." value="${escapeAttr(searchQuery)}" oninput="debouncedSearch(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); renderSearchAndBrands();}"><button class="searchBtn" onclick="renderSearchAndBrands()">🔎 بحث</button><button class="clearBtn" onclick="clearSearch()" title="مسح">✖</button></div></div>${renderContactDock()}<div id="searchResults"></div><div id="brandsArea"></div><div class="designSignature">تم التصميم بواسطة YaSsEr EL Joker</div>`;
+  renderSearchAndBrands();
+  renderTierBanner();
+  updateFooterTotal();
+  syncFooter();
+  el.tierActionBtn.classList.remove("active");
+  el.offerActionBtn.classList.remove("active");
+}
+function clearSearch(){ searchQuery = ""; clearTimeout(searchTimer); const input = document.getElementById("searchInput"); if(input) input.value = ""; renderSearchAndBrands(); document.getElementById("searchInput")?.focus(); }
+function debouncedSearch(value){ searchQuery = clean(value); clearTimeout(searchTimer); searchTimer = setTimeout(renderSearchAndBrands, 180); }
+function renderSearchAndBrands(){ const resultsContainer = document.getElementById("searchResults"); const brandsContainer = document.getElementById("brandsArea"); if(!resultsContainer || !brandsContainer) return; const q = clean(searchQuery); const brands = getBrandOrder(); if(q){ logEvent("search", { query:q }); const results = sortSearchResults(products, q); resultsContainer.innerHTML = results.length ? `<div class="searchHint">نتائج البحث: ${results.length}</div>${renderProductsGrid(results)}` : `<div class="emptyState">لا توجد نتائج مطابقة</div>`; brandsContainer.innerHTML = `<div class="sectionTitle">الأقسام</div>${renderBrandsGrid(brands)}`; } else { resultsContainer.innerHTML = ""; brandsContainer.innerHTML = renderBrandsGrid(brands); } bindBrandCards(); }
+function renderBrandProducts(company, returnTo="home"){
+  const companyName = clean(company);
+  if(companyName === "صفقة اليوم") return openOffersPage();
+  lastCompany = companyName;
+  brandReturnTarget = returnTo === "vip" ? "vip" : "home";
+  brandPageStyle = brandReturnTarget === "vip" ? "vip" : "standard";
+  setMode("products");
+  applyBrandStyle();
+  scrollTop();
+  document.title = `${companyName} - الأهرام للتجارة والتوزيع`;
+  logEvent("page_brand", { company: companyName, returnTo: brandReturnTarget });
+  el.backBtn.style.display = "block";
+  const list = filterProductsByCompany(companyName).map((p,i)=>({...p,__uiKey:getProductKey(p)}));
+  if(!list.length){
+    el.app.innerHTML = renderPageCard(companyName, "لا توجد منتجات داخل هذا القسم", "blue");
+    updateFooterTotal();
+    syncFooter();
+    return;
+  }
+  el.app.innerHTML = `${renderPageCard(companyName, "اختر الوحدة ثم الكمية وأضف مباشرة للسلة.", "blue")}${renderProductsGrid(list)}`;
+  list.forEach(p=>restoreDraftForProduct(p.__uiKey));
+  updateFooterTotal();
+  syncFooter();
+}
+function restoreDraftForProduct(uiKey){ const d = drafts[uiKey]; if(!d) return; const u = document.getElementById(`unit_${uiKey}`); if(u && clean(d.unit)) u.value = d.unit; const q = document.getElementById(`qty_${uiKey}`); if(q) q.value = clean(d.qty) ? String(d.qty) : ""; }
+function findProductByKey(uiKey){ const key = clean(uiKey); return products.find(p => getProductKey(p) === key || clean(p.__uiKey) === key || clean(p.codo) === key || clean(p.code) === key || clean(p.CODO) === key || clean(p.CODE) === key); }
+function selectUnit(uiKey, unit, silent=false){ const product = findProductByKey(uiKey); if(!product || isOfferProduct(product) || !isAddableToCart(product)) return; const u = clean(unit); drafts[uiKey] = drafts[uiKey] || {}; drafts[uiKey].unit = u; persistAll(); const base = getOriginalPrice(product, u || "carton"); const priceEl = document.getElementById(`price_${uiKey}`); if(priceEl){ priceEl.innerHTML = `${formatMoney(selectedTier ? getDiscountedPrice(base) : base)} جنيه`; } if(!silent) notify(`تم اختيار ${UNIT_NAMES[u] || "الوحدة"}`, "info"); }
+function draftQty(uiKey, value){ const cleaned = clean(value).replace(/[^\d]/g, ""); drafts[uiKey] = drafts[uiKey] || {}; drafts[uiKey].qty = cleaned === "" ? "" : parseInt(cleaned, 10); persistAll(); }
+function changeQty(uiKey, delta){ const input = document.getElementById(`qty_${uiKey}`); if(!input) return; let current = parseInt(clean(input.value), 10); if(!Number.isFinite(current) || current <= 0) current = 1; current += delta; if(current < 1) current = 1; input.value = String(current); draftQty(uiKey, input.value); }
+function addToCart(uiKey){ const product = findProductByKey(uiKey); if(!product){ notify("خطأ في المنتج", "error"); return; } if(!isAddableToCart(product)){ notify("هذا الصنف غير جاهز للإضافة للسلة", "error"); return; } const offerMode = isOfferProduct(product); const unit = offerMode ? "offer" : clean(drafts[uiKey]?.unit || document.getElementById(`unit_${uiKey}`)?.value); if(!offerMode && !unit){ notify("اختر الوحدة أولاً", "error"); return; } let qty = clean(drafts[uiKey]?.qty || document.getElementById(`qty_${uiKey}`)?.value); qty = qty === "" ? 1 : parseInt(qty, 10); if(!Number.isFinite(qty) || qty <= 0) qty = 1; const basePrice = getOriginalPrice(product, unit); if(!basePrice){ return; } cart[clean(uiKey)] = { uiKey:clean(uiKey), code:getProductCode(product), name:getDisplayName(product), company:clean(product.company), unit, qty, price:basePrice, basePrice }; persistAll(); updateFooterTotal(); notify("تمت الإضافة للسلة", "ok"); logEvent("add_to_cart", { code:getProductCode(product), name:getDisplayName(product), company:clean(product.company), unit, qty }); }
+function renderTiersPage(){ reviewReturn = { type:"tiers", value:null }; setMode("tiers"); scrollTop(); document.title = "الشرائح - الأهرام للتجارة والتوزيع"; logEvent("page_tiers"); const welcome = splitSettingsTypes(["tier_welcome","tiers_welcome","tier intro","tiers intro","welcome tier","welcome tiers"]) || "اختر الشريحة المناسبة لك واستفد من خصومات أعلى عند الوصول للحد الأدنى."; const terms = splitSettingsTypes(["tier_terms","tiers_terms","tier_conditions","tiers_conditions","شروط الشرائح","الشرائح"]) || "شروط الشرائح تُعرض هنا من Google Sheet ويمكن تعديلها من الشيت مباشرة."; const cards = tiersData.map(t => { const id = clean(t.tier_id || t.id || t.tier_name); const protectedTier = isProtectedTier(t); const unlocked = isTierUnlocked(t); const active = selectedTier && id === clean(selectedTier.tier_id || selectedTier.id || selectedTier.tier_name); const lockBadge = protectedTier ? (unlocked ? "🔓 مفتوح" : "🔒 مقفل") : "متاح"; const btnText = active ? "الشريحة الحالية" : (protectedTier && !unlocked ? "دخول بالرقم السري" : "اختيار الشريحة"); return `<div class="tierCard ${active?"active":""} ${protectedTier && !unlocked ? "locked" : ""}"><div class="tierCardName"><span>${escapeHtml(t.tier_name || "")}</span><span class="tierBadge">${lockBadge}</span></div><div class="tierCardMeta"><div>الخصم: <b>${formatPercent(t.tier_discount || 0)}%</b></div><div>الحد الأدنى: <b>${formatMoney(t.tier_min || 0)} جنيه</b></div></div><button class="tierCardBtn ${protectedTier && !unlocked ? "locked" : ""}" onclick="tierCardClick('${escapeAttr(id)}')">${escapeHtml(btnText)}</button></div>`; }).join(""); el.app.innerHTML = `${renderPageCard("الشرائح", welcome, "blue")}${renderPageCard("شروط الشرائح", terms, "blue")}${selectedTier ? renderPageCard("الشريحة الحالية", `أنت الآن على شريحة: ${escapeHtml(selectedTier.tier_name)} — الخصم ${formatPercent(getTierDiscount())}% — الحد الأدنى ${formatMoney(getTierMin())} جنيه`, "blue") : ""}<div class="tiersGrid">${cards}</div>`; renderTierBanner(); syncFooter(); el.backBtn.style.display = "block"; el.tierActionBtn.classList.add("active"); el.offerActionBtn.classList.remove("active"); }
+function tierCardClick(tierId){ const t = tiersData.find(x => clean(x.tier_id || x.id || x.tier_name) === clean(tierId)); if(t) chooseTier(t); }
+function openTierProductsPage(){
+  renderTierProductsPage();
+}
+function renderTierProductsPage(){
+  reviewReturn = { type:"vipBrands", value:null };
+  brandPageStyle = "vip";
+  brandReturnTarget = "vip";
+  setMode("vipBrands");
+  applyBrandStyle();
+  scrollTop();
+  document.title = "اختار منتجاتك - شرائح الجملة VIP";
+  logEvent("page_vip_brands");
+  const brands = getBrandOrder();
+  const intro = selectedTier
+    ? `أنت الآن على ${escapeHtml(selectedTier.tier_name)} — الخصم ${formatPercent(getTierDiscount())}%`
+    : "اختر المنتجات التي تناسبك ثم أكمل الشراء مباشرة.";
+  el.app.innerHTML = `
+    ${renderPageCard("اختار منتجاتك", intro, "gold")}
+    ${selectedTier ? renderPageCard("ملاحظات الشريحة", `الحد الأدنى: ${formatMoney(getTierMin())} جنيه — استخدم زر إلغاء الشريحة إذا أردت الرجوع للوضع العادي.`, "gold") : renderPageCard("ملاحظات", "يمكنك التصفح والشراء مباشرة من البراندات.", "gold")}
+    ${renderContactDock()}
+    <div class="sectionTitle">البراندات</div>
+    ${renderBrandsGrid(brands)}
+    <div class="designSignature">تجربة VIP للجملة</div>
+  `;
+  bindBrandCards();
+  renderTierBanner();
+  syncFooter();
+  el.backBtn.style.display = "block";
+  el.tierActionBtn.classList.add("active");
+  el.offerActionBtn.classList.remove("active");
+}
+
+function openTiersPage(){ renderTiersPage(); }
+function renderOffersPage(){
+  reviewReturn = { type:"offers", value:null };
+  brandPageStyle = "standard";
+  brandReturnTarget = "home";
+  setMode("offers");
+  applyBrandStyle();
+  scrollTop();
+  document.title = "صفقة اليوم - الأهرام للتجارة والتوزيع";
+  logEvent("page_offers");
+  const welcome = splitSettingsTypes(["offer_welcome","offers_welcome","offer intro","offers intro","صفقة اليوم","العروض"]) || "صفقة اليوم مخصصة لتحفيز الشراء السريع وعروضها لا تُجمع مع الشرائح.";
+  const terms = splitSettingsTypes(["offer_terms","offers_terms","offer_conditions","offers_conditions","شروط الصفقات","شروط العروض"]) || "شروط صفقات اليوم تُعرض هنا من Google Sheet ويمكن تعديلها مباشرة من الشيت.";
+  if(selectedTier){
+    el.app.innerHTML = `${renderPageCard("صفقة اليوم", "الصفقات لا تُجمع مع الشرائح. لإظهار الصفقات يمكنك إلغاء الشريحة الحالية أولاً.", "gold", `<div style="margin-top:10px"><button class="smallBtn" style="width:100%;min-height:40px" onclick="clearTier()">إلغاء الشريحة وفتح الصفقات</button></div>`) }${renderPageCard("شروط العروض", terms, "gold")}`;
+    renderTierBanner();
+    syncFooter();
+    el.backBtn.style.display = "block";
+    el.tierActionBtn.classList.remove("active");
+    el.offerActionBtn.classList.add("active");
+    return;
+  }
+  const offers = products.filter(isOfferProduct).map((p,i)=>({...p,__uiKey:getProductKey(p)}));
+  const cards = offers.map(p => {
+    const uiKey = p.__uiKey;
+    const img = clean(p.image) || PLACEHOLDERS.product(getDisplayName(p));
+    const offerLabel = getOfferLabel(p);
+    const units = getAvailableUnits(p);
+    const primaryUnit = getPrimaryUnit(p);
+    const base = primaryUnit ? getOriginalPrice(p, primaryUnit) : getOriginalPrice(p, "offer");
+    return `<div class="card productCard offerCard"><img class="productImg" src="${img}" alt="${escapeAttr(getDisplayName(p))}" onerror="this.src='${PLACEHOLDERS.product(getDisplayName(p))}'"><div class="productName">${escapeHtml(getDisplayName(p))}</div><div class="offerLabel">${escapeHtml(offerLabel || "عرض خاص")}</div>${base > 0 ? `<div class="price offer" id="price_${uiKey}">سعر العرض: ${formatMoney(base)} جنيه</div>` : ""}${units.length ? `<select class="unitSelect" id="unit_${uiKey}" onchange="selectUnit('${uiKey}', this.value)"><option value="">اختر الوحدة</option>${buildAvailableUnitsOptions(p)}</select>` : ""}<div class="qtyWrap"><button class="qtyBtn" id="minus_${uiKey}" onclick="changeQty('${uiKey}', -1)">-</button><input class="qtyInput" id="qty_${uiKey}" inputmode="numeric" value="${escapeAttr(clean(drafts[uiKey]?.qty) || "")}" oninput="draftQty('${uiKey}', this.value)"><button class="qtyBtn" id="plus_${uiKey}" onclick="changeQty('${uiKey}', 1)">+</button></div><button class="addBtn offer" onclick="addToCart('${uiKey}')">أضف للسلة</button></div>`;
+  }).join("");
+  el.app.innerHTML = `${renderPageCard("صفقة اليوم", welcome, "gold")}${renderPageCard("شروط العروض", terms, "gold")}${offers.length ? `<div class="grid">${cards}</div>` : `<div class="emptyState">لا توجد عروض حالياً</div>`}`;
+  renderTierBanner();
+  syncFooter();
+  el.backBtn.style.display = "block";
+  el.tierActionBtn.classList.remove("active");
+  el.offerActionBtn.classList.add("active");
+}
+function openOffersPage(){ renderOffersPage(); }
+function renderSearchAndBrands(){ const resultsContainer = document.getElementById("searchResults"); const brandsContainer = document.getElementById("brandsArea"); if(!resultsContainer || !brandsContainer) return; const q = clean(searchQuery); const brands = getBrandOrder(); if(q){ logEvent("search", { query:q }); const results = sortSearchResults(products, q); resultsContainer.innerHTML = results.length ? `<div class="searchHint">نتائج البحث: ${results.length}</div>${renderProductsGrid(results)}` : `<div class="emptyState">لا توجد نتائج مطابقة</div>`; brandsContainer.innerHTML = `<div class="sectionTitle">الأقسام</div>${renderBrandsGrid(brands)}`; } else { resultsContainer.innerHTML = ""; brandsContainer.innerHTML = renderBrandsGrid(brands); } bindBrandCards(); }
+function renderHome(){
+  brandPageStyle = "standard";
+  brandReturnTarget = "home";
+  setMode("home");
+  applyBrandStyle();
+  scrollTop();
+  document.title = "الأهرام للتجارة والتوزيع";
+  logEvent("page_home");
+  el.backBtn.style.display = "none";
+  el.app.innerHTML = `<div class="searchBar"><div class="searchRow"><input class="searchInput" id="searchInput" placeholder="ابحث باسم الصنف أو الكود أو الرقم..." value="${escapeAttr(searchQuery)}" oninput="debouncedSearch(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); renderSearchAndBrands();}"><button class="searchBtn" onclick="renderSearchAndBrands()">🔎 بحث</button><button class="clearBtn" onclick="clearSearch()" title="مسح">✖</button></div></div>${renderContactDock()}<div id="searchResults"></div><div id="brandsArea"></div><div class="designSignature">تم التصميم بواسطة YaSsEr EL Joker</div>`;
+  renderSearchAndBrands();
+  renderTierBanner();
+  updateFooterTotal();
+  syncFooter();
+  el.tierActionBtn.classList.remove("active");
+  el.offerActionBtn.classList.remove("active");
+}
+function clearSearch(){ searchQuery = ""; clearTimeout(searchTimer); const input = document.getElementById("searchInput"); if(input) input.value = ""; renderSearchAndBrands(); document.getElementById("searchInput")?.focus(); }
+function debouncedSearch(value){ searchQuery = clean(value); clearTimeout(searchTimer); searchTimer = setTimeout(renderSearchAndBrands, 180); }
+function renderBrandProducts(company, returnTo="home"){
+  const companyName = clean(company);
+  if(companyName === "صفقة اليوم") return openOffersPage();
+  lastCompany = companyName;
+  brandReturnTarget = returnTo === "vip" ? "vip" : "home";
+  brandPageStyle = brandReturnTarget === "vip" ? "vip" : "standard";
+  setMode("products");
+  applyBrandStyle();
+  scrollTop();
+  document.title = `${companyName} - الأهرام للتجارة والتوزيع`;
+  logEvent("page_brand", { company: companyName, returnTo: brandReturnTarget });
+  el.backBtn.style.display = "block";
+  const list = filterProductsByCompany(companyName).map((p,i)=>({...p,__uiKey:getProductKey(p)}));
+  if(!list.length){
+    el.app.innerHTML = renderPageCard(companyName, "لا توجد منتجات داخل هذا القسم", "blue");
+    updateFooterTotal();
+    syncFooter();
+    return;
+  }
+  el.app.innerHTML = `${renderPageCard(companyName, "اختر الوحدة ثم الكمية وأضف مباشرة للسلة.", "blue")}${renderProductsGrid(list)}`;
+  list.forEach(p=>restoreDraftForProduct(p.__uiKey));
+  updateFooterTotal();
+  syncFooter();
+}
+function openReview(){ reviewReturn = { type:currentPage, value:lastCompany, returnTo:brandReturnTarget }; renderReview(); }
+function renderReview(){ setMode("review"); scrollTop(); document.title = "إتمام الشراء - الأهرام للتجارة والتوزيع"; logEvent("page_review"); el.backBtn.style.display = "block"; const items = Object.values(cart); const subtotal = getSubtotal(); const discount = getDiscountAmount(); const payable = getPayableTotal(); const satisfied = isTierSatisfied(); if(!items.length){ el.app.innerHTML = `<div class="emptyState">السلة فارغة</div><div style="height:10px"></div><div class="card"><button class="mainBtn secondary" onclick="goBack()">⬅ الرجوع للتسوق</button></div>`; updateFooterTotal(); syncFooter(); renderTierBanner(); return; } let html = `<div class="reviewWrap"><div class="reviewSummary"><div class="reviewSummaryTop"><div><b>إتمام الشراء</b></div><button class="miniDanger" onclick="clearCartConfirm()">🗑️ تصفير السلة</button></div><div><b>إجمالي السلة:</b> ${formatMoney(subtotal)} جنيه</div>${selectedTier ? `<div><b>الشريحة:</b> ${escapeHtml(selectedTier.tier_name)}</div><div><b>الخصم:</b> ${formatPercent(getTierDiscount())}%</div><div><b>الحد الأدنى:</b> ${formatMoney(getTierMin())} جنيه</div>${satisfied ? `<div><b>إجمالي بعد الخصم:</b> ${formatMoney(payable)} جنيه</div>` : `<div style="color:var(--red)"><b>المتبقي للوصول للشريحة:</b> ${formatMoney(getTierMin() - subtotal)} جنيه</div>`}` : ""}</div><div class="formCard"><input class="input" id="invoiceNumber" placeholder="رقم الفاتورة (اختياري)" value="${escapeAttr(customer.invoiceNumber || "")}"><input class="input" id="custName" placeholder="اسم العميل" value="${escapeAttr(customer.name || "")}"><input class="input" id="custPhone" placeholder="رقم الهاتف" value="${escapeAttr(customer.phone || "")}"><input class="input" id="custBusiness" placeholder="اسم النشاط" value="${escapeAttr(customer.business || "")}"><input class="input" id="custAddress" placeholder="العنوان" value="${escapeAttr(customer.address || "")}"><button class="mainBtn secondary" onclick="setLocation()">📍 اضغط لإضافة اللوكيشن</button><div class="locationStatus" id="locationStatus">${customer.location ? "✔ تم حفظ اللوكيشن" : ""}</div><div style="height:10px"></div><button class="mainBtn primary" id="sendNowBtn" onclick="sendOrder()" ${selectedTier && !satisfied ? "disabled" : ""}>إرسال الطلب الآن</button><div style="height:8px"></div><button class="mainBtn secondary" onclick="backToShopping()">⬅ الرجوع للتسوق</button></div>`; items.forEach(item => { const priceAfterDiscount = selectedTier ? getDiscountedPrice(item.basePrice || item.price) : toNum(item.price); const lineTotal = toNum(item.qty) * priceAfterDiscount; const isOfferItem = clean(item.unit) === "offer"; html += `<div class="reviewItem"><div class="reviewItemTop">${escapeHtml(item.name)}${item.code ? ` (${escapeHtml(item.code)})` : ""}</div><div>الوحدة: ${escapeHtml(isOfferItem ? "عرض" : (UNIT_NAMES[item.unit] || item.unit))}</div><div>الكمية: ${item.qty}</div><div>السعر: ${formatMoney(priceAfterDiscount)} جنيه</div><div><b>إجمالي الصنف بالجنيه:</b> ${formatMoney(lineTotal)} جنيه</div><div class="reviewControls"><button class="qtyBtn" onclick="reviewQty('${item.uiKey}', -1)">-</button><input class="reviewQtyInput" value="${item.qty}" inputmode="numeric" oninput="reviewQtyInput('${item.uiKey}', this.value)"><button class="qtyBtn" onclick="reviewQty('${item.uiKey}', 1)">+</button></div><div class="reviewAction" onclick="removeFromCart('${item.uiKey}')">حذف</div></div>`; }); html += `</div>`; el.app.innerHTML = html; updateFooterTotal(); syncFooter(); renderTierBanner(); }
+function reviewQtyInput(uiKey, value){ const cleaned = clean(value).replace(/[^\d]/g, ""); const qty = cleaned === "" ? "" : parseInt(cleaned, 10); if(!Number.isFinite(qty) || qty < 1){ drafts[uiKey] = drafts[uiKey] || {}; drafts[uiKey].qty = ""; persistAll(); return; } if(cart[uiKey]){ cart[uiKey].qty = qty; persistAll(); renderReview(); updateFooterTotal(); } else { drafts[uiKey] = drafts[uiKey] || {}; drafts[uiKey].qty = qty; persistAll(); } }
+function reviewQty(uiKey, delta){ if(!cart[uiKey]) return; let qty = toNum(cart[uiKey].qty); if(!Number.isFinite(qty) || qty < 1) qty = 1; qty += delta; if(qty < 1) qty = 1; cart[uiKey].qty = qty; persistAll(); renderReview(); updateFooterTotal(); }
+function removeFromCart(uiKey){ delete cart[uiKey]; persistAll(); renderReview(); updateFooterTotal(); notify("تم حذف الصنف", "info"); logEvent("remove_from_cart", { uiKey }); }
+function setLocation(){ if(!navigator.geolocation){ notify("الموقع غير مدعوم على هذا الجهاز", "error"); return; } navigator.geolocation.getCurrentPosition(pos => { customer.location = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`; persistAll(); const loc = document.getElementById("locationStatus"); if(loc) loc.textContent = "✔ تم تحديد اللوكيشن"; notify("تم تحديد اللوكيشن", "ok"); logEvent("set_location"); }, () => notify("تعذر تحديد اللوكيشن", "error"), { enableHighAccuracy:true, timeout:12000, maximumAge:0 }); }
+function buildOrderItemsPayload(){ return Object.values(cart).map(item => { const unitPrice = selectedTier ? getDiscountedPrice(item.basePrice || item.price) : toNum(item.price); return { order_id:"", product_code:item.code || "", product_name:item.name || "", company:item.company || "", unit:item.unit || "", quantity:toNum(item.qty), price_after_discount:unitPrice, item_total:toNum(item.qty) * unitPrice }; }); }
+function buildOrderPayload(){ const name = clean(document.getElementById("custName")?.value); const phone = clean(document.getElementById("custPhone")?.value); const business = clean(document.getElementById("custBusiness")?.value); const address = clean(document.getElementById("custAddress")?.value); const invoiceNumber = clean(document.getElementById("invoiceNumber")?.value); const location = clean(customer.location || ""); const subtotal = getSubtotal(); const total = getPayableTotal(); const orderId = `ORD-${Date.now()}`; return { order_id:orderId, time:new Date().toISOString(), name, phone, business, address, location, invoice_number:invoiceNumber, tier:selectedTier ? selectedTier.tier_name : "بدون", tier_discount:selectedTier ? getTierDiscount() : 0, subtotal, total, status:"تم التواصل مع العميل", notes:"", items_count:Object.keys(cart).length, items:buildOrderItemsPayload(), items_json:JSON.stringify(buildOrderItemsPayload()) }; }
+function postOrderToSheet(payload){ const body = JSON.stringify(payload); try { if(navigator.sendBeacon){ const blob = new Blob([body], { type:"text/plain;charset=UTF-8" }); if(navigator.sendBeacon(SHEETS_URL, blob)) return Promise.resolve(true); } } catch(_){} return fetch(SHEETS_URL, { method:"POST", mode:"no-cors", body }).then(()=>true).catch(()=>false); }
+function buildWhatsAppMessage(payload){
+  const unitMap = { carton:"كرتونة", dozen:"دستة", piece:"قطعة", offer:"عرض" };
+  const lines = [];
+  lines.push(`طلب شراء من : ${payload.name}`);
+  lines.push(`رقم التليفون : ${payload.phone}`);
+  lines.push(`العنوان : ${payload.address}`);
+  lines.push(`اسم النشاط : ${payload.business}`);
+  lines.push(`اللوكيشن : ${payload.location}`);
+  lines.push("");
+  lines.push("بيان الفاتورة");
+  lines.push("");
+  buildOrderItemsPayload().forEach(item => {
+    lines.push(`كود الصنف : ${item.product_code || "-"}`);
+    lines.push(`اسم الصنف : ${item.product_name}`);
+    lines.push(`الوحدة : ${unitMap[item.unit] || item.unit}`);
+    lines.push(`الكميه : ${item.quantity}`);
+    lines.push(`السعر : ${formatMoney(item.price_after_discount)} جنيه`);
+    lines.push(`اجمالي الصنف بالجنيه : ${formatMoney(item.item_total)} جنيه`);
+    lines.push("");
+  });
+  if(selectedTier){
+    lines.push(`الشريحة : ${selectedTier.tier_name}`);
+    lines.push(`خصم الشريحة : ${formatPercent(getTierDiscount())}%`);
+    lines.push("");
+  }
+  lines.push(`إجمالي الفاتورة : ${formatMoney(payload.total)} جنيه`);
+  return lines.join("\n");
+}
+function sendOrder(){ const name = clean(document.getElementById("custName")?.value); const phone = clean(document.getElementById("custPhone")?.value); const business = clean(document.getElementById("custBusiness")?.value); const address = clean(document.getElementById("custAddress")?.value); const invoiceNumber = clean(document.getElementById("invoiceNumber")?.value); const location = clean(customer.location || ""); if(!name || !phone || !business || !address || !location){ notify("من فضلك أكمل بيانات العميل واللوكيشن", "error"); return; } if(selectedTier && !isTierSatisfied()){ notify("لم تصل للحد الأدنى للشريحة", "error"); return; } customer = { name, phone, business, address, location, invoiceNumber }; persistAll(); const payload = buildOrderPayload(); saveJSON(LS.latestOrder, payload); logEvent("order_prepare", { order_id:payload.order_id, total:payload.total, items_count:payload.items_count }); postOrderToSheet(payload); window.open(`https://wa.me/201040880002?text=${encodeURIComponent(buildWhatsAppMessage(payload))}`, "_blank"); notify("تم تجهيز الطلب وإرساله", "ok"); logEvent("order_sent", { order_id:payload.order_id, total:payload.total, items_count:payload.items_count }); }
+function backToShopping(){ if(reviewReturn?.type === "products" && reviewReturn?.value) renderBrandProducts(reviewReturn.value, reviewReturn.returnTo || "home"); else if(reviewReturn?.type === "vipBrands") renderTierProductsPage(); else if(reviewReturn?.type === "tiers") renderTiersPage(); else if(reviewReturn?.type === "offers") renderOffersPage(); else renderHome(); }
+function goBack(){ if(currentPage === "products"){ if(brandReturnTarget === "vip") renderTierProductsPage(); else renderHome(); return; } if(currentPage === "vipBrands"){ renderTiersPage(); return; } if(currentPage === "tiers" || currentPage === "offers") { renderHome(); return; } if(currentPage === "review") { backToShopping(); return; } renderHome(); }
+function openReview(){ reviewReturn = { type:currentPage, value:lastCompany, returnTo:brandReturnTarget }; renderReview(); }
+
+function renderTiersPage(){
+  reviewReturn = { type:"tiers", value:null };
+  brandPageStyle = "standard";
+  brandReturnTarget = "home";
+  setMode("tiers");
+  applyBrandStyle();
+  scrollTop();
+  document.title = "الشرائح - الأهرام للتجارة والتوزيع";
+  logEvent("page_tiers");
+  const welcome = splitSettingsTypes(["tier_welcome","tiers_welcome","tier intro","tiers intro","welcome tier","welcome tiers"]) || "اختر الشريحة المناسبة لك واستفد من خصومات أعلى عند الوصول للحد الأدنى.";
+  const terms = splitSettingsTypes(["tier_terms","tiers_terms","tier_conditions","tiers_conditions","شروط الشرائح","الشرائح"]) || "شروط الشرائح تُعرض هنا من Google Sheet ويمكن تعديلها من الشيت مباشرة.";
+  const cards = tiersData.map(t => {
+    const id = clean(t.tier_id || t.id || t.tier_name);
+    const protectedTier = isProtectedTier(t);
+    const unlocked = isTierUnlocked(t);
+    const active = selectedTier && id === clean(selectedTier.tier_id || selectedTier.id || selectedTier.tier_name);
+    const lockBadge = protectedTier ? (unlocked ? "🔓 مفتوح" : "🔒 مقفل") : "متاح";
+    const btnText = active ? "الشريحة الحالية" : (protectedTier && !unlocked ? "دخول بالرقم السري" : "اختيار الشريحة");
+    return `<div class="tierCard ${active ? "active" : ""} ${protectedTier && !unlocked ? "locked" : ""}"><div class="tierCardName"><span>${escapeHtml(t.tier_name || "")}</span><span class="tierBadge">${lockBadge}</span></div><div class="tierCardMeta"><div>الخصم: <b>${formatPercent(t.tier_discount || 0)}%</b></div><div>الحد الأدنى: <b>${formatMoney(t.tier_min || 0)} جنيه</b></div></div><button class="tierCardBtn ${protectedTier && !unlocked ? "locked" : ""}" onclick="tierCardClick('${escapeAttr(id)}')">${escapeHtml(btnText)}</button></div>`;
+  }).join("");
+  el.app.innerHTML = `
+    ${renderPageCard("شرائح الجملة VIP", welcome, "blue")}
+    ${renderPageCard("شروط الشرائح", terms, "blue")}
+    ${selectedTier ? renderPageCard("الشريحة الحالية", `أنت الآن على شريحة: ${escapeHtml(selectedTier.tier_name)} — الخصم ${formatPercent(getTierDiscount())}% — الحد الأدنى ${formatMoney(getTierMin())} جنيه`, "blue") : ""}
+    <div class="tierPageActions">
+      <button class="miniDanger" onclick="clearTier()">إلغاء الشريحة</button>
+      <button class="vipLaunchBtn" onclick="openTierProductsPage()">اختار منتجاتك</button>
+    </div>
+    <div class="tiersGrid">${cards}</div>
+  `;
+  renderTierBanner();
+  syncFooter();
+  el.backBtn.style.display = "block";
+  el.tierActionBtn.classList.add("active");
+  el.offerActionBtn.classList.remove("active");
+}
+function tierCardClick(tierId){ const t = tiersData.find(x => clean(x.tier_id || x.id || x.tier_name) === clean(tierId)); if(t) chooseTier(t); }
+function openTierProductsPage(){
+  renderTierProductsPage();
+}
+function renderTierProductsPage(){
+  reviewReturn = { type:"vipBrands", value:null };
+  brandPageStyle = "vip";
+  brandReturnTarget = "vip";
+  setMode("vipBrands");
+  applyBrandStyle();
+  scrollTop();
+  document.title = "اختار منتجاتك - شرائح الجملة VIP";
+  logEvent("page_vip_brands");
+  const brands = getBrandOrder();
+  const intro = selectedTier
+    ? `أنت الآن على ${escapeHtml(selectedTier.tier_name)} — الخصم ${formatPercent(getTierDiscount())}%`
+    : "اختر المنتجات التي تناسبك ثم أكمل الشراء مباشرة.";
+  el.app.innerHTML = `
+    ${renderPageCard("اختار منتجاتك", intro, "gold")}
+    ${selectedTier ? renderPageCard("ملاحظات الشريحة", `الحد الأدنى: ${formatMoney(getTierMin())} جنيه — استخدم زر إلغاء الشريحة إذا أردت الرجوع للوضع العادي.`, "gold") : renderPageCard("ملاحظات", "يمكنك التصفح والشراء مباشرة من البراندات.", "gold")}
+    ${renderContactDock()}
+    <div class="sectionTitle">البراندات</div>
+    ${renderBrandsGrid(brands)}
+    <div class="designSignature">تجربة VIP للجملة</div>
+  `;
+  bindBrandCards();
+  renderTierBanner();
+  syncFooter();
+  el.backBtn.style.display = "block";
+  el.tierActionBtn.classList.add("active");
+  el.offerActionBtn.classList.remove("active");
+}
+
+function openTiersPage(){ renderTiersPage(); }
+function renderOffersPage(){
+  reviewReturn = { type:"offers", value:null };
+  brandPageStyle = "standard";
+  brandReturnTarget = "home";
+  setMode("offers");
+  applyBrandStyle();
+  scrollTop();
+  document.title = "صفقة اليوم - الأهرام للتجارة والتوزيع";
+  logEvent("page_offers");
+  const welcome = splitSettingsTypes(["offer_welcome","offers_welcome","offer intro","offers intro","صفقة اليوم","العروض"]) || "صفقة اليوم مخصصة لتحفيز الشراء السريع وعروضها لا تُجمع مع الشرائح.";
+  const terms = splitSettingsTypes(["offer_terms","offers_terms","offer_conditions","offers_conditions","شروط الصفقات","شروط العروض"]) || "شروط صفقات اليوم تُعرض هنا من Google Sheet ويمكن تعديلها مباشرة من الشيت.";
+  if(selectedTier){
+    el.app.innerHTML = `${renderPageCard("صفقة اليوم", "الصفقات لا تُجمع مع الشرائح. لإظهار الصفقات يمكنك إلغاء الشريحة الحالية أولاً.", "gold", `<div style="margin-top:10px"><button class="smallBtn" style="width:100%;min-height:40px" onclick="clearTier()">إلغاء الشريحة وفتح الصفقات</button></div>`) }${renderPageCard("شروط العروض", terms, "gold")}`;
+    renderTierBanner();
+    syncFooter();
+    el.backBtn.style.display = "block";
+    el.tierActionBtn.classList.remove("active");
+    el.offerActionBtn.classList.add("active");
+    return;
+  }
+  const offers = products.filter(isOfferProduct).map((p,i)=>({...p,__uiKey:getProductKey(p)}));
+  const cards = offers.map(p => {
+    const uiKey = p.__uiKey;
+    const img = clean(p.image) || PLACEHOLDERS.product(getDisplayName(p));
+    const offerLabel = getOfferLabel(p);
+    const units = getAvailableUnits(p);
+    const primaryUnit = getPrimaryUnit(p);
+    const base = primaryUnit ? getOriginalPrice(p, primaryUnit) : getOriginalPrice(p, "offer");
+    return `<div class="card productCard offerCard"><img class="productImg" src="${img}" alt="${escapeAttr(getDisplayName(p))}" onerror="this.src='${PLACEHOLDERS.product(getDisplayName(p))}'"><div class="productName">${escapeHtml(getDisplayName(p))}</div><div class="offerLabel">${escapeHtml(offerLabel || "عرض خاص")}</div>${base > 0 ? `<div class="price offer" id="price_${uiKey}">سعر العرض: ${formatMoney(base)} جنيه</div>` : ""}${units.length ? `<select class="unitSelect" id="unit_${uiKey}" onchange="selectUnit('${uiKey}', this.value)"><option value="">اختر الوحدة</option>${buildAvailableUnitsOptions(p)}</select>` : ""}<div class="qtyWrap"><button class="qtyBtn" id="minus_${uiKey}" onclick="changeQty('${uiKey}', -1)">-</button><input class="qtyInput" id="qty_${uiKey}" inputmode="numeric" value="${escapeAttr(clean(drafts[uiKey]?.qty) || "")}" oninput="draftQty('${uiKey}', this.value)"><button class="qtyBtn" id="plus_${uiKey}" onclick="changeQty('${uiKey}', 1)">+</button></div><button class="addBtn offer" onclick="addToCart('${uiKey}')">أضف للسلة</button></div>`;
+  }).join("");
+  el.app.innerHTML = `${renderPageCard("صفقة اليوم", welcome, "gold")}${renderPageCard("شروط العروض", terms, "gold")}${offers.length ? `<div class="grid">${cards}</div>` : `<div class="emptyState">لا توجد عروض حالياً</div>`}`;
+  renderTierBanner();
+  syncFooter();
+  el.backBtn.style.display = "block";
+  el.tierActionBtn.classList.remove("active");
+  el.offerActionBtn.classList.add("active");
+}
+function openOffersPage(){ renderOffersPage(); }
+function renderSearchAndBrands(){ const resultsContainer = document.getElementById("searchResults"); const brandsContainer = document.getElementById("brandsArea"); if(!resultsContainer || !brandsContainer) return; const q = clean(searchQuery); const brands = getBrandOrder(); if(q){ logEvent("search", { query:q }); const results = sortSearchResults(products, q); resultsContainer.innerHTML = results.length ? `<div class="searchHint">نتائج البحث: ${results.length}</div>${renderProductsGrid(results)}` : `<div class="emptyState">لا توجد نتائج مطابقة</div>`; brandsContainer.innerHTML = `<div class="sectionTitle">الأقسام</div>${renderBrandsGrid(brands)}`; } else { resultsContainer.innerHTML = ""; brandsContainer.innerHTML = renderBrandsGrid(brands); } bindBrandCards(); }
+function renderHome(){
+  brandPageStyle = "standard";
+  brandReturnTarget = "home";
+  setMode("home");
+  applyBrandStyle();
+  scrollTop();
+  document.title = "الأهرام للتجارة والتوزيع";
+  logEvent("page_home");
+  el.backBtn.style.display = "none";
+  el.app.innerHTML = `<div class="searchBar"><div class="searchRow"><input class="searchInput" id="searchInput" placeholder="ابحث باسم الصنف أو الكود أو الرقم..." value="${escapeAttr(searchQuery)}" oninput="debouncedSearch(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); renderSearchAndBrands();}"><button class="searchBtn" onclick="renderSearchAndBrands()">🔎 بحث</button><button class="clearBtn" onclick="clearSearch()" title="مسح">✖</button></div></div>${renderContactDock()}<div id="searchResults"></div><div id="brandsArea"></div><div class="designSignature">تم التصميم بواسطة YaSsEr EL Joker</div>`;
+  renderSearchAndBrands();
+  renderTierBanner();
+  updateFooterTotal();
+  syncFooter();
+  el.tierActionBtn.classList.remove("active");
+  el.offerActionBtn.classList.remove("active");
+}
+function clearSearch(){ searchQuery = ""; clearTimeout(searchTimer); const input = document.getElementById("searchInput"); if(input) input.value = ""; renderSearchAndBrands(); document.getElementById("searchInput")?.focus(); }
+function debouncedSearch(value){ searchQuery = clean(value); clearTimeout(searchTimer); searchTimer = setTimeout(renderSearchAndBrands, 180); }
+function buildOrderItemsPayload(){ return Object.values(cart).map(item => { const unitPrice = selectedTier ? getDiscountedPrice(item.basePrice || item.price) : toNum(item.price); return { order_id:"", product_code:item.code || "", product_name:item.name || "", company:item.company || "", unit:item.unit || "", quantity:toNum(item.qty), price_after_discount:unitPrice, item_total:toNum(item.qty) * unitPrice }; }); }
+function buildOrderPayload(){ const name = clean(document.getElementById("custName")?.value); const phone = clean(document.getElementById("custPhone")?.value); const business = clean(document.getElementById("custBusiness")?.value); const address = clean(document.getElementById("custAddress")?.value); const invoiceNumber = clean(document.getElementById("invoiceNumber")?.value); const location = clean(customer.location || ""); const subtotal = getSubtotal(); const total = getPayableTotal(); const orderId = `ORD-${Date.now()}`; return { order_id:orderId, time:new Date().toISOString(), name, phone, business, address, location, invoice_number:invoiceNumber, tier:selectedTier ? selectedTier.tier_name : "بدون", tier_discount:selectedTier ? getTierDiscount() : 0, subtotal, total, status:"تم التواصل مع العميل", notes:"", items_count:Object.keys(cart).length, items:buildOrderItemsPayload(), items_json:JSON.stringify(buildOrderItemsPayload()) }; }
+function postOrderToSheet(payload){ const body = JSON.stringify(payload); try { if(navigator.sendBeacon){ const blob = new Blob([body], { type:"text/plain;charset=UTF-8" }); if(navigator.sendBeacon(SHEETS_URL, blob)) return Promise.resolve(true); } } catch(_){} return fetch(SHEETS_URL, { method:"POST", mode:"no-cors", body }).then(()=>true).catch(()=>false); }
+function buildWhatsAppMessage(payload){
+  const unitMap = { carton:"كرتونة", dozen:"دستة", piece:"قطعة", offer:"عرض" };
+  const lines = [];
+  lines.push(`طلب شراء من : ${payload.name}`);
+  lines.push(`رقم التليفون : ${payload.phone}`);
+  lines.push(`العنوان : ${payload.address}`);
+  lines.push(`اسم النشاط : ${payload.business}`);
+  lines.push(`اللوكيشن : ${payload.location}`);
+  lines.push("");
+  lines.push("بيان الفاتورة");
+  lines.push("");
+  buildOrderItemsPayload().forEach(item => {
+    lines.push(`كود الصنف : ${item.product_code || "-"}`);
+    lines.push(`اسم الصنف : ${item.product_name}`);
+    lines.push(`الوحدة : ${unitMap[item.unit] || item.unit}`);
+    lines.push(`الكميه : ${item.quantity}`);
+    lines.push(`السعر : ${formatMoney(item.price_after_discount)} جنيه`);
+    lines.push(`اجمالي الصنف بالجنيه : ${formatMoney(item.item_total)} جنيه`);
+    lines.push("");
+  });
+  if(selectedTier){
+    lines.push(`الشريحة : ${selectedTier.tier_name}`);
+    lines.push(`خصم الشريحة : ${formatPercent(getTierDiscount())}%`);
+    lines.push("");
+  }
+  lines.push(`إجمالي الفاتورة : ${formatMoney(payload.total)} جنيه`);
+  return lines.join("\n");
+}
+function sendOrder(){ const name = clean(document.getElementById("custName")?.value); const phone = clean(document.getElementById("custPhone")?.value); const business = clean(document.getElementById("custBusiness")?.value); const address = clean(document.getElementById("custAddress")?.value); const invoiceNumber = clean(document.getElementById("invoiceNumber")?.value); const location = clean(customer.location || ""); if(!name || !phone || !business || !address || !location){ notify("من فضلك أكمل بيانات العميل واللوكيشن", "error"); return; } if(selectedTier && !isTierSatisfied()){ notify("لم تصل للحد الأدنى للشريحة", "error"); return; } customer = { name, phone, business, address, location, invoiceNumber }; persistAll(); const payload = buildOrderPayload(); saveJSON(LS.latestOrder, payload); logEvent("order_prepare", { order_id:payload.order_id, total:payload.total, items_count:payload.items_count }); postOrderToSheet(payload); window.open(`https://wa.me/201040880002?text=${encodeURIComponent(buildWhatsAppMessage(payload))}`, "_blank"); notify("تم تجهيز الطلب وإرساله", "ok"); logEvent("order_sent", { order_id:payload.order_id, total:payload.total, items_count:payload.items_count }); }
+function backToShopping(){ if(reviewReturn?.type === "products" && reviewReturn?.value) renderBrandProducts(reviewReturn.value, reviewReturn.returnTo || "home"); else if(reviewReturn?.type === "vipBrands") renderTierProductsPage(); else if(reviewReturn?.type === "tiers") renderTiersPage(); else if(reviewReturn?.type === "offers") renderOffersPage(); else renderHome(); }
+function goBack(){ if(currentPage === "products"){ if(brandReturnTarget === "vip") renderTierProductsPage(); else renderHome(); return; } if(currentPage === "vipBrands"){ renderTiersPage(); return; } if(currentPage === "tiers" || currentPage === "offers") { renderHome(); return; } if(currentPage === "review") { backToShopping(); return; } renderHome(); }
+
+function initHeader(){ const headerImage = settings.find(x => clean(x.type) === "company_image")?.value || settings.find(x => clean(x.key) === "company_image")?.value || settings.find(x => clean(x.name) === "company_image")?.value || settings.find(x => normalizeLoose([x.type,x.key,x.name].filter(Boolean).join(" ")).includes("header image"))?.value; setHeaderImage(headerImage); el.headerImg.onerror = () => { el.headerImg.src = PLACEHOLDERS.header; }; const newsList = settings.filter(x => clean(x.type) === "news" && clean(x.value)).flatMap(x => clean(x.value).split(/[،\n]+/g)).map(x => clean(x)).filter(Boolean); if(newsList.length){ let i = 0; el.news.textContent = newsList[0]; setInterval(() => { el.news.textContent = newsList[i]; i = (i + 1) % newsList.length; }, 3000); } }
+
+(function () {
+  const ALAHRAM_ROUTE = {
+    ready: false,
+    suppress: false,
+    initialHandled: false
+  };
+
+  function injectAlaStyles() {
+    if (document.getElementById("alahram-extra-styles")) return;
+    const style = document.createElement("style");
+    style.id = "alahram-extra-styles";
+    style.textContent = `
+      .pageChrome{display:flex;flex-direction:column;gap:10px}
+      .pageSearch{position:sticky;top:0;z-index:900;background:transparent}
+      .pageSearch .searchRow{grid-template-columns:1fr 78px 52px}
+      .tierBannerHost{margin:0 0 10px}
+      .tierBannerRow{display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(135deg,#fff7df,#fffdf3);border:1px solid #e6cc7a;border-radius:14px;padding:10px 12px;box-shadow:0 6px 18px rgba(184,138,0,.10);font-size:13px;line-height:1.6}
+      .tierBannerAction{border:none;border-radius:999px;background:linear-gradient(135deg,#0B3D91,#1852b6);color:#fff;font-weight:800;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
+      .priceWrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:42px}
+      .priceOld{color:#7A8596;text-decoration:line-through;font-size:12px;line-height:1.2}
+      .priceNew{color:#b88a00;font-size:14px;font-weight:800;line-height:1.2}
+      .priceTag{display:inline-block;background:linear-gradient(135deg,#ffd85c,#c79b18);color:#5a4300;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;margin-top:2px}
+      .tierCardDesc{font-size:12px;line-height:1.7;color:#526077;margin-top:6px;min-height:38px}
+      .reviewTierState{background:#fff8ea;border:1px solid #e1c777;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.7;margin:10px 0}
+      .reviewTierState.ok{background:#eef9f1;border-color:#9ad0a8;color:#1f7a3d}
+      .reviewTierState.warn{background:#fff3f2;border-color:#f0b3a8;color:#b03a2e}
+      .searchBar.stickySearch{margin:0}
+      .searchBar.stickySearch .searchRow{grid-template-columns:1fr 84px 56px}
+      .actionBtn.tier{white-space:nowrap}
+      .back{z-index:2000}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function pageSearchBar() {
+    return `
+      <div class="searchBar stickySearch">
+        <div class="searchRow">
+          <input class="searchInput" id="searchInput" placeholder="ابحث باسم الصنف أو الكود أو الرقم..." value="${escapeAttr(searchQuery)}" oninput="debouncedSearch(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); executeGlobalSearch();}">
+          <button class="searchBtn" onclick="executeGlobalSearch()" title="بحث">🔎</button>
+          <button class="clearBtn" onclick="clearSearch()" title="مسح">✖</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function tierBannerHost() {
+    return `<div class="tierBannerHost" id="tiersWrap"><div id="tierBanner"></div></div>`;
+  }
+
+  function currentTierKey() {
+    return clean(selectedTier?.tier_name || selectedTier?.tier_id || selectedTier?.id || "");
+  }
+
+  function currentTierLabel() {
+    return clean(selectedTier?.visible_label || selectedTier?.tier_name || "");
+  }
+
+  function tierPassword(t) {
+    return clean(t?.tier_password || t?.password || t?.secret_code || t?.code || t?.pin || "");
+  }
+
+  function tierIsProtected(t) {
+    return !!tierPassword(t);
+  }
+
+  function tierIsUnlocked(t) {
+    if (!tierIsProtected(t)) return true;
+    const key = clean(t?.tier_id || t?.id || t?.tier_name || "");
+    return !!unlockedTiers[key];
+  }
+
+  function routeSet(page, data = {}, replace = false) {
+    if (ALAHRAM_ROUTE.suppress) return;
+    try {
+      const state = { appPage: page, ...data };
+      if (replace || !ALAHRAM_ROUTE.ready || !history.state) {
+        history.replaceState(state, "", location.href);
+      } else {
+        history.pushState(state, "", location.href);
+      }
+      ALAHRAM_ROUTE.ready = true;
+    } catch (_) {}
+  }
+
+  function renderFromState(state) {
+    const page = clean(state?.appPage || "home");
+    ALAHRAM_ROUTE.suppress = true;
+    try {
+      if (page === "products") {
+        renderBrandProducts(state?.company || lastCompany || "", state?.returnTo || "home", true);
+      } else if (page === "vipBrands") {
+        renderTierProductsPage(true);
+      } else if (page === "tiers") {
+        renderTiersPage(true);
+      } else if (page === "offers") {
+        renderOffersPage(true);
+      } else if (page === "review") {
+        renderReview(true);
+      } else {
+        renderHome(true);
+      }
+    } finally {
+      ALAHRAM_ROUTE.suppress = false;
+    }
+  }
+
+  window.addEventListener("popstate", (e) => {
+    renderFromState(e.state || { appPage: "home" });
+  });
+
+  window.addEventListener("beforeunload", (e) => {
+    if (currentPage === "home") {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    }
+  });
+
+  function getTierUnitFields(tierKey, unit) {
+    const u = clean(unit || "carton");
+    const k = clean(tierKey || "");
+    const fields = [];
+    if (k) fields.push(`${k}_${u}`);
+    fields.push(`vip_${u}`);
+    if (u === "carton" || u === "dozen") {
+      fields.push(`vip_${u}`);
+    }
+    fields.push(`vip_carton`);
+    fields.push(`vip_dozen`);
+    if (u === "piece") fields.push(`vip_piece`);
+    return [...new Set(fields)];
+  }
+
+  function getBaseUnitPrice(product, unit) {
+    const u = clean(unit || "carton");
+    if (u === "offer") {
+      const offer = toNum(product?.price_offer || product?.offer_price);
+      if (offer > 0) return offer;
+      const carton = toNum(product?.price_carton);
+      const dozen = toNum(product?.price_dozen);
+      const piece = toNum(product?.price_piece);
+      return carton || dozen || piece || 0;
+    }
+    return toNum(product?.[`price_${u}`] || product?.[`${u}_price`]);
+  }
+
+  function getTierUnitPrice(product, unit, tier = selectedTier) {
+    const u = clean(unit || "carton");
+    const key = currentTierKey() || clean(tier?.tier_name || tier?.tier_id || tier?.id || "");
+    const candidates = getTierUnitFields(key, u);
+    for (const field of candidates) {
+      const value = toNum(product?.[field]);
+      if (value > 0) return value;
+    }
+    return getBaseUnitPrice(product, u);
+  }
+
+  function getAvailableUnits(product) {
+    const units = ["carton", "dozen", "piece"];
+    return units.filter(u => getBaseUnitPrice(product, u) > 0 || getTierUnitPrice(product, u) > 0);
+  }
+
+  function getPrimaryUnit(product) {
+    const units = getAvailableUnits(product);
+    if (getBaseUnitPrice(product, "carton") > 0 || getTierUnitPrice(product, "carton") > 0) return "carton";
+    if (units.includes("dozen")) return "dozen";
+    if (units.includes("piece")) return "piece";
+    return units[0] || "";
+  }
+
+  function isOfferProduct(product) {
+    return toNum(product?.is_offer) === 1 || clean(product?.company) === "صفقة اليوم" || clean(product?.offer_label) !== "" || toNum(product?.price_offer) > 0;
+  }
+
+  function getDisplayName(p) {
+    return clean(p?.name || p?.product_name || p?.item_name || p?.item || p?.title) || clean(p?.offer_label) || "صنف";
+  }
+
+  function getOfferLabel(p) {
+    return clean(p?.offer_label || p?.offer_name || p?.offer || "");
+  }
+
+  function getProductCode(p) {
+    return clean(p?.codo || p?.code || p?.CODO || p?.CODE || p?.product_code || p?.productCode || p?.sku || "");
+  }
+
+  function getProductKey(p) {
+    return clean(p?.id || p?.product_id || p?.sku || `${getProductCode(p)}_${getDisplayName(p)}_${clean(p?.company || "")}`) || `${getDisplayName(p)}_${clean(p?.company || "")}`;
+  }
+
+  function getSubtotal() {
+    return Object.values(cart).reduce((sum, item) => {
+      const product = findProductByKey(item.uiKey || item.code || item.name);
+      const unit = clean(item.unit || "carton");
+      const qty = toNum(item.qty);
+      const unitPrice = product ? getTierUnitPrice(product, unit) : toNum(item.price || item.basePrice || 0);
+      return sum + qty * unitPrice;
+    }, 0);
+  }
+
+  function getCartTotal() {
+    return getSubtotal();
+  }
+
+  function getPayableTotal() {
+    return getCartTotal();
+  }
+
+  function getTierMin() {
+    return selectedTier ? toNum(selectedTier.tier_min) : 0;
+  }
+
+  function getTierDiscount() {
+    return 0;
+  }
+
+  function getDiscountAmount() {
+    return 0;
+  }
+
+  function getDiscountedPrice(base) {
+    return toNum(base);
+  }
+
+  function isTierSatisfied() {
+    return !selectedTier || getCartTotal() >= getTierMin();
+  }
+
+  function updateTierActionButton() {
+    if (!el.tierActionBtn) return;
+    el.tierActionBtn.textContent = selectedTier
+      ? `${currentTierLabel()} (اضغط لتغيير الشريحة)`
+      : "💰 شرائح الجملة VIP";
+  }
+
+  function renderTierBanner() {
+    const wrap = document.getElementById("tierBanner");
+    const host = document.getElementById("tiersWrap");
+    if (!wrap || !host) return;
+    updateTierActionButton();
+    if (!selectedTier) {
+      host.style.display = "none";
+      wrap.innerHTML = "";
+      return;
+    }
+    host.style.display = "block";
+    wrap.style.display = "block";
+    wrap.innerHTML = `
+      <div class="tierBannerRow">
+        <div>الشريحة الحالية: <b>${escapeHtml(currentTierLabel())}</b> — الحد الأدنى <b>${formatMoney(getTierMin())} جنيه</b></div>
+        <button class="tierBannerAction" onclick="clearTier()">إلغاء الشريحة</button>
+      </div>
+    `;
+  }
+
+  function updateFooterTotal() {
+    el.totalBox.textContent = `${formatMoney(getCartTotal())} جنيه`;
+  }
+
+  function syncFooter() {
+    el.footerPrimary.textContent = currentPage === "review" ? "إرسال الطلب" : "إتمام الشراء";
+    el.footerPrimary.onclick = currentPage === "review" ? sendOrder : openReview;
+    el.footerBack.textContent = "رجوع";
+    el.footerBack.onclick = goBack;
+  }
+
+  function renderGlobalSearchAndBrandShell(content) {
+    return `
+      ${pageSearchBar()}
+      ${tierBannerHost()}
+      ${content}
+    `;
+  }
+
+  function executeGlobalSearch() {
+    const input = document.getElementById("searchInput");
+    searchQuery = clean(input?.value || searchQuery);
+    renderHome(false);
+  }
+
+  function clearSearch() {
+    searchQuery = "";
+    const input = document.getElementById("searchInput");
+    if (input) input.value = "";
+    if (currentPage === "home") {
+      renderHome(false);
+    }
+  }
+
+  function debouncedSearch(value) {
+    searchQuery = clean(value);
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      if (currentPage === "home") renderSearchAndBrands();
+    }, 180);
+  }
+
+  function renderSearchAndBrands() {
+    const resultsContainer = document.getElementById("searchResults");
+    const brandsContainer = document.getElementById("brandsArea");
+    if (!resultsContainer || !brandsContainer) return;
+    const q = clean(searchQuery);
+    const brands = getBrandOrder();
+    if (q) {
+      const results = sortSearchResults(products, q);
+      resultsContainer.innerHTML = results.length
+        ? `<div class="searchHint">نتائج البحث: ${results.length}</div>${renderProductsGrid(results)}`
+        : `<div class="emptyState">لا توجد نتائج مطابقة</div>`;
+      brandsContainer.innerHTML = `<div class="sectionTitle">الأقسام</div>${renderBrandsGrid(brands)}`;
+    } else {
+      resultsContainer.innerHTML = "";
+      brandsContainer.innerHTML = renderBrandsGrid(brands);
+    }
+    bindBrandCards();
+  }
+
+  function refreshProductPrice(uiKey) {
+    const product = findProductByKey(uiKey);
+    const priceBox = document.getElementById(`price_${uiKey}`);
+    if (!product || !priceBox) return;
+    priceBox.outerHTML = buildPriceBlock(product, uiKey);
+  }
+
+  function buildPriceBlock(product, uiKey) {
+    const unit = clean(drafts[uiKey]?.unit || getPrimaryUnit(product) || "carton");
+    const base = getBaseUnitPrice(product, unit);
+    const final = getTierUnitPrice(product, unit);
+    const label = UNIT_NAMES[unit] || "الوحدة";
+    const tierLabel = currentTierLabel() || currentTierKey();
+    if (selectedTier && base > 0 && final > 0 && final !== base) {
+      return `
+        <div class="priceWrap" id="price_${uiKey}">
+          <div class="priceOld">سعر ${label}: ${formatMoney(base)} جنيه</div>
+          <div class="priceNew">💰 ${escapeHtml(tierLabel)}: ${formatMoney(final)} جنيه</div>
+        </div>
+      `;
+    }
+    return `
+      <div class="priceWrap" id="price_${uiKey}">
+        <div class="cartonPrice">سعر ${label}: ${formatMoney(final)} جنيه</div>
+        ${selectedTier ? `<div class="priceTag">${escapeHtml(tierLabel)}</div>` : ""}
+      </div>
+    `;
+  }
+
+  function renderProductCard(p, index = 0) {
+    const uiKey = p.__uiKey || safeKey(p, index);
+    const img = clean(p.image) || PLACEHOLDERS.product(getDisplayName(p));
+    const active = isActiveProduct(p);
+    const addable = isAddableToCart(p);
+    const offer = isOfferProduct(p);
+    const displayName = getDisplayName(p);
+    const selectedUnit = clean(drafts[uiKey]?.unit);
+    const qtyValue = clean(drafts[uiKey]?.qty);
+    const offerLabel = getOfferLabel(p);
+    const units = getAvailableUnits(p);
+
+    if (!active) {
+      return `<div class="card productCard"><img class="productImg" src="${img}" alt="${escapeAttr(displayName)}" onerror="this.src='${PLACEHOLDERS.product(displayName)}'"><div class="productName">${escapeHtml(displayName)}</div><div class="stockBadge inactive">نفذت الكمية ستصل قريبًا</div></div>`;
+    }
+
+    const priceLine = offer
+      ? (() => {
+          const offerPrice = getBaseUnitPrice(p, "offer");
+          return offerPrice > 0 ? `<div class="price offer" id="price_${uiKey}">سعر العرض: ${formatMoney(offerPrice)} جنيه</div>` : "";
+        })()
+      : buildPriceBlock(p, uiKey);
+
+    const unitSelect = offer ? "" : (units.length ? `<select class="unitSelect" id="unit_${uiKey}" onchange="selectUnit('${uiKey}', this.value)" ${!addable ? "disabled" : ""}><option value="">اختر الوحدة</option>${buildAvailableUnitsOptions(p, selectedUnit)}</select>` : "");
+    const controls = (units.length || offer) ? `<div class="qtyWrap"><button class="qtyBtn" id="minus_${uiKey}" onclick="changeQty('${uiKey}', -1)" ${!addable ? "disabled" : ""}>-</button><input class="qtyInput" id="qty_${uiKey}" inputmode="numeric" value="${escapeAttr(qtyValue)}" oninput="draftQty('${uiKey}', this.value)" ${!addable ? "disabled" : ""}><button class="qtyBtn" id="plus_${uiKey}" onclick="changeQty('${uiKey}', 1)" ${!addable ? "disabled" : ""}>+</button></div><button class="addBtn ${offer ? "offer" : ""}" onclick="addToCart('${uiKey}')" ${!addable ? "disabled" : ""}>أضف للسلة</button>` : "";
+
+    return `<div class="card productCard ${offer ? "offerCard" : ""}" id="card_${uiKey}"><img class="productImg" src="${img}" alt="${escapeAttr(displayName)}" onerror="this.src='${PLACEHOLDERS.product(displayName)}'"><div class="productName">${escapeHtml(displayName)}</div>${offer ? `<div class="offerLabel">${escapeHtml(offerLabel || "عرض خاص")}</div>` : ""}${priceLine}${(!addable && units.length) ? `<div class="stockBadge inactive">غير متاح للطلب</div>` : ""}${unitSelect}${controls}</div>`;
+  }
+
+  function renderProductsGrid(list) {
+    return list.length ? `<div class="grid">${list.map((p, i) => renderProductCard(p, i)).join("")}</div>` : `<div class="emptyState">لا توجد عناصر للعرض</div>`;
+  }
+
+  function renderHome(replace = false) {
+    brandPageStyle = "standard";
+    brandReturnTarget = "home";
+    setMode("home");
+    applyBrandStyle();
+    scrollTop();
+    document.title = "الأهرام للتجارة والتوزيع";
+    logEvent("page_home");
+    el.backBtn.style.display = "none";
+    routeSet("home", {}, replace || !history.state);
+    el.app.innerHTML = renderGlobalSearchAndBrandShell(`
+      ${renderContactDock()}
+      <div id="searchResults"></div>
+      <div id="brandsArea"></div>
+      <div class="designSignature">تم التصميم بواسطة YaSsEr EL Joker</div>
+    `);
+    renderSearchAndBrands();
+    renderTierBanner();
+    updateFooterTotal();
+    syncFooter();
+    updateTierActionButton();
+    el.tierActionBtn.classList.remove("active");
+    el.offerActionBtn.classList.remove("active");
+  }
+
+  function renderBrandProducts(company, returnTo = "home", replace = false) {
+    const companyName = clean(company);
+    if (companyName === "صفقة اليوم") {
+      openOffersPage();
+      return;
+    }
+    lastCompany = companyName;
+    brandReturnTarget = returnTo === "vip" ? "vip" : "home";
+    brandPageStyle = brandReturnTarget === "vip" ? "vip" : "standard";
+    setMode("products");
+    applyBrandStyle();
+    scrollTop();
+    document.title = `${companyName} - الأهرام للتجارة والتوزيع`;
+    logEvent("page_brand", { company: companyName, returnTo: brandReturnTarget });
+    el.backBtn.style.display = "block";
+    routeSet("products", { company: companyName, returnTo: brandReturnTarget }, replace);
+
+    const list = filterProductsByCompany(companyName).map((p, i) => ({ ...p, __uiKey: getProductKey(p) }));
+    if (!list.length) {
+      el.app.innerHTML = renderGlobalSearchAndBrandShell(renderPageCard(companyName, "لا توجد منتجات داخل هذا القسم", "blue"));
+      updateFooterTotal();
+      syncFooter();
+      updateTierActionButton();
+      return;
+    }
+
+    el.app.innerHTML = renderGlobalSearchAndBrandShell(`
+      ${renderPageCard(companyName, "اختر الوحدة ثم الكمية وأضف مباشرة للسلة.", "blue")}
+      ${renderProductsGrid(list)}
+    `);
+    list.forEach(p => restoreDraftForProduct(p.__uiKey));
+    renderTierBanner();
+    updateFooterTotal();
+    syncFooter();
+    updateTierActionButton();
+  }
+
+  function renderTiersPage(replace = false) {
+    reviewReturn = { type: "tiers", value: null };
+    brandPageStyle = "standard";
+    brandReturnTarget = "home";
+    setMode("tiers");
+    applyBrandStyle();
+    scrollTop();
+    document.title = "الشرائح - الأهرام للتجارة والتوزيع";
+    logEvent("page_tiers");
+    el.backBtn.style.display = "block";
+    routeSet("tiers", {}, replace);
+
+    const welcome = splitSettingsTypes(["tier_welcome","tiers_welcome","tier intro","tiers intro","welcome tier","welcome tiers"]) || "اختر الشريحة المناسبة لك واستفد من أسعار VIP مباشرة.";
+    const terms = splitSettingsTypes(["tier_terms","tiers_terms","tier_conditions","tiers_conditions","شروط الشرائح","الشرائح"]) || "شروط الشرائح تُعرض هنا من Google Sheet ويمكن تعديلها من الشيت مباشرة.";
+
+    const cards = tiersData.filter(t => clean(t?.active || t?.tier_active || "1") === "1" || clean(t?.status || "").toLowerCase() === "active").map(t => {
+      const key = clean(t.tier_name || t.tier_id || t.id || "");
+      const protectedTier = tierIsProtected(t);
+      const unlocked = tierIsUnlocked(t);
+      const active = selectedTier && key === currentTierKey();
+      const lockBadge = protectedTier ? (unlocked ? "🔓 مفتوح" : "🔒 مقفل") : "متاح";
+      const btnText = active ? "الشريحة الحالية" : (protectedTier && !unlocked ? "دخول بالرقم السري" : "اختيار الشريحة");
+      const desc = clean(t.tier_description || "—");
+      return `
+        <div class="tierCard ${active ? "active" : ""} ${protectedTier && !unlocked ? "locked" : ""}">
+          <div class="tierCardName">
+            <span>${escapeHtml(clean(t.visible_label || t.tier_name || key))}</span>
+            <span class="tierBadge">${lockBadge}</span>
+          </div>
+          <div class="tierCardMeta">
+            <div>الحد الأدنى: <b>${formatMoney(t.tier_min || 0)} جنيه</b></div>
+          </div>
+          <div class="tierCardDesc">${escapeHtml(desc)}</div>
+          <button class="tierCardBtn ${protectedTier && !unlocked ? "locked" : ""}" onclick="tierCardClick('${escapeAttr(key)}')">${escapeHtml(btnText)}</button>
+        </div>
+      `;
+    }).join("");
+
+    el.app.innerHTML = renderGlobalSearchAndBrandShell(`
+      ${renderPageCard("شرائح الجملة VIP", welcome, "blue")}
+      ${renderPageCard("شروط الشرائح", terms, "blue")}
+      ${selectedTier ? renderPageCard("الشريحة الحالية", `أنت الآن على شريحة: ${escapeHtml(currentTierLabel())}`, "blue") : ""}
+      <div class="tierPageActions">
+        <button class="miniDanger" onclick="clearTier()">إلغاء الشريحة</button>
+        <button class="vipLaunchBtn" onclick="openTierProductsPage()">اختار منتجاتك</button>
+      </div>
+      <div class="tiersGrid">${cards}</div>
+    `);
+    renderTierBanner();
+    syncFooter();
+    updateTierActionButton();
+    el.tierActionBtn.classList.add("active");
+    el.offerActionBtn.classList.remove("active");
+  }
+
+  function tierCardClick(tierId) {
+    const t = tiersData.find(x => clean(x.tier_name || x.tier_id || x.id || "") === clean(tierId));
+    if (t) chooseTier(t);
+  }
+
+  function openTierProductsPage(replace = false) {
+    renderTierProductsPage(replace);
+  }
+
+  function renderTierProductsPage(replace = false) {
+    reviewReturn = { type: "vipBrands", value: null };
+    brandPageStyle = "vip";
+    brandReturnTarget = "vip";
+    setMode("vipBrands");
+    applyBrandStyle();
+    scrollTop();
+    document.title = "اختار منتجاتك - شرائح الجملة VIP";
+    logEvent("page_vip_brands");
+    el.backBtn.style.display = "block";
+    routeSet("vipBrands", {}, replace);
+
+    const brands = getBrandOrder();
+    const intro = selectedTier
+      ? `أنت الآن على ${escapeHtml(currentTierLabel())}`
+      : "اختر المنتجات التي تناسبك ثم أكمل الشراء مباشرة.";
+
+    el.app.innerHTML = renderGlobalSearchAndBrandShell(`
+      ${renderPageCard("اختار منتجاتك", intro, "gold")}
+      ${selectedTier ? renderPageCard("ملاحظات الشريحة", `الحد الأدنى: ${formatMoney(getTierMin())} جنيه — استخدم زر إلغاء الشريحة إذا أردت الرجوع للوضع العادي.`, "gold") : renderPageCard("ملاحظات", "يمكنك التصفح والشراء مباشرة من البراندات.", "gold")}
+      ${renderContactDock()}
+      <div class="sectionTitle">البراندات</div>
+      ${renderBrandsGrid(brands)}
+      <div class="designSignature">تجربة VIP للجملة</div>
+    `);
+    bindBrandCards();
+    renderTierBanner();
+    syncFooter();
+    updateTierActionButton();
+    el.tierActionBtn.classList.add("active");
+    el.offerActionBtn.classList.remove("active");
+  }
+
+  function openTiersPage() {
+    renderTiersPage();
+  }
+
+  function renderOffersPage(replace = false) {
+    reviewReturn = { type: "offers", value: null };
+    brandPageStyle = "standard";
+    brandReturnTarget = "home";
+    setMode("offers");
+    applyBrandStyle();
+    scrollTop();
+    document.title = "صفقة اليوم - الأهرام للتجارة والتوزيع";
+    logEvent("page_offers");
+    el.backBtn.style.display = "block";
+    routeSet("offers", {}, replace);
+
+    const welcome = splitSettingsTypes(["offer_welcome","offers_welcome","offer intro","offers intro","صفقة اليوم","العروض"]) || "صفقة اليوم مخصصة لتحفيز الشراء السريع وعروضها لا تُجمع مع الشرائح.";
+    const terms = splitSettingsTypes(["offer_terms","offers_terms","offer_conditions","offers_conditions","شروط الصفقات","شروط العروض"]) || "شروط صفقات اليوم تُعرض هنا من Google Sheet ويمكن تعديلها مباشرة من الشيت.";
+
+    if (selectedTier) {
+      el.app.innerHTML = renderGlobalSearchAndBrandShell(`
+        ${renderPageCard("صفقة اليوم", "لا يمكن الجمع بين صفقة اليوم والشريحة الحالية. يمكنك إلغاء الشريحة لفتح العروض.", "gold", `<div style="margin-top:10px"><button class="smallBtn" style="width:100%;min-height:40px" onclick="clearTier()">إلغاء الشريحة وفتح الصفقات</button></div>`)}
+        ${renderPageCard("شروط العروض", terms, "gold")}
+      `);
+      renderTierBanner();
+      syncFooter();
+      updateTierActionButton();
+      el.tierActionBtn.classList.remove("active");
+      el.offerActionBtn.classList.add("active");
+      return;
+    }
+
+    const offers = products.filter(p => isOfferProduct(p) && clean(p.status).toLowerCase() === "active").map((p, i) => ({ ...p, __uiKey: getProductKey(p) }));
+    const cards = offers.map(p => {
+      const uiKey = p.__uiKey;
+      const img = clean(p.image) || PLACEHOLDERS.product(getDisplayName(p));
+      const offerLabel = getOfferLabel(p);
+      const units = getAvailableUnits(p);
+      const primaryUnit = getPrimaryUnit(p);
+      const base = primaryUnit ? getBaseUnitPrice(p, primaryUnit) : getBaseUnitPrice(p, "offer");
+      return `<div class="card productCard offerCard"><img class="productImg" src="${img}" alt="${escapeAttr(getDisplayName(p))}" onerror="this.src='${PLACEHOLDERS.product(getDisplayName(p))}'"><div class="productName">${escapeHtml(getDisplayName(p))}</div><div class="offerLabel">${escapeHtml(offerLabel || "عرض خاص")}</div>${base > 0 ? `<div class="price offer" id="price_${uiKey}">سعر العرض: ${formatMoney(base)} جنيه</div>` : ""}${units.length ? `<select class="unitSelect" id="unit_${uiKey}" onchange="selectUnit('${uiKey}', this.value)"><option value="">اختر الوحدة</option>${buildAvailableUnitsOptions(p)}</select>` : ""}<div class="qtyWrap"><button class="qtyBtn" id="minus_${uiKey}" onclick="changeQty('${uiKey}', -1)">-</button><input class="qtyInput" id="qty_${uiKey}" inputmode="numeric" value="${escapeAttr(clean(drafts[uiKey]?.qty) || "")}" oninput="draftQty('${uiKey}', this.value)"><button class="qtyBtn" id="plus_${uiKey}" onclick="changeQty('${uiKey}', 1)">+</button></div><button class="addBtn offer" onclick="addToCart('${uiKey}')">أضف للسلة</button></div>`;
+    }).join("");
+
+    el.app.innerHTML = renderGlobalSearchAndBrandShell(`
+      ${renderPageCard("صفقة اليوم", welcome, "gold")}
+      ${renderPageCard("شروط العروض", terms, "gold")}
+      ${offers.length ? `<div class="grid">${cards}</div>` : `<div class="emptyState">لا توجد عروض حالياً</div>`}
+    `);
+    renderTierBanner();
+    syncFooter();
+    updateTierActionButton();
+    el.tierActionBtn.classList.remove("active");
+    el.offerActionBtn.classList.add("active");
+  }
+
+  function openOffersPage(replace = false) {
+    renderOffersPage(replace);
+  }
+
+  function chooseTier(t) {
+    if (tierIsProtected(t) && !tierIsUnlocked(t)) return promptTierUnlock(t);
+    selectedTier = t;
+    persistAll();
+    updateTierActionButton();
+    renderTierBanner();
+    if (currentPage === "home") renderHome(false);
+    else if (currentPage === "tiers") renderTiersPage(true);
+    else if (currentPage === "products") renderBrandProducts(lastCompany, brandReturnTarget, true);
+    else if (currentPage === "offers") renderOffersPage(true);
+    else if (currentPage === "vipBrands") renderTierProductsPage(true);
+    else if (currentPage === "review") renderReview(true);
+    updateFooterTotal();
+    notify("تم اختيار الشريحة", "ok");
+    logEvent("select_tier", { tier: clean(t?.tier_name || "") });
+  }
+
+  function clearTier() {
+    selectedTier = null;
+    persistAll();
+    updateTierActionButton();
+    renderTierBanner();
+    if (currentPage === "home") renderHome(false);
+    else if (currentPage === "tiers") renderTiersPage(true);
+    else if (currentPage === "products") renderBrandProducts(lastCompany, brandReturnTarget, true);
+    else if (currentPage === "offers") renderOffersPage(true);
+    else if (currentPage === "vipBrands") renderTierProductsPage(true);
+    else if (currentPage === "review") renderReview(true);
+    updateFooterTotal();
+    notify("تم إلغاء الشريحة", "info");
+    logEvent("clear_tier");
+  }
+
+  function promptTierUnlock(t) {
+    const secret = window.prompt(`أدخل الرقم السري للشريحة: ${clean(t?.visible_label || t?.tier_name || "")}`);
+    if (secret === null) return;
+    if (clean(secret) === tierPassword(t)) {
+      const key = clean(t?.tier_name || t?.tier_id || t?.id || "");
+      unlockedTiers[key] = true;
+      persistAll();
+      notify("تم فتح الشريحة", "ok");
+      chooseTier(t);
+    } else {
+      notify("الرقم السري غير صحيح", "error");
+    }
+  }
+
+  function selectUnit(uiKey, unit, silent = false) {
+    const product = findProductByKey(uiKey);
+    if (!product || isOfferProduct(product) || !isAddableToCart(product)) return;
+    const u = clean(unit);
+    drafts[uiKey] = drafts[uiKey] || {};
+    drafts[uiKey].unit = u;
+    persistAll();
+    refreshProductPrice(uiKey);
+    if (!silent) notify(`تم اختيار ${UNIT_NAMES[u] || "الوحدة"}`, "info");
+  }
+
+  function draftQty(uiKey, value) {
+    const cleaned = clean(value).replace(/[^\d]/g, "");
+    drafts[uiKey] = drafts[uiKey] || {};
+    drafts[uiKey].qty = cleaned === "" ? "" : parseInt(cleaned, 10);
+    persistAll();
+  }
+
+  function changeQty(uiKey, delta) {
+    const input = document.getElementById(`qty_${uiKey}`);
+    if (!input) return;
+    let current = parseInt(clean(input.value), 10);
+    if (!Number.isFinite(current) || current <= 0) current = 1;
+    current += delta;
+    if (current < 1) current = 1;
+    input.value = String(current);
+    draftQty(uiKey, input.value);
+  }
+
+  function addToCart(uiKey) {
+    const product = findProductByKey(uiKey);
+    if (!product) {
+      notify("خطأ في المنتج", "error");
+      return;
+    }
+    if (!isAddableToCart(product)) {
+      notify("نفذت الكمية ستصل قريبًا", "error");
+      return;
+    }
+    const offerMode = isOfferProduct(product);
+    const unit = offerMode ? "offer" : clean(drafts[uiKey]?.unit || document.getElementById(`unit_${uiKey}`)?.value);
+    if (!offerMode && !unit) {
+      notify("اختر الوحدة أولاً", "error");
+      return;
+    }
+    let qty = clean(drafts[uiKey]?.qty || document.getElementById(`qty_${uiKey}`)?.value);
+    qty = qty === "" ? 1 : parseInt(qty, 10);
+    if (!Number.isFinite(qty) || qty <= 0) qty = 1;
+    const unitPrice = getTierUnitPrice(product, unit);
+    if (!unitPrice) {
+      notify("السعر غير متاح لهذا الصنف", "error");
+      return;
+    }
+    cart[clean(uiKey)] = {
+      uiKey: clean(uiKey),
+      code: getProductCode(product),
+      name: getDisplayName(product),
+      company: clean(product.company),
+      unit,
+      qty,
+      price: unitPrice,
+      basePrice: getBaseUnitPrice(product, unit)
+    };
+    persistAll();
+    updateFooterTotal();
+    notify("تمت الإضافة للسلة", "ok");
+    logEvent("add_to_cart", { code: getProductCode(product), name: getDisplayName(product), company: clean(product.company), unit, qty });
+  }
+
+  function buildOrderItemsPayload() {
+    return Object.values(cart).map(item => {
+      const product = findProductByKey(item.uiKey || item.code || item.name);
+      const unit = clean(item.unit || "carton");
+      const unitPrice = product ? getTierUnitPrice(product, unit) : toNum(item.price || item.basePrice || 0);
+      return {
+        order_id: "",
+        product_code: item.code || "",
+        product_name: item.name || "",
+        company: item.company || "",
+        unit,
+        quantity: toNum(item.qty),
+        price_after_discount: unitPrice,
+        item_total: toNum(item.qty) * unitPrice
+      };
+    });
+  }
+
+  function buildOrderPayload() {
+    const name = clean(document.getElementById("custName")?.value);
+    const phone = clean(document.getElementById("custPhone")?.value);
+    const business = clean(document.getElementById("custBusiness")?.value);
+    const address = clean(document.getElementById("custAddress")?.value);
+    const location = clean(customer.location || "");
+    const total = getCartTotal();
+    const orderId = `ORD-${Date.now()}`;
+    return {
+      order_id: orderId,
+      time: new Date().toISOString(),
+      name,
+      phone,
+      business,
+      address,
+      location,
+      tier: currentTierKey() || "بدون",
+      tier_label: selectedTier ? currentTierLabel() : "بدون",
+      tier_min: selectedTier ? getTierMin() : 0,
+      subtotal: total,
+      total,
+      status: "تم التواصل مع العميل",
+      notes: "",
+      items_count: Object.keys(cart).length,
+      items: buildOrderItemsPayload(),
+      items_json: JSON.stringify(buildOrderItemsPayload())
+    };
+  }
+
+  function buildWhatsAppMessage(payload) {
+    const unitMap = { carton: "كرتونة", dozen: "دستة", piece: "قطعة", offer: "عرض" };
+    const lines = [];
+    lines.push(`طلب شراء من : ${payload.name}`);
+    lines.push(`رقم التليفون : ${payload.phone}`);
+    lines.push(`العنوان : ${payload.address}`);
+    lines.push(`اسم النشاط : ${payload.business}`);
+    lines.push(`اللوكيشن : ${payload.location}`);
+    lines.push("");
+    if (payload.tier_label && payload.tier_label !== "بدون") {
+      lines.push(`الشريحة : ${payload.tier_label}`);
+      lines.push("");
+    }
+    lines.push("بيان الفاتورة");
+    lines.push("");
+    buildOrderItemsPayload().forEach(item => {
+      lines.push(`كود الصنف : ${item.product_code || "-"}`);
+      lines.push(`اسم الصنف : ${item.product_name}`);
+      lines.push(`الوحدة : ${unitMap[item.unit] || item.unit}`);
+      lines.push(`الكميه : ${item.quantity}`);
+      lines.push(`السعر : ${formatMoney(item.price_after_discount)} جنيه`);
+      lines.push(`اجمالي الصنف بالجنيه : ${formatMoney(item.item_total)} جنيه`);
+      lines.push("");
+    });
+    lines.push(`إجمالي الفاتورة : ${formatMoney(payload.total)} جنيه`);
+    return lines.join("\n");
+  }
+
+  function sendOrder() {
+    const name = clean(document.getElementById("custName")?.value);
+    const phone = clean(document.getElementById("custPhone")?.value);
+    const business = clean(document.getElementById("custBusiness")?.value);
+    const address = clean(document.getElementById("custAddress")?.value);
+    const location = clean(customer.location || "");
+    if (!name || !phone || !business || !address || !location) {
+      notify("من فضلك أكمل بيانات العميل واللوكيشن", "error");
+      return;
+    }
+    if (selectedTier && !isTierSatisfied()) {
+      notify("لم يتم تحقيق الشريحة بعد", "error");
+      return;
+    }
+    customer = { name, phone, business, address, location };
+    persistAll();
+    const payload = buildOrderPayload();
+    saveJSON(LS.latestOrder, payload);
+    logEvent("order_prepare", { order_id: payload.order_id, total: payload.total, items_count: payload.items_count });
+    postOrderToSheet(payload);
+    window.open(`https://wa.me/201040880002?text=${encodeURIComponent(buildWhatsAppMessage(payload))}`, "_blank");
+    notify("تم تجهيز الطلب وإرساله", "ok");
+    logEvent("order_sent", { order_id: payload.order_id, total: payload.total, items_count: payload.items_count });
+  }
+
+  function openReview(replace = false) {
+    reviewReturn = { type: currentPage, value: lastCompany, returnTo: brandReturnTarget };
+    renderReview(replace);
+  }
+
+  function renderReview(replace = false) {
+    setMode("review");
+    scrollTop();
+    document.title = "إتمام الشراء - الأهرام للتجارة والتوزيع";
+    logEvent("page_review");
+    el.backBtn.style.display = "block";
+    routeSet("review", { returnTo: reviewReturn, company: lastCompany, brandReturnTarget }, replace);
+
+    const items = Object.values(cart);
+    const total = getCartTotal();
+    const satisfied = isTierSatisfied();
+    const tierLabel = currentTierLabel();
+
+    if (!items.length) {
+      el.app.innerHTML = renderGlobalSearchAndBrandShell(`
+        <div class="emptyState">السلة فارغة</div>
+        <div style="height:10px"></div>
+        <div class="card"><button class="mainBtn secondary" onclick="goBack()">⬅ الرجوع للتسوق</button></div>
+      `);
+      updateFooterTotal();
+      syncFooter();
+      renderTierBanner();
+      updateTierActionButton();
+      return;
+    }
+
+    let html = `<div class="reviewWrap">`;
+    html += `
+      <div class="reviewSummary">
+        <div class="reviewSummaryTop">
+          <div><b>إتمام الشراء</b></div>
+          <button class="miniDanger" onclick="clearCartConfirm()">🗑️ تصفير السلة</button>
+        </div>
+        <div><b>إجمالي السلة:</b> ${formatMoney(total)} جنيه</div>
+      </div>
+      ${selectedTier ? (satisfied
+        ? `<div class="reviewTierState ok">أنت الآن على شريحة <b>${escapeHtml(tierLabel)}</b> — تم تحقيق الشريحة يمكنك الآن إرسال الفاتورة.</div>`
+        : `<div class="reviewTierState warn">أنت الآن على شريحة <b>${escapeHtml(tierLabel)}</b> — متبقي <b>${formatMoney(getTierMin() - total)} جنيه</b> لتحقيق الفاتورة.</div>`) : `<div class="reviewTierState">لم يتم اختيار شريحة بعد.</div>`}
+      <div class="formCard">
+        <input class="input" id="custName" placeholder="اسم العميل" value="${escapeAttr(customer.name || "")}">
+        <input class="input" id="custPhone" placeholder="رقم الهاتف" value="${escapeAttr(customer.phone || "")}">
+        <input class="input" id="custBusiness" placeholder="اسم النشاط" value="${escapeAttr(customer.business || "")}">
+        <input class="input" id="custAddress" placeholder="العنوان" value="${escapeAttr(customer.address || "")}">
+        <button class="mainBtn secondary" onclick="setLocation()">📍 اضغط لإضافة اللوكيشن</button>
+        <div class="locationStatus" id="locationStatus">${customer.location ? "✔ تم حفظ اللوكيشن" : ""}</div>
+        <div style="height:10px"></div>
+        <button class="mainBtn primary" id="sendNowBtn" onclick="sendOrder()" ${selectedTier && !satisfied ? "disabled" : ""}>إرسال الطلب الآن</button>
+        <div style="height:8px"></div>
+        <button class="mainBtn secondary" onclick="goBack()">⬅ الرجوع للتسوق</button>
+      </div>
+    `;
+    items.forEach(item => {
+      const product = findProductByKey(item.uiKey || item.code || item.name);
+      const unit = clean(item.unit || "carton");
+      const unitPrice = product ? getTierUnitPrice(product, unit) : toNum(item.price || item.basePrice || 0);
+      const lineTotal = toNum(item.qty) * unitPrice;
+      const isOfferItem = unit === "offer";
+      html += `
+        <div class="reviewItem">
+          <div class="reviewItemTop">${escapeHtml(item.name)}${item.code ? ` (${escapeHtml(item.code)})` : ""}</div>
+          <div>الوحدة: ${escapeHtml(isOfferItem ? "عرض" : (UNIT_NAMES[unit] || unit))}</div>
+          <div>الكمية: ${item.qty}</div>
+          <div>السعر: ${formatMoney(unitPrice)} جنيه</div>
+          <div><b>إجمالي الصنف بالجنيه:</b> ${formatMoney(lineTotal)} جنيه</div>
+          <div class="reviewControls">
+            <button class="qtyBtn" onclick="reviewQty('${item.uiKey}', -1)">-</button>
+            <input class="reviewQtyInput" value="${item.qty}" inputmode="numeric" oninput="reviewQtyInput('${item.uiKey}', this.value)">
+            <button class="qtyBtn" onclick="reviewQty('${item.uiKey}', 1)">+</button>
+          </div>
+          <div class="reviewAction" onclick="removeFromCart('${item.uiKey}')">حذف</div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    el.app.innerHTML = renderGlobalSearchAndBrandShell(html);
+    updateFooterTotal();
+    syncFooter();
+    renderTierBanner();
+    updateTierActionButton();
+  }
+
+  function backToShopping() {
+    if (reviewReturn?.type === "products" && reviewReturn?.value) {
+      history.back();
+    } else {
+      history.back();
+    }
+  }
+
+  function goBack() {
+    if (currentPage === "home") {
+      if (confirm("هل تريد الخروج من المتجر؟")) {
+        window.history.back();
+      }
+      return;
+    }
+    window.history.back();
+  }
+
+  function setLocation() {
+    if (!navigator.geolocation) {
+      notify("الموقع غير مدعوم على هذا الجهاز", "error");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(pos => {
+      customer.location = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+      persistAll();
+      const loc = document.getElementById("locationStatus");
+      if (loc) loc.textContent = "✔ تم تحديد اللوكيشن";
+      notify("تم تحديد اللوكيشن", "ok");
+      logEvent("set_location");
+    }, () => notify("تعذر تحديد اللوكيشن", "error"), { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
+  }
+
+  function renderCurrentState(replace = false) {
+    if (currentPage === "home") return renderHome(replace);
+    if (currentPage === "products") return renderBrandProducts(lastCompany, brandReturnTarget, replace);
+    if (currentPage === "tiers") return renderTiersPage(replace);
+    if (currentPage === "vipBrands") return renderTierProductsPage(replace);
+    if (currentPage === "offers") return renderOffersPage(replace);
+    if (currentPage === "review") return renderReview(replace);
+    return renderHome(replace);
+  }
+
+  const oldPrompt = window.promptTierUnlock;
+  window.promptTierUnlock = promptTierUnlock;
+  window.executeGlobalSearch = executeGlobalSearch;
+  window.clearSearch = clearSearch;
+  window.debouncedSearch = debouncedSearch;
+  window.renderHome = renderHome;
+  window.renderBrandProducts = renderBrandProducts;
+  window.renderTiersPage = renderTiersPage;
+  window.renderTierProductsPage = renderTierProductsPage;
+  window.renderOffersPage = renderOffersPage;
+  window.chooseTier = chooseTier;
+  window.clearTier = clearTier;
+  window.tierCardClick = tierCardClick;
+  window.openTiersPage = openTiersPage;
+  window.openOffersPage = openOffersPage;
+  window.openTierProductsPage = openTierProductsPage;
+  window.renderReview = renderReview;
+  window.openReview = openReview;
+  window.backToShopping = backToShopping;
+  window.goBack = goBack;
+  window.selectUnit = selectUnit;
+  window.draftQty = draftQty;
+  window.changeQty = changeQty;
+  window.addToCart = addToCart;
+  window.sendOrder = sendOrder;
+  window.setLocation = setLocation;
+  window.renderSearchAndBrands = renderSearchAndBrands;
+  window.refreshProductPrice = refreshProductPrice;
+  window.getSubtotal = getSubtotal;
+  window.getPayableTotal = getPayableTotal;
+  window.getDiscountAmount = getDiscountAmount;
+  window.getTierMin = getTierMin;
+  window.getTierDiscount = getTierDiscount;
+  window.getDiscountedPrice = getDiscountedPrice;
+  window.isTierSatisfied = isTierSatisfied;
+  window.renderTierBanner = renderTierBanner;
+  window.syncFooter = syncFooter;
+  window.updateFooterTotal = updateFooterTotal;
+  window.updateTierActionButton = updateTierActionButton;
+  window.getAvailableUnits = getAvailableUnits;
+  window.getPrimaryUnit = getPrimaryUnit;
+  window.getBaseUnitPrice = getBaseUnitPrice;
+  window.getTierUnitPrice = getTierUnitPrice;
+  window.getProductKey = getProductKey;
+  window.getProductCode = getProductCode;
+  window.getDisplayName = getDisplayName;
+  window.getOfferLabel = getOfferLabel;
+  window.isOfferProduct = isOfferProduct;
+  window.isTierUnlocked = tierIsUnlocked;
+  window.isProtectedTier = tierIsProtected;
+
+  injectAlaStyles();
+  updateTierActionButton();
+
+  if (!window.__alahramBootPatched) {
+    window.__alahramBootPatched = true;
+    const originalPromiseAll = Promise.all;
+    window.addEventListener("load", () => {
+      if (!history.state) {
+        history.replaceState({ appPage: "home" }, "", location.href);
+      }
+    });
+  }
+})();
+
+
+Promise.all([loadCSV(URLS.products), loadCSV(URLS.tiers), loadCSV(URLS.settings)]).then(([productsRes, tiersRes, settingsRes]) => { products = productsRes.filter(x => clean(x.company)).map((p,i)=>({...p,__uiKey:getProductKey(p)})); tiersData = tiersRes.filter(x => clean(x.tier_active) === "1" || clean(x.active) === "1" || clean(x.status).toLowerCase() === "active"); settings = settingsRes; initHeader(); renderTierBanner(); renderHome(); updateFooterTotal(); syncFooter(); logEvent("visit"); if("serviceWorker" in navigator){ window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{})); } }).catch(() => { el.app.innerHTML = `<div class="emptyState">تعذر تحميل البيانات. راجع روابط الشيت أو الاتصال.</div>`; });
+</script>
+
+<script>
+(function () {
+  if (window.__alahramFinalFixLoaded) return;
+  window.__alahramFinalFixLoaded = true;
+
+  const THEME_CLASSES = ["theme-vip_10k", "theme-vip_20k", "theme-vip_1m", "theme-vip_2m"];
+
+  const THEME_STYLES = {
+    vip_10k: {
+      bg1: "#0b3d91",
+      bg2: "#1fb7a9",
+      accent1: "#1f8b4c",
+      accent2: "#2da35d",
+      text: "#0f2f57",
+      soft: "#eef8ff",
+      border: "#b8d7ff"
+    },
+    vip_20k: {
+      bg1: "#5b2a86",
+      bg2: "#d98c2b",
+      accent1: "#7b3fe4",
+      accent2: "#b568ff",
+      text: "#3f235d",
+      soft: "#fbf3ff",
+      border: "#e2c5ff"
+    },
+    vip_1m: {
+      bg1: "#0f7b57",
+      bg2: "#1fb7a9",
+      accent1: "#0f8f83",
+      accent2: "#1fb7a9",
+      text: "#0d3f33",
+      soft: "#effff9",
+      border: "#b8f0d7"
+    },
+    vip_2m: {
+      bg1: "#1a1f2b",
+      bg2: "#c79b18",
+      accent1: "#8a5a00",
+      accent2: "#f0d46c",
+      text: "#332200",
+      soft: "#fff8df",
+      border: "#ead08a"
+    }
+  };
+
+  function tierKey(t) {
+    const raw = String(t?.tier_name || t?.tier_id || t?.id || "").trim().toLowerCase();
+    const compact = raw.replace(/\s+/g, "").replace(/[-]+/g, "_");
+    if (compact.includes("vip10k") || compact.includes("10k")) return "vip_10k";
+    if (compact.includes("vip20k") || compact.includes("20k")) return "vip_20k";
+    if (compact.includes("vip1m") || compact.includes("1m")) return "vip_1m";
+    if (compact.includes("vip2m") || compact.includes("2m")) return "vip_2m";
+    return compact;
+  }
+
+  function tierLabel(t) {
+    return String(t?.visible_label || t?.tier_name || "").trim();
+  }
+
+  function tierPasswordValue(t) {
+    return String(t?.tier_password ?? t?.password ?? t?.secret_code ?? t?.code ?? t?.pin ?? "").trim();
+  }
+
+  function updateRootThemeVars(theme) {
+    if (!theme) return;
+    const root = document.documentElement.style;
+    root.setProperty("--blue", theme.bg1);
+    root.setProperty("--blue2", theme.bg2);
+    root.setProperty("--orange", theme.accent2);
+    root.setProperty("--gold", theme.accent1);
+    root.setProperty("--gold2", theme.accent2);
+    root.setProperty("--red", theme.accent1);
+    root.setProperty("--bg", theme.soft);
+    root.setProperty("--line", theme.border);
+  }
+
+  function applyTierTheme() {
+    document.body.classList.remove(...THEME_CLASSES);
+    if (!selectedTier) {
+      updateRootThemeVars({
+        bg1: "#0B3D91",
+        bg2: "#1852b6",
+        accent1: "#1f8b4c",
+        accent2: "#ff9a3a",
+        soft: "#F5F7FA",
+        border: "#e7e9ee"
+      });
+      return;
+    }
+    const key = tierKey(selectedTier);
+    const theme = THEME_STYLES[key] || THEME_STYLES.vip_10k;
+    document.body.classList.add(`theme-${key}`);
+    updateRootThemeVars(theme);
+  }
+
+  function injectFinalStyles() {
+    if (document.getElementById("alahram-final-fix-styles")) return;
+    const style = document.createElement("style");
+    style.id = "alahram-final-fix-styles";
+    style.textContent = `
+      #backBtn{display:none!important;visibility:hidden!important;pointer-events:none!important}
+      .footer{grid-template-columns:118px 1fr 108px}
+      #footerBack.footerBtn{
+        background:linear-gradient(135deg,#1f8b4c,#2da35d)!important;
+        color:#fff!important;
+        min-height:52px!important;
+        font-size:16px!important;
+        border:0!important;
+        box-shadow:0 10px 18px rgba(31,139,76,.22)!important;
+      }
+      #footerPrimary.footerBtn.primary{
+        min-height:52px!important;
+        font-size:16px!important;
+      }
+      body.theme-vip_10k .header,
+      body.theme-vip_20k .header,
+      body.theme-vip_1m .header,
+      body.theme-vip_2m .header{
+        background:linear-gradient(180deg,var(--blue),var(--blue2))!important;
+      }
+      body.theme-vip_10k .actionBtn.tier,
+      body.theme-vip_20k .actionBtn.tier,
+      body.theme-vip_1m .actionBtn.tier,
+      body.theme-vip_2m .actionBtn.tier{
+        background:linear-gradient(135deg,var(--gold),var(--gold2))!important;
+        color:#fff!important;
+      }
+      body.theme-vip_10k .footerBtn.primary,
+      body.theme-vip_20k .footerBtn.primary,
+      body.theme-vip_1m .footerBtn.primary,
+      body.theme-vip_2m .footerBtn.primary,
+      body.theme-vip_10k .addBtn,
+      body.theme-vip_20k .addBtn,
+      body.theme-vip_1m .addBtn,
+      body.theme-vip_2m .addBtn,
+      body.theme-vip_10k .tierCardBtn,
+      body.theme-vip_20k .tierCardBtn,
+      body.theme-vip_1m .tierCardBtn,
+      body.theme-vip_2m .tierCardBtn,
+      body.theme-vip_10k .vipLaunchBtn,
+      body.theme-vip_20k .vipLaunchBtn,
+      body.theme-vip_1m .vipLaunchBtn,
+      body.theme-vip_2m .vipLaunchBtn{
+        background:linear-gradient(135deg,var(--gold),var(--gold2))!important;
+        color:#fff!important;
+      }
+      body.theme-vip_10k .pageCard,
+      body.theme-vip_20k .pageCard,
+      body.theme-vip_1m .pageCard,
+      body.theme-vip_2m .pageCard,
+      body.theme-vip_10k .card,
+      body.theme-vip_20k .card,
+      body.theme-vip_1m .card,
+      body.theme-vip_2m .card{
+        border-color:var(--line)!important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function hideTopBackButton() {
+    const top = document.getElementById("backBtn");
+    if (top) {
+      top.style.display = "none";
+      top.style.visibility = "hidden";
+      top.style.pointerEvents = "none";
+    }
+  }
+
+  function refreshThemeAndTopBack() {
+    applyTierTheme();
+    hideTopBackButton();
+    updateTierActionButton?.();
+  }
+
+  function rerenderCurrentPage() {
+    if (currentPage === "home") return renderHome();
+    if (currentPage === "products") return renderBrandProducts(lastCompany, brandReturnTarget);
+    if (currentPage === "tiers") return renderTiersPage();
+    if (currentPage === "vipBrands") return renderTierProductsPage();
+    if (currentPage === "offers") return renderOffersPage();
+    if (currentPage === "review") return renderReview();
+    return renderHome();
+  }
+
+  getTierPassword = function (t) {
+    return tierPasswordValue(t);
+  };
+
+  isProtectedTier = function (t) {
+    return !!tierPasswordValue(t);
+  };
+
+  isTierUnlocked = function (t) {
+    if (!isProtectedTier(t)) return true;
+    const key = tierKey(t);
+    return !!unlockedTiers[key];
+  };
+
+  currentTierLabel = function () {
+    return tierLabel(selectedTier);
+  };
+
+  updateTierActionButton = function () {
+    if (!el.tierActionBtn) return;
+    el.tierActionBtn.textContent = selectedTier ? `${currentTierLabel()} (اضغط لتغيير الشريحة)` : "💰 شرائح الجملة VIP";
+  };
+
+  renderTierBanner = function () {
+    const wrap = document.getElementById("tierBanner");
+    const host = document.getElementById("tiersWrap");
+    if (!wrap || !host) return;
+    if (!selectedTier) {
+      host.style.display = "none";
+      wrap.innerHTML = "";
+      updateTierActionButton();
+      return;
+    }
+    host.style.display = "block";
+    wrap.style.display = "block";
+    wrap.innerHTML = `
+      <div class="tierBannerRow">
+        <div>الشريحة الحالية: <b>${escapeHtml(currentTierLabel())}</b></div>
+        <button class="tierBannerAction" onclick="clearTier()">إلغاء الشريحة</button>
+      </div>
+    `;
+    updateTierActionButton();
+  };
+
+  isOfferProduct = function (p) {
+    return String(getCompany(p) || "").trim() === "صفقة اليوم";
+  };
+
+  getAvailableUnits = function (p) {
+    return ["carton", "dozen", "piece"].filter((u) => getBaseUnitPrice(p, u) > 0 || getTierUnitPrice(p, u) > 0);
+  };
+
+  getPrimaryUnit = function (p) {
+    const units = getAvailableUnits(p);
+    if (getBaseUnitPrice(p, "carton") > 0 || getTierUnitPrice(p, "carton") > 0) return "carton";
+    if (getBaseUnitPrice(p, "dozen") > 0 || getTierUnitPrice(p, "dozen") > 0) return "dozen";
+    if (getBaseUnitPrice(p, "piece") > 0 || getTierUnitPrice(p, "piece") > 0) return "piece";
+    return units[0] || "";
+  };
+
+  getSubtotal = function () {
+    return Object.values(cart).reduce((sum, item) => {
+      const product = findProductByKey(item.uiKey || item.code || item.name);
+      const unit = String(item.unit || "carton").trim();
+      const qty = Number(item.qty || 0);
+      const price = product ? getTierUnitPrice(product, unit) : Number(item.price || item.basePrice || 0);
+      return sum + qty * price;
+    }, 0);
+  };
+
+  getPayableTotal = function () {
+    return getSubtotal();
+  };
+
+  getDiscountAmount = function () {
+    return 0;
+  };
+
+  getDiscountedPrice = function (base) {
+    return Number(base || 0);
+  };
+
+  updateFooterTotal = function () {
+    el.totalBox.textContent = `${formatMoney(getPayableTotal())} جنيه`;
+  };
+
+  function buildOrderItemsPayloadFixed() {
+    return Object.values(cart).map((item) => {
+      const product = findProductByKey(item.uiKey || item.code || item.name);
+      const unit = String(item.unit || "carton").trim();
+      const unitPrice = product ? getTierUnitPrice(product, unit) : Number(item.price || item.basePrice || 0);
+      return {
+        order_id: "",
+        product_code: item.code || "",
+        product_name: item.name || "",
+        company: item.company || "",
+        unit,
+        quantity: Number(item.qty || 0),
+        price_after_discount: unitPrice,
+        item_total: Number(item.qty || 0) * unitPrice
+      };
+    });
+  }
+
+  buildOrderItemsPayload = function () {
+    return buildOrderItemsPayloadFixed();
+  };
+
+  buildOrderPayload = function () {
+    const name = String(document.getElementById("custName")?.value || "").trim();
+    const phone = String(document.getElementById("custPhone")?.value || "").trim();
+    const business = String(document.getElementById("custBusiness")?.value || "").trim();
+    const address = String(document.getElementById("custAddress")?.value || "").trim();
+    const location = String(customer.location || "").trim();
+    const total = getSubtotal();
+    const orderId = `ORD-${Date.now()}`;
+    return {
+      order_id: orderId,
+      time: new Date().toISOString(),
+      name,
+      phone,
+      business,
+      address,
+      location,
+      tier: selectedTier ? currentTierKey() : "بدون",
+      tier_label: selectedTier ? currentTierLabel() : "بدون",
+      tier_min: selectedTier ? getTierMin() : 0,
+      subtotal: total,
+      total,
+      status: "تم التواصل مع العميل",
+      notes: "",
+      items_count: Object.keys(cart).length,
+      items: buildOrderItemsPayloadFixed(),
+      items_json: JSON.stringify(buildOrderItemsPayloadFixed())
+    };
+  };
+
+  buildWhatsAppMessage = function (payload) {
+    const unitMap = { carton: "كرتونة", dozen: "دستة", piece: "قطعة", offer: "عرض" };
+    const lines = [];
+    lines.push(`طلب شراء من : ${payload.name}`);
+    lines.push(`رقم التليفون : ${payload.phone}`);
+    lines.push(`العنوان : ${payload.address}`);
+    lines.push(`اسم النشاط : ${payload.business}`);
+    lines.push(`اللوكيشن : ${payload.location}`);
+    if (payload.tier_label && payload.tier_label !== "بدون") {
+      lines.push(`الشريحة : ${payload.tier_label}`);
+    }
+    lines.push("");
+    lines.push("بيان الفاتورة");
+    lines.push("");
+    buildOrderItemsPayloadFixed().forEach((item) => {
+      lines.push(`كود الصنف : ${item.product_code || "-"}`);
+      lines.push(`اسم الصنف : ${item.product_name}`);
+      lines.push(`الوحدة : ${unitMap[item.unit] || item.unit}`);
+      lines.push(`الكميه : ${item.quantity}`);
+      lines.push(`السعر : ${formatMoney(item.price_after_discount)} جنيه`);
+      lines.push(`اجمالي الصنف بالجنيه : ${formatMoney(item.item_total)} جنيه`);
+      lines.push("");
+    });
+    lines.push(`إجمالي الفاتورة : ${formatMoney(payload.total)} جنيه`);
+    return lines.join("\n");
+  };
+
+  selectUnit = function (uiKey, unit, silent = false) {
+    const product = findProductByKey(uiKey);
+    if (!product || isOfferProduct(product) || !isAddableToCart(product)) return;
+    const u = String(unit || "").trim();
+    drafts[uiKey] = drafts[uiKey] || {};
+    drafts[uiKey].unit = u;
+    persistAll();
+    refreshProductPrice?.(uiKey);
+    if (!silent) notify(`تم اختيار ${UNIT_NAMES[u] || "الوحدة"}`, "info");
+  };
+
+  addToCart = function (uiKey) {
+    const product = findProductByKey(uiKey);
+    if (!product) {
+      notify("خطأ في المنتج", "error");
+      return;
+    }
+    if (!isAddableToCart(product)) {
+      notify("نفذت الكمية ستصل قريبًا", "error");
+      return;
+    }
+    const offerMode = isOfferProduct(product);
+    const unit = offerMode ? "offer" : String(drafts[uiKey]?.unit || document.getElementById(`unit_${uiKey}`)?.value || "").trim();
+    if (!offerMode && !unit) {
+      notify("اختر الوحدة أولاً", "error");
+      return;
+    }
+    let qty = String(drafts[uiKey]?.qty || document.getElementById(`qty_${uiKey}`)?.value || "").trim();
+    qty = qty === "" ? 1 : parseInt(qty, 10);
+    if (!Number.isFinite(qty) || qty <= 0) qty = 1;
+    const unitPrice = getTierUnitPrice(product, unit);
+    if (!unitPrice) {
+      notify("السعر غير متاح لهذا الصنف", "error");
+      return;
+    }
+    cart[String(uiKey).trim()] = {
+      uiKey: String(uiKey).trim(),
+      code: getProductCode(product),
+      name: getDisplayName(product),
+      company: String(product.company || "").trim(),
+      unit,
+      qty,
+      price: unitPrice,
+      basePrice: getBaseUnitPrice(product, unit)
+    };
+    persistAll();
+    updateFooterTotal();
+    notify("تمت الإضافة للسلة", "ok");
+  };
+
+  function renderTiersPageMinimal(replace = false) {
+    reviewReturn = { type: "tiers", value: null };
+    brandPageStyle = "standard";
+    brandReturnTarget = "home";
+    setMode("tiers");
+    applyBrandStyle();
+    applyTierTheme();
+    scrollTop();
+    document.title = "الشرائح - الأهرام للتجارة والتوزيع";
+    logEvent("page_tiers");
+    el.backBtn.style.display = "none";
+    if (typeof routeSet === "function") routeSet("tiers", {}, replace);
+
+    const activeTiers = (tiersData || []).filter((t) => {
+      const a = String(t.active ?? t.tier_active ?? "1").trim();
+      const s = String(t.status || "").trim().toLowerCase();
+      return a === "1" || s === "active" || s === "فعال";
+    });
+
+    const cards = activeTiers.map((t) => {
+      const key = String(t.tier_name || t.tier_id || t.id || "").trim();
+      const protectedTier = isProtectedTier(t);
+      const unlocked = isTierUnlocked(t);
+      const active = selectedTier && key === currentTierKey();
+      const lockBadge = protectedTier ? (unlocked ? "🔓 مفتوح" : "🔒 مقفل") : "متاح";
+      const btnText = active ? "الشريحة الحالية" : (protectedTier && !unlocked ? "دخول بالرقم السري" : "اختيار الشريحة");
+      const description = String(t.tier_description || "").trim();
+      const visible = String(t.visible_label || t.tier_name || key).trim();
+
+      return `
+        <div class="tierCard ${active ? "active" : ""} ${protectedTier && !unlocked ? "locked" : ""}">
+          <div class="tierCardName">
+            <span>${escapeHtml(visible)}</span>
+            <span class="tierBadge">${lockBadge}</span>
+          </div>
+          <div class="tierCardMeta">
+            <div>الحد الأدنى: <b>${formatMoney(t.tier_min || 0)} جنيه</b></div>
+          </div>
+          ${description ? `<div class="tierCardDesc">${escapeHtml(description)}</div>` : ""}
+          <button class="tierCardBtn ${protectedTier && !unlocked ? "locked" : ""}" onclick="tierCardClick('${escapeAttr(key)}')">${escapeHtml(btnText)}</button>
+        </div>
+      `;
+    }).join("");
+
+    el.app.innerHTML = `
+      ${selectedTier ? renderPageCard("الشريحة الحالية", `أنت الآن على شريحة: ${escapeHtml(currentTierLabel())}`, "blue") : ""}
+      <div class="tierPageActions">
+        ${selectedTier ? `<button class="miniDanger" onclick="clearTier()">إلغاء الشريحة</button>` : ""}
+        <button class="vipLaunchBtn" onclick="openTierProductsPage()">الذهاب للتسوق</button>
+      </div>
+      <div class="tiersGrid">${cards || '<div class="emptyState">لا توجد شرائح متاحة</div>'}</div>
+    `;
+    renderTierBanner();
+    syncFooter();
+    updateTierActionButton();
+  }
+
+  function renderReviewMinimal(replace = false) {
+    setMode("review");
+    applyTierTheme();
+    scrollTop();
+    document.title = "إتمام الشراء - الأهرام للتجارة والتوزيع";
+    logEvent("page_review");
+    el.backBtn.style.display = "none";
+    if (typeof routeSet === "function") routeSet("review", { returnTo: reviewReturn, company: lastCompany, brandReturnTarget }, replace);
+
+    const items = Object.values(cart);
+    const total = getSubtotal();
+    const tierOk = isTierSatisfied();
+    const tierMsg = selectedTier
+      ? (tierOk
+          ? `<div class="reviewTierState ok">أنت الآن على شريحة <b>${escapeHtml(currentTierLabel())}</b> — تم تحقيق الشريحة يمكنك الآن إرسال الفاتورة.</div>`
+          : `<div class="reviewTierState warn">أنت الآن على شريحة <b>${escapeHtml(currentTierLabel())}</b> — متبقي <b>${formatMoney(getTierMin() - total)} جنيه</b> لتحقيق الفاتورة.</div>`)
+      : `<div class="reviewTierState">لم يتم اختيار شريحة بعد.</div>`;
+
+    let html = `<div class="reviewWrap">${tierMsg}`;
+
+    if (!items.length) {
+      html += `
+        <div class="reviewSummary">
+          <div class="reviewSummaryTop">
+            <div><b>إجمالي الطلب:</b> ${formatMoney(total)} جنيه</div>
+            <button class="miniDanger" onclick="clearCartConfirm()">🗑️ تصفير السلة</button>
+          </div>
+        </div>
+        <div class="emptyState">السلة فارغة</div>
+        <div class="card"><button class="mainBtn secondary" onclick="goBack()">⬅ الرجوع للتسوق</button></div>
+      </div>`;
+      el.app.innerHTML = html;
+      updateFooterTotal();
+      syncFooter();
+      renderTierBanner();
+      updateTierActionButton();
+      return;
+    }
+
+    items.forEach((item) => {
+      const product = findProductByKey(item.uiKey || item.code || item.name);
+      const unit = String(item.unit || "carton").trim();
+      const unitPrice = product ? getTierUnitPrice(product, unit) : Number(item.price || item.basePrice || 0);
+      const lineTotal = Number(item.qty || 0) * unitPrice;
+      const isOfferItem = unit === "offer";
+      html += `
+        <div class="reviewItem">
+          <div class="reviewItemTop">${escapeHtml(item.name)}${item.code ? ` (${escapeHtml(item.code)})` : ""}</div>
+          <div>الوحدة: ${escapeHtml(isOfferItem ? "عرض" : (UNIT_NAMES[unit] || unit))}</div>
+          <div>الكمية: ${item.qty}</div>
+          <div>السعر: ${formatMoney(unitPrice)} جنيه</div>
+          <div><b>إجمالي الصنف بالجنيه:</b> ${formatMoney(lineTotal)} جنيه</div>
+          <div class="reviewControls">
+            <button class="qtyBtn" onclick="reviewQty('${item.uiKey}', -1)">-</button>
+            <input class="reviewQtyInput" value="${item.qty}" inputmode="numeric" oninput="reviewQtyInput('${item.uiKey}', this.value)">
+            <button class="qtyBtn" onclick="reviewQty('${item.uiKey}', 1)">+</button>
+          </div>
+          <div class="reviewAction" onclick="removeFromCart('${item.uiKey}')">حذف</div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="card">
+        <button class="mainBtn secondary" onclick="backToShopping()">⬅ الرجوع للتسوق</button>
+      </div>
+      <div class="reviewSummary">
+        <div class="reviewSummaryTop">
+          <div><b>إجمالي الطلب:</b> ${formatMoney(total)} جنيه</div>
+          <button class="miniDanger" onclick="clearCartConfirm()">🗑️ تصفير السلة</button>
+        </div>
+      </div>
+      <div class="formCard">
+        <input class="input" id="custName" placeholder="اسم العميل" value="${escapeAttr(customer.name || "")}">
+        <input class="input" id="custPhone" placeholder="رقم الهاتف" value="${escapeAttr(customer.phone || "")}">
+        <input class="input" id="custBusiness" placeholder="اسم النشاط" value="${escapeAttr(customer.business || "")}">
+        <input class="input" id="custAddress" placeholder="العنوان" value="${escapeAttr(customer.address || "")}">
+        <button class="mainBtn secondary" onclick="setLocation()">📍 اضغط لإضافة اللوكيشن</button>
+        <div class="locationStatus" id="locationStatus">${customer.location ? "✔ تم حفظ اللوكيشن" : ""}</div>
+        <div style="height:10px"></div>
+        <button class="mainBtn primary" id="sendNowBtn" onclick="sendOrder()" ${selectedTier && !tierOk ? "disabled" : ""}>إرسال الطلب الآن</button>
+      </div>
+    </div>`;
+
+    el.app.innerHTML = html;
+    updateFooterTotal();
+    syncFooter();
+    renderTierBanner();
+    updateTierActionButton();
+  }
+
+  function tierPageButtonTextFix() {
+    const btn = document.querySelector(".vipLaunchBtn");
+    if (btn && btn.textContent.includes("اختار منتجاتك")) btn.textContent = "الذهاب للتسوق";
+  }
+
+  chooseTier = function (t) {
+    if (!t) return;
+    if (isProtectedTier(t) && !isTierUnlocked(t)) {
+      return promptTierUnlock(t);
+    }
+    selectedTier = t;
+    unlockedTiers[tierKey(t)] = true;
+    persistAll();
+    applyTierTheme();
+    updateTierActionButton();
+    rerenderCurrentPage();
+    notify("تم اختيار الشريحة", "ok");
+  };
+
+  promptTierUnlock = function (t) {
+    const entered = String(window.prompt(`أدخل الرقم السري للشريحة: ${tierLabel(t)}`) || "").trim();
+    if (!entered) return;
+    if (entered === tierPasswordValue(t)) {
+      unlockedTiers[tierKey(t)] = true;
+      selectedTier = t;
+      persistAll();
+      applyTierTheme();
+      updateTierActionButton();
+      rerenderCurrentPage();
+      notify("تم فتح الشريحة", "ok");
+      return;
+    }
+    notify("الرقم السري غير صحيح", "error");
+  };
+
+  clearTier = function () {
+    selectedTier = null;
+    persistAll();
+    applyTierTheme();
+    updateTierActionButton();
+    rerenderCurrentPage();
+    notify("تم إلغاء الشريحة", "info");
+  };
+
+  function wrapRender(fnName) {
+    const original = window[fnName];
+    if (typeof original !== "function") return;
+    window[`__orig_${fnName}`] = original;
+    window[fnName] = function (...args) {
+      const result = original.apply(this, args);
+      refreshThemeAndTopBack();
+      tierPageButtonTextFix();
+      return result;
+    };
+  }
+
+  wrapRender("renderHome");
+  wrapRender("renderBrandProducts");
+  wrapRender("renderOffersPage");
+  wrapRender("renderTierProductsPage");
+
+  openReview = function () {
+    reviewReturn = { type: currentPage, value: lastCompany, returnTo: brandReturnTarget };
+    renderReview();
+  };
+
+  function postRenderFixes() {
+    hideTopBackButton();
+    updateTierActionButton();
+    applyTierTheme();
+  }
+
+  sendOrder = function () {
+    const name = String(document.getElementById("custName")?.value || "").trim();
+    const phone = String(document.getElementById("custPhone")?.value || "").trim();
+    const business = String(document.getElementById("custBusiness")?.value || "").trim();
+    const address = String(document.getElementById("custAddress")?.value || "").trim();
+    const location = String(customer.location || "").trim();
+
+    if (!name || !phone || !business || !address || !location) {
+      notify("من فضلك أكمل بيانات العميل واللوكيشن", "error");
+      return;
+    }
+    if (selectedTier && !isTierSatisfied()) {
+      notify("لم يتم تحقيق الشريحة بعد", "error");
+      return;
+    }
+
+    customer = { name, phone, business, address, location };
+    persistAll();
+
+    const payload = buildOrderPayload();
+    saveJSON(LS.latestOrder, payload);
+    logEvent("order_prepare", { order_id: payload.order_id, total: payload.total, items_count: payload.items_count });
+    postOrderToSheet(payload);
+    window.open(`https://wa.me/201040880002?text=${encodeURIComponent(buildWhatsAppMessage(payload))}`, "_blank");
+    notify("تم تجهيز الطلب وإرساله", "ok");
+    logEvent("order_sent", { order_id: payload.order_id, total: payload.total, items_count: payload.items_count });
+  };
+
+  const originalRenderReview = renderReview;
+  renderReview = function (...args) {
+    const result = originalRenderReview.apply(this, args);
+    postRenderFixes();
+    return result;
+  };
+
+  const originalRenderTiersPage = renderTiersPage;
+  renderTiersPage = function (...args) {
+    const result = originalRenderTiersPage.apply(this, args);
+    postRenderFixes();
+    tierPageButtonTextFix();
+    return result;
+  };
+
+  window.renderReview = renderReview;
+  window.renderTiersPage = renderTiersPage;
+  window.chooseTier = chooseTier;
+  window.promptTierUnlock = promptTierUnlock;
+  window.clearTier = clearTier;
+  window.openReview = openReview;
+  window.sendOrder = sendOrder;
+
+  applyTierTheme();
+  injectFinalStyles();
+  postRenderFixes();
+
+  if (selectedTier) {
+    unlockedTiers[tierKey(selectedTier)] = true;
+    persistAll();
+  }
+})();
+</script>
+
+
+<script>
+(function () {
+  if (window.__alahramStatePatchLoaded) return;
+  window.__alahramStatePatchLoaded = true;
+
+  const NAV_KEY = 'alahram_nav_stack_v3';
+  const SELECTED_TIER_KEY = 'alahram_selected_tier_v3';
+  const TIER_UNLOCKS_KEY = 'alahram_tier_unlocks_v3';
+  const HISTORY_DEDUPE_KEY = '__alahram_last_history_state_v3';
+  const PRELOAD_LIMIT = 180;
+
+  const nav = {
+    stack: [],
+    current: null,
+    restoring: false,
+    booted: false
+  };
+
+  const pushStateNative = history.pushState.bind(history);
+  const replaceStateNative = history.replaceState.bind(history);
+
+  const safeParse = (raw, fallback) => {
+    try { return raw ? JSON.parse(raw) : fallback; } catch { return fallback; }
+  };
+
+  const cleanStr = (v) => (v ?? '').toString().trim();
+  const tierKey = (t) => {
+    const raw = cleanStr(t?.tier_name || t?.tier_id || t?.id || t?.visible_label || '');
+    const compact = raw.toLowerCase().replace(/\s+/g, '').replace(/[-]+/g, '_');
+    if (compact.includes('vip10k') || compact.includes('10k')) return 'vip_10k';
+    if (compact.includes('vip20k') || compact.includes('20k')) return 'vip_20k';
+    if (compact.includes('vip1m') || compact.includes('1m')) return 'vip_1m';
+    if (compact.includes('vip2m') || compact.includes('2m')) return 'vip_2m';
+    return compact || raw;
+  };
+  const tierLabel = (t) => cleanStr(t?.visible_label || t?.tier_name || '');
+  const tierPassword = (t) => cleanStr(t?.tier_password ?? t?.password ?? t?.secret_code ?? t?.code ?? t?.pin ?? '');
+  const tierIsProtected = (t) => !!tierPassword(t);
+  const tierIsUnlocked = (t) => {
+    if (!tierIsProtected(t)) return true;
+    const key = tierKey(t);
+    const unlocks = safeParse(localStorage.getItem(TIER_UNLOCKS_KEY), {});
+    return !!unlocks[key];
+  };
+  const findTier = (key) => (tiersData || []).find(t => tierKey(t) === cleanStr(key)) || null;
+  const persistTierSnapshot = () => {
+    try {
+      if (selectedTier) {
+        localStorage.setItem(SELECTED_TIER_KEY, JSON.stringify({
+          key: tierKey(selectedTier),
+          tier: selectedTier
+        }));
+      } else {
+        localStorage.removeItem(SELECTED_TIER_KEY);
+      }
+    } catch (_) {}
+  };
+  const loadTierFromStorage = () => {
+    const raw = safeParse(localStorage.getItem(SELECTED_TIER_KEY), null);
+    if (!raw) return null;
+    if (raw.tier && typeof raw.tier === 'object') {
+      const match = findTier(raw.key || tierKey(raw.tier));
+      return match || raw.tier;
+    }
+    const key = cleanStr(raw.key || raw);
+    return findTier(key);
+  };
+  const saveNav = () => {
+    try {
+      localStorage.setItem(NAV_KEY, JSON.stringify({
+        stack: nav.stack.slice(-20),
+        current: nav.current
+      }));
+    } catch (_) {}
+  };
+  const setNav = (frame, push = true) => {
+    if (nav.restoring) {
+      nav.current = frame;
+      nav.restoring = false;
+      saveNav();
+      return;
+    }
+    const current = nav.current;
+    const same = current && current.page === frame.page && JSON.stringify(current.payload || {}) === JSON.stringify(frame.payload || {});
+    if (push && current && !same) nav.stack.push(current);
+    nav.current = frame;
+    saveNav();
+  };
+  const dispatchFrame = (frame) => {
+    if (!frame || !frame.page) {
+      window.renderHome(true);
+      return;
+    }
+    const payload = frame.payload || {};
+    switch (frame.page) {
+      case 'home':
+        window.renderHome(true);
+        break;
+      case 'products':
+        window.renderBrandProducts(payload.company || lastCompany || '', payload.returnTo || 'home', true);
+        break;
+      case 'tiers':
+        window.renderTiersPage(true);
+        break;
+      case 'vipBrands':
+        window.renderTierProductsPage(true);
+        break;
+      case 'offers':
+        window.renderOffersPage(true);
+        break;
+      case 'review':
+        window.renderReview(true);
+        break;
+      default:
+        window.renderHome(true);
+    }
+  };
+  const recordFrame = (page, payload = {}) => setNav({ page, payload }, true);
+
+  const bodyTheme = {
+    vip_10k: { bg1: '#0b3d91', bg2: '#1fb7a9', accent1: '#1f8b4c', accent2: '#2da35d', soft: '#eef8ff', border: '#b8d7ff' },
+    vip_20k: { bg1: '#5b2a86', bg2: '#d98c2b', accent1: '#7b3fe4', accent2: '#b568ff', soft: '#fbf3ff', border: '#e2c5ff' },
+    vip_1m: { bg1: '#0f7b57', bg2: '#1fb7a9', accent1: '#0f8f83', accent2: '#1fb7a9', soft: '#effff9', border: '#b8f0d7' },
+    vip_2m: { bg1: '#1a1f2b', bg2: '#c79b18', accent1: '#8a5a00', accent2: '#f0d46c', soft: '#fff8df', border: '#ead08a' }
+  };
+
+  function applyThemeFromSelectedTier() {
+    document.body.classList.remove('theme-vip_10k', 'theme-vip_20k', 'theme-vip_1m', 'theme-vip_2m');
+    const tier = selectedTier;
+    const root = document.documentElement.style;
+    const fallback = { bg1: '#0B3D91', bg2: '#1852b6', accent1: '#1f8b4c', accent2: '#ff9a3a', soft: '#F5F7FA', border: '#e7e9ee' };
+    const key = tier ? tierKey(tier) : '';
+    const theme = bodyTheme[key] || fallback;
+    root.setProperty('--blue', theme.bg1);
+    root.setProperty('--blue2', theme.bg2);
+    root.setProperty('--orange', theme.accent2);
+    root.setProperty('--gold', theme.accent1);
+    root.setProperty('--gold2', theme.accent2);
+    root.setProperty('--red', theme.accent1);
+    root.setProperty('--bg', theme.soft);
+    root.setProperty('--line', theme.border);
+    if (tier && bodyTheme[key]) document.body.classList.add(`theme-${key}`);
+  }
+
+  function preloadImages() {
+    const urls = [];
+    (products || []).forEach(p => {
+      const img = cleanStr(p.image);
+      const brand = cleanStr(p.brand_image);
+      if (img) urls.push(img);
+      if (brand) urls.push(brand);
+    });
+    const uniq = [...new Set(urls)].slice(0, PRELOAD_LIMIT);
+    uniq.forEach(src => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.loading = 'eager';
+      img.src = src;
+    });
+  }
+
+  function fixHistoryDeduping() {
+    if (window.__alahramHistoryDeduped) return;
+    window.__alahramHistoryDeduped = true;
+
+    history.pushState = function (state, title, url) {
+      try {
+        const marker = JSON.stringify([state?.appPage || '', state?.company || '', state?.returnTo || '']);
+        if (sessionStorage.getItem(HISTORY_DEDUPE_KEY) === marker) return;
+        sessionStorage.setItem(HISTORY_DEDUPE_KEY, marker);
+      } catch (_) {}
+      return pushStateNative(state, title, url);
+    };
+
+    history.replaceState = function (state, title, url) {
+      try {
+        const marker = JSON.stringify([state?.appPage || '', state?.company || '', state?.returnTo || '']);
+        sessionStorage.setItem(HISTORY_DEDUPE_KEY, marker);
+      } catch (_) {}
+      return replaceStateNative(state, title, url);
+    };
+  }
+
+  function updateSelectedTierState() {
+    const stored = loadTierFromStorage();
+    if (stored && (!selectedTier || tierKey(stored) !== tierKey(selectedTier))) {
+      selectedTier = stored;
+    }
+    if (selectedTier) {
+      const key = tierKey(selectedTier);
+      const unlocks = safeParse(localStorage.getItem(TIER_UNLOCKS_KEY), {});
+      unlocks[key] = true;
+      try { localStorage.setItem(TIER_UNLOCKS_KEY, JSON.stringify(unlocks)); } catch (_) {}
+      persistTierSnapshot();
+    }
+    applyThemeFromSelectedTier();
+  }
+
+  function customTierUnlock(t) {
+    const pw = tierPassword(t);
+    const entered = cleanStr(window.prompt(`أدخل الرقم السري للشريحة: ${tierLabel(t)}`) || '');
+    if (!entered) return;
+    if (entered === pw) {
+      const unlocks = safeParse(localStorage.getItem(TIER_UNLOCKS_KEY), {});
+      const key = tierKey(t);
+      unlocks[key] = true;
+      try { localStorage.setItem(TIER_UNLOCKS_KEY, JSON.stringify(unlocks)); } catch (_) {}
+      selectedTier = t;
+      persistTierSnapshot();
+      applyThemeFromSelectedTier();
+      if (currentPage === 'tiers') window.renderTiersPage(true);
+      else if (currentPage === 'products') window.renderBrandProducts(lastCompany || '', brandReturnTarget || 'home', true);
+      else if (currentPage === 'vipBrands') window.renderTierProductsPage(true);
+      else if (currentPage === 'offers') window.renderOffersPage(true);
+      else if (currentPage === 'review') window.renderReview(true);
+      else window.renderHome(true);
+      window.renderTierBanner?.();
+      window.updateTierActionButton?.();
+      window.updateFooterTotal?.();
+      window.notify?.('تم فتح الشريحة', 'ok');
+      return;
+    }
+    window.notify?.('الرقم السري غير صحيح', 'error');
+  }
+
+  function chooseTierFixed(t) {
+    if (!t) return;
+    if (tierIsProtected(t) && !tierIsUnlocked(t)) return customTierUnlock(t);
+    selectedTier = t;
+    persistTierSnapshot();
+    const unlocks = safeParse(localStorage.getItem(TIER_UNLOCKS_KEY), {});
+    unlocks[tierKey(t)] = true;
+    try { localStorage.setItem(TIER_UNLOCKS_KEY, JSON.stringify(unlocks)); } catch (_) {}
+    applyThemeFromSelectedTier();
+    if (currentPage === 'tiers') window.renderTiersPage(true);
+    else if (currentPage === 'products') window.renderBrandProducts(lastCompany || '', brandReturnTarget || 'home', true);
+    else if (currentPage === 'vipBrands') window.renderTierProductsPage(true);
+    else if (currentPage === 'offers') window.renderOffersPage(true);
+    else if (currentPage === 'review') window.renderReview(true);
+    else window.renderHome(true);
+    window.renderTierBanner?.();
+    window.updateTierActionButton?.();
+    window.updateFooterTotal?.();
+    window.notify?.('تم اختيار الشريحة', 'ok');
+    recordFrame('tiers', {});
+  }
+
+  function clearTierFixed() {
+    selectedTier = null;
+    try { localStorage.removeItem(SELECTED_TIER_KEY); } catch (_) {}
+    applyThemeFromSelectedTier();
+    if (currentPage === 'tiers') window.renderTiersPage(true);
+    else if (currentPage === 'products') window.renderBrandProducts(lastCompany || '', brandReturnTarget || 'home', true);
+    else if (currentPage === 'vipBrands') window.renderTierProductsPage(true);
+    else if (currentPage === 'offers') window.renderOffersPage(true);
+    else if (currentPage === 'review') window.renderReview(true);
+    else window.renderHome(true);
+    window.renderTierBanner?.();
+    window.updateTierActionButton?.();
+    window.updateFooterTotal?.();
+    window.notify?.('تم إلغاء الشريحة', 'info');
+  }
+
+  function customGoBack() {
+    if (nav.stack.length > 0) {
+      const prev = nav.stack.pop();
+      nav.current = prev;
+      saveNav();
+      nav.restoring = true;
+      dispatchFrame(prev);
+      return true;
+    }
+    if (currentPage === 'home') {
+      const ok = window.confirm ? window.confirm('هل تريد الخروج من المتجر؟') : true;
+      if (ok) history.back();
+      return true;
+    }
+    nav.restoring = true;
+    dispatchFrame({ page: 'home', payload: {} });
+    return true;
+  }
+
+  function getCompanyStrict(p) {
+    return cleanStr(p?.company || p?.company_name || p?.brand || '');
+  }
+
+  function renderTiersPageFixed(replace = false) {
+    currentPage = 'tiers';
+    brandPageStyle = 'standard';
+    brandReturnTarget = 'home';
+    window.scrollTop?.();
+    document.title = 'الشرائح - الأهرام للتجارة والتوزيع';
+    recordFrame('tiers', {});
+    try {
+      if (history.state?.appPage !== 'tiers') history.pushState({ appPage: 'tiers' }, '', location.href);
+    } catch (_) {}
+    const tiers = (tiersData || []).filter(t => {
+      const active = cleanStr(t.active ?? t.tier_active ?? '1');
+      const status = cleanStr(t.status || '').toLowerCase();
+      return active === '1' || status === 'active' || status === 'فعال';
+    });
+    const cards = tiers.map(t => {
+      const key = tierKey(t);
+      const isActive = selectedTier && tierKey(selectedTier) === key;
+      const protectedTier = tierIsProtected(t);
+      const unlocked = tierIsUnlocked(t);
+      const btn = isActive ? 'الشريحة الحالية' : (protectedTier && !unlocked ? 'دخول بالرقم السري' : 'اختيار الشريحة');
+      const badge = protectedTier ? (unlocked ? '🔓 مفتوح' : '🔒 مقفل') : 'متاح';
+      return `
+        <div class="tierCard ${isActive ? 'active' : ''} ${protectedTier && !unlocked ? 'locked' : ''}">
+          <div class="tierCardName">
+            <span>${escapeHtml(tierLabel(t))}</span>
+            <span class="tierBadge">${badge}</span>
+          </div>
+          <div class="tierCardMeta">
+            <div>الحد الأدنى: <b>${formatMoney(t.tier_min || 0)} جنيه</b></div>
+          </div>
+          ${cleanStr(t.tier_description || '') ? `<div class="tierCardDesc">${escapeHtml(cleanStr(t.tier_description))}</div>` : ''}
+          <button class="tierCardBtn ${protectedTier && !unlocked ? 'locked' : ''}" onclick="tierCardClick('${escapeAttr(key)}')">${escapeHtml(btn)}</button>
+        </div>
+      `;
+    }).join('');
+    const selectedInfo = selectedTier ? `
+      <div class="pageCard blue">
+        <div class="pageCardTitle">الشريحة الحالية</div>
+        <div class="pageCardSub">أنت الآن على شريحة: ${escapeHtml(tierLabel(selectedTier))}</div>
+      </div>
+    ` : '';
+    const actionBtn = selectedTier
+      ? `<button class="miniDanger" onclick="clearTier()">إلغاء الشريحة</button>`
+      : '';
+    el && (el.backBtn.style.display = 'none');
+    el.app.innerHTML = `
+      ${selectedInfo}
+      <div class="tierPageActions">
+        ${actionBtn}
+        <button class="vipLaunchBtn" onclick="openTierProductsPage()">الذهاب للتسوق</button>
+      </div>
+      <div class="tiersGrid">${cards || '<div class="emptyState">لا توجد شرائح متاحة</div>'}</div>
+    `;
+    window.renderTierBanner?.();
+    window.syncFooter?.();
+    window.updateTierActionButton?.();
+    window.updateFooterTotal?.();
+    postRenderFixes();
+  }
+
+  function renderOffersPageFixed(replace = false) {
+    currentPage = 'offers';
+    brandPageStyle = 'standard';
+    brandReturnTarget = 'home';
+    window.scrollTop?.();
+    document.title = 'صفقة اليوم - الأهرام للتجارة والتوزيع';
+    recordFrame('offers', {});
+    try {
+      if (history.state?.appPage !== 'offers') history.pushState({ appPage: 'offers' }, '', location.href);
+    } catch (_) {}
+    const strictOffers = (products || []).filter(p => getCompanyStrict(p) === 'صفقة اليوم' && cleanStr(p.status).toLowerCase() === 'active');
+    const intro = 'صفقة اليوم تعرض فقط الأصناف المسجلة تحت شركة صفقة اليوم.';
+    const cards = strictOffers.map((p, i) => {
+      const uiKey = p.__uiKey || window.getProductKey?.(p) || `${cleanStr(p.codo || p.code || p.name || 'item')}_${i}`;
+      const img = cleanStr(p.image) || PLACEHOLDERS.product(cleanStr(window.getDisplayName ? window.getDisplayName(p) : (p.name || 'صنف')));
+      const name = cleanStr(window.getDisplayName ? window.getDisplayName(p) : (p.name || 'صنف'));
+      const offerLabel = cleanStr(window.getOfferLabel ? window.getOfferLabel(p) : (p.offer_label || ''));
+      const units = window.getAvailableUnits ? window.getAvailableUnits(p) : ['carton','dozen','piece'];
+      const baseUnit = window.getPrimaryUnit ? window.getPrimaryUnit(p) : 'carton';
+      const basePrice = window.getBaseUnitPrice ? window.getBaseUnitPrice(p, baseUnit) : toNum(p.price_offer || p.price_carton || p.price_dozen || p.price_piece);
+      return `
+        <div class="card productCard offerCard">
+          <img class="productImg" src="${img}" alt="${escapeAttr(name)}" onerror="this.src='${PLACEHOLDERS.product(name)}'">
+          <div class="productName">${escapeHtml(name)}</div>
+          <div class="offerLabel">${escapeHtml(offerLabel || 'عرض خاص')}</div>
+          ${basePrice > 0 ? `<div class="price offer" id="price_${uiKey}">سعر العرض: ${formatMoney(basePrice)} جنيه</div>` : ''}
+          ${units.length ? `<select class="unitSelect" id="unit_${uiKey}" onchange="selectUnit('${uiKey}', this.value)"><option value="">اختر الوحدة</option>${window.buildAvailableUnitsOptions ? window.buildAvailableUnitsOptions(p) : units.map(u=>`<option value="${u}">${u}</option>`).join('')}</select>` : ''}
+          <div class="qtyWrap">
+            <button class="qtyBtn" id="minus_${uiKey}" onclick="changeQty('${uiKey}', -1)">-</button>
+            <input class="qtyInput" id="qty_${uiKey}" inputmode="numeric" value="${escapeAttr(cleanStr(drafts?.[uiKey]?.qty || ''))}" oninput="draftQty('${uiKey}', this.value)">
+            <button class="qtyBtn" id="plus_${uiKey}" onclick="changeQty('${uiKey}', 1)">+</button>
+          </div>
+          <button class="addBtn offer" onclick="addToCart('${uiKey}')">أضف للسلة</button>
+        </div>
+      `;
+    }).join('');
+    el.backBtn.style.display = 'none';
+    el.app.innerHTML = `
+      ${renderPageCard('صفقة اليوم', intro, 'gold')}
+      ${strictOffers.length ? `<div class="grid">${cards}</div>` : `<div class="emptyState">لا توجد عروض حالياً</div>`}
+    `;
+    window.renderTierBanner?.();
+    window.syncFooter?.();
+    window.updateTierActionButton?.();
+    window.updateFooterTotal?.();
+    postRenderFixes();
+  }
+
+  function renderReviewFixed(replace = false) {
+    currentPage = 'review';
+    window.scrollTop?.();
+    document.title = 'إتمام الشراء - الأهرام للتجارة والتوزيع';
+    recordFrame('review', { company: cleanStr(lastCompany || ''), returnTo: cleanStr(brandReturnTarget || 'home') });
+    try {
+      if (history.state?.appPage !== 'review') history.pushState({ appPage: 'review' }, '', location.href);
+    } catch (_) {}
+    const items = Object.values(cart || {});
+    const subtotal = window.getSubtotal ? window.getSubtotal() : 0;
+    const tierOk = window.isTierSatisfied ? window.isTierSatisfied() : true;
+    const tierName = tierLabel(selectedTier);
+    const tierBlock = selectedTier ? (
+      tierOk
+        ? `<div class="reviewTierState ok">أنت الآن على شريحة <b>${escapeHtml(tierName)}</b> — تم تحقيق الشريحة يمكنك الآن إرسال الفاتورة.</div>`
+        : `<div class="reviewTierState warn">أنت الآن على شريحة <b>${escapeHtml(tierName)}</b> — متبقي <b>${formatMoney((window.getTierMin ? window.getTierMin() : 0) - subtotal)} جنيه</b> لتحقيق الفاتورة.</div>`
+    ) : `<div class="reviewTierState">لم يتم اختيار شريحة بعد.</div>`;
+
+    const itemsHtml = items.map(item => {
+      const product = window.findProductByKey ? window.findProductByKey(item.uiKey || item.code || item.name) : null;
+      const unit = cleanStr(item.unit || 'carton');
+      const unitPrice = product && window.getTierUnitPrice ? window.getTierUnitPrice(product, unit) : toNum(item.price || item.basePrice || 0);
+      const lineTotal = toNum(item.qty) * unitPrice;
+      const unitLabel = unit === 'offer' ? 'عرض' : (UNIT_NAMES[unit] || unit);
+      return `
+        <div class="reviewItem">
+          <div class="reviewItemTop">${escapeHtml(item.name)}${item.code ? ` (${escapeHtml(item.code)})` : ''}</div>
+          <div>الوحدة: ${escapeHtml(unitLabel)}</div>
+          <div>الكمية: ${item.qty}</div>
+          <div>السعر: ${formatMoney(unitPrice)} جنيه</div>
+          <div><b>إجمالي الصنف بالجنيه:</b> ${formatMoney(lineTotal)} جنيه</div>
+          <div class="reviewControls">
+            <button class="qtyBtn" onclick="reviewQty('${item.uiKey}', -1)">-</button>
+            <input class="reviewQtyInput" value="${item.qty}" inputmode="numeric" oninput="reviewQtyInput('${item.uiKey}', this.value)">
+            <button class="qtyBtn" onclick="reviewQty('${item.uiKey}', 1)">+</button>
+          </div>
+          <div class="reviewAction" onclick="removeFromCart('${item.uiKey}')">حذف</div>
+        </div>
+      `;
+    }).join('');
+
+    el.backBtn.style.display = 'none';
+    el.app.innerHTML = `
+      <div class="reviewWrap">
+        ${tierBlock}
+        <div class="reviewSummary">
+          <div class="reviewSummaryTop">
+            <div><b>إجمالي الطلب:</b> ${formatMoney(subtotal)} جنيه</div>
+            <button class="miniDanger" onclick="clearCartConfirm()">🗑️ تصفير السلة</button>
+          </div>
+        </div>
+        ${itemsHtml || '<div class="emptyState">السلة فارغة</div>'}
+        <div class="card">
+          <button class="mainBtn secondary" onclick="goBack()">⬅ الرجوع للتسوق</button>
+        </div>
+        <div class="reviewSummary">
+          <div class="reviewSummaryTop">
+            <div><b>إجمالي الطلب:</b> ${formatMoney(subtotal)} جنيه</div>
+            <button class="miniDanger" onclick="clearCartConfirm()">🗑️ تصفير السلة</button>
+          </div>
+        </div>
+        <div class="formCard">
+          <input class="input" id="custName" placeholder="اسم العميل" value="${escapeAttr(customer?.name || '')}">
+          <input class="input" id="custPhone" placeholder="رقم الهاتف" value="${escapeAttr(customer?.phone || '')}">
+          <input class="input" id="custBusiness" placeholder="اسم النشاط" value="${escapeAttr(customer?.business || '')}">
+          <input class="input" id="custAddress" placeholder="العنوان" value="${escapeAttr(customer?.address || '')}">
+          <button class="mainBtn secondary" onclick="setLocation()">📍 اضغط لإضافة اللوكيشن</button>
+          <div class="locationStatus" id="locationStatus">${customer?.location ? '✔ تم حفظ اللوكيشن' : ''}</div>
+          <div style="height:10px"></div>
+          <button class="mainBtn primary" id="sendNowBtn" onclick="sendOrder()" ${selectedTier && !tierOk ? 'disabled' : ''}>إرسال الطلب الآن</button>
+        </div>
+      </div>
+    `;
+    window.syncFooter?.();
+    window.updateTierActionButton?.();
+    window.updateFooterTotal?.();
+    window.renderTierBanner?.();
+    postRenderFixes();
+  }
+
+  function postRenderFixes() {
+    applyThemeFromSelectedTier();
+    window.renderTierBanner?.();
+    window.updateTierActionButton?.();
+    window.updateFooterTotal?.();
+    if (el?.backBtn) {
+      el.backBtn.style.display = 'none';
+      el.backBtn.style.visibility = 'hidden';
+      el.backBtn.style.pointerEvents = 'none';
+    }
+    if (el?.footerBack) {
+      el.footerBack.style.minHeight = '52px';
+      el.footerBack.style.fontSize = '16px';
+      el.footerBack.style.background = 'linear-gradient(135deg,#1f8b4c,#2da35d)';
+      el.footerBack.style.color = '#fff';
+    }
+    if (el?.footerPrimary) {
+      el.footerPrimary.style.minHeight = '52px';
+      el.footerPrimary.style.fontSize = '16px';
+    }
+  }
+
+  function wrapNav(name, frameProvider) {
+    const original = window[name];
+    if (typeof original !== 'function') return;
+    window[`__orig_${name}`] = original;
+    window[name] = function (...args) {
+      const result = original.apply(this, args);
+      try {
+        const frame = frameProvider ? frameProvider(args) : null;
+        if (frame) setNav(frame, true);
+      } catch (_) {}
+      postRenderFixes();
+      return result;
+    };
+  }
+
+  function wrapOriginalGoBack() {
+    window.goBack = customGoBack;
+    window.backToShopping = customGoBack;
+  }
+
+  function wrapTierActions() {
+    window.chooseTier = chooseTierFixed;
+    window.promptTierUnlock = customTierUnlock;
+    window.clearTier = clearTierFixed;
+    window.tierCardClick = function (tierId) {
+      const t = findTier(tierId);
+      if (t) chooseTierFixed(t);
+    };
+    window.openTiersPage = function () {
+      window.renderTiersPage(true);
+    };
+    window.openOffersPage = function () {
+      window.renderOffersPage(true);
+    };
+    window.openTierProductsPage = function () {
+      window.renderTierProductsPage(true);
+    };
+  }
+
+  function wrapStrictOfferFilter() {
+    window.isOfferProduct = function (p) {
+      return getCompanyStrict(p) === 'صفقة اليوم';
+    };
+  }
+
+  function wrapCustomRenders() {
+    window.renderTiersPage = renderTiersPageFixed;
+    window.renderOffersPage = renderOffersPageFixed;
+    window.renderReview = renderReviewFixed;
+    window.openReview = function () { window.renderReview(true); };
+  }
+
+  function patchCheckoutFooter() {
+    if (el?.footerBack) {
+      el.footerBack.textContent = 'رجوع';
+      el.footerBack.onclick = customGoBack;
+    }
+  }
+
+  function installBoot() {
+    if (nav.booted) return;
+    if (!products || !tiersData || typeof window.renderHome !== 'function') return;
+    nav.booted = true;
+
+    try {
+      const raw = safeParse(localStorage.getItem(NAV_KEY), null);
+      if (raw && Array.isArray(raw.stack)) nav.stack = raw.stack;
+      if (raw && raw.current) nav.current = raw.current;
+    } catch (_) {}
+
+    fixHistoryDeduping();
+    updateSelectedTierState();
+    wrapStrictOfferFilter();
+    wrapTierActions();
+    wrapCustomRenders();
+    wrapOriginalGoBack();
+    wrapNav('renderHome', () => ({ page: 'home', payload: {} }));
+    wrapNav('renderBrandProducts', (args) => ({ page: 'products', payload: { company: cleanStr(args[0] || lastCompany || ''), returnTo: cleanStr(args[1] || 'home') } }));
+    wrapNav('renderTierProductsPage', () => ({ page: 'vipBrands', payload: {} }));
+    wrapNav('renderOffersPage', () => ({ page: 'offers', payload: {} }));
+    wrapNav('renderTiersPage', () => ({ page: 'tiers', payload: {} }));
+    wrapNav('renderReview', () => ({ page: 'review', payload: { company: cleanStr(lastCompany || ''), returnTo: cleanStr(brandReturnTarget || 'home') } }));
+
+    patchCheckoutFooter();
+    preloadImages();
+    applyThemeFromSelectedTier();
+    window.renderTierBanner?.();
+    window.updateTierActionButton?.();
+    window.updateFooterTotal?.();
+    window.syncFooter?.();
+
+    if (currentPage === 'review') window.renderReview(true);
+    else if (currentPage === 'offers') window.renderOffersPage(true);
+    else if (currentPage === 'tiers') window.renderTiersPage(true);
+    else if (currentPage === 'vipBrands') window.renderTierProductsPage(true);
+    else if (currentPage === 'products') window.renderBrandProducts(lastCompany || '', brandReturnTarget || 'home', true);
+    else window.renderHome(true);
+  }
+
+  const bootTimer = setInterval(() => {
+    try {
+      if ((products && products.length) || (tiersData && tiersData.length)) {
+        installBoot();
+        if (nav.booted) clearInterval(bootTimer);
+      }
+    } catch (_) {}
+  }, 180);
+
+  window.addEventListener('load', () => {
+    try { installBoot(); } catch (_) {}
+  });
+
+  window.addEventListener('beforeunload', () => {
+    try { saveNav(); persistTierSnapshot(); } catch (_) {}
+  });
+
+})();
+</script>
+
+</body>
+</html>
 
