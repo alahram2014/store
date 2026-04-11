@@ -139,7 +139,6 @@ img{max-width:100%;display:block}
   line-height:1.5;
   border-top:1px solid rgba(255,255,255,.12);
 }
-
 .topActions{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -147,29 +146,34 @@ img{max-width:100%;display:block}
   padding:10px 12px 12px;
 }
 .topBtn{
-  min-height:42px;
+  min-height:clamp(40px,9vw,48px);
   border:none;
   border-radius:16px;
-  font-size:clamp(10px,2.55vw,12px);
+  font-size:clamp(9px,2.1vw,11.5px);
   font-weight:800;
   cursor:pointer;
   box-shadow:0 8px 18px rgba(0,0,0,.11);
   min-width:0;
   width:100%;
-  padding:8px 6px;
-  line-height:1.15;
+  padding:6px 4px;
+  line-height:1.08;
   white-space:normal;
   word-break:break-word;
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
+  gap:4px;
 }
 .topBtn.tier{background:linear-gradient(135deg,#fff7cf,#f0d46c);color:#5a4300}
-.topBtn.tier.active{background:linear-gradient(135deg,#1f8b4c,#2da35d);color:#fff}
+.topBtn.tier.active{
+  background:linear-gradient(135deg,#1f8b4c,#2da35d);
+  color:#fff;
+  box-shadow:0 10px 20px rgba(31,139,76,.18);
+  border:1px solid rgba(255,255,255,.25);
+}
 .topBtn.offer{background:linear-gradient(135deg,#1f8b4c,#2da35d);color:#fff}
 .topBtn.hidden{display:none!important}
-
 .searchBox{
   margin:0 0 10px;
   background:#fff;
@@ -1046,25 +1050,32 @@ function renderRoute(page) {
   return renderHome();
 }
 
-
 function renderTopActions() {
   const box = els.topActions;
   if (!box) return;
+  const tierLabel = selectedTierLabel();
   const tierText = state.selectedTier
-    ? `💰 ${selectedTierLabel()}`
+    ? `💰 ${tierLabel || "شريحتك"}`
     : `💰 اختار شريحتك`;
-  const tierClass = state.selectedTier ? "topBtn tier active" : "topBtn tier";
+  const tierHtml = state.selectedTier
+    ? `<div class="tierActiveChip">
+        <div class="chipText">
+          <div class="chipTitle">الشريحة: ${html(tierLabel || "مفعلة")}</div>
+          <div class="chipSub">مفعلة على كل الصفحات</div>
+        </div>
+        <button class="chipCancel" type="button" onclick="clearTier()">إلغاء</button>
+      </div>`
+    : `<button class="topBtn tier" type="button" onclick="goTiers()">${html(tierText)}</button>`;
   const offerHtml = state.selectedTier
     ? ``
     : `<button class="topBtn offer" type="button" onclick="goOffers()">🔥 صفقة اليوم</button>`;
   const repHtml = state.rep
     ? `<button class="topBtn repBtn repChip" type="button" onclick="logoutRepConfirm()">👔 ${html(state.rep.repName || state.rep.name || "مندوب")}</button>`
     : `<button class="topBtn repBtn" type="button" onclick="openRepLogin()">👔 دخول المندوب</button>`;
-  box.innerHTML = `<button class="${tierClass}" type="button" onclick="goTiers()">${html(tierText)}</button>${offerHtml}${repHtml}`;
+  box.innerHTML = `${tierHtml}${offerHtml}${repHtml}`;
 }
 
 function logoutRepConfirm() {
- {
   if (!confirm("خروج من وضع المندوب؟")) return;
   state.rep = null;
   saveState();
@@ -1987,7 +1998,6 @@ function updateHero() {
   els.heroImage.src = state.heroImage || PLACEHOLDER;
   els.heroTagline.textContent = state.heroTagline || "تشكيل كبير ومتنوع لأكبر شركات مستحضرات التجميل";
 }
-
 async function loadData() {
   try {
     const products = await fetchCSV(DATA.productsUrl);
@@ -1998,11 +2008,7 @@ async function loadData() {
     state.news = getNewsMessages();
     saveState();
     updateHero();
-    initTicker();
-    bindGlobalKeys();
     updateCartBadge();
-    ensureRepChip();
-    applyPageEffects();
     renderHome();
 
     const [tiers, settings, reps] = await Promise.all([
@@ -2010,18 +2016,18 @@ async function loadData() {
       fetchCSV(DATA.settingsUrl),
       fetchCSV(DATA.repsUrl)
     ]);
-
     state.tiers = tiers.filter(Boolean).map(row => ({ ...row }));
     state.settings = settings.filter(Boolean).map(row => ({ ...row }));
     state.reps = reps.filter(Boolean).map(row => ({ ...row }));
     state.heroImage = getHeroImage();
     state.heroTagline = getHeroTagline();
     state.news = getNewsMessages();
-    state.loading = false;
     saveState();
     updateHero();
     initTicker();
-    renderTopActions();
+    bindGlobalKeys();
+    ensureRepChip();
+    applyPageEffects();
     render();
   } catch (err) {
     state.loading = false;
@@ -2031,7 +2037,6 @@ async function loadData() {
   }
 }
 function startApp() {
-
   updateHero();
   initHistory();
   applyPageEffects();
