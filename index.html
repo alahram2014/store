@@ -1,1 +1,596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الأهرام للتجارة والتوزيع</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A227;
+  --gold-2:#E6C55A;
+  --bg:#0f0f10;
+  --card:#151516;
+  --muted:#9aa0a6;
+  --ok:#2ecc71;
+  --danger:#e74c3c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:#fff;font-family:'Cairo',sans-serif;
+}
+.header{
+  padding:12px 14px;border-bottom:1px solid #222;background:#111;
+}
+.brand{font-weight:800;color:var(--gold);font-size:18px}
+.tagline{font-size:12px;color:#bbb;margin-top:2px}
+.hero{height:120px;background:#222 url('') center/cover no-repeat;border-bottom:1px solid #222}
+.topbar{display:flex;gap:8px;align-items:center;padding:8px 12px}
+.topbar .btn{flex:1;padding:8px;border-radius:8px;background:#1c1c1e;border:1px solid #2a2a2a;color:#fff}
+.news{padding:6px 12px;color:#000;background:var(--gold);font-size:12px;white-space:nowrap;overflow:hidden}
+.search-wrap{display:flex;gap:8px;padding:8px 12px}
+.search{flex:1;padding:10px;border-radius:10px;border:1px solid #2a2a2a;background:#111;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
+.brand-card,.product{
+  background:var(--card);border:1px solid #222;border-radius:12px;overflow:hidden
+}
+.brand-card img{width:100%;height:90px;object-fit:contain;background:#0b0b0c}
+.brand-card .name{padding:6px 8px;font-size:13px;color:#ddd}
+.product img{width:100%;height:120px;object-fit:contain;background:#0b0b0c}
+.product .p{padding:8px}
+.product .name{font-size:13px;min-height:32px}
+.price{color:var(--gold-2);font-weight:700;margin:4px 0}
+.old{color:#aaa;text-decoration:line-through;margin-inline-end:6px}
+.row{display:flex;gap:6px;align-items:center}
+.select,.qty{flex:1;background:#111;border:1px solid #2a2a2a;border-radius:8px;color:#fff;padding:8px}
+.qty-wrap{display:flex;gap:6px;align-items:center}
+.step{width:34px;height:34px;border-radius:8px;background:#1c1c1e;border:1px solid #2a2a2a;color:#fff}
+.add{width:100%;margin-top:6px;padding:10px;border-radius:10px;background:var(--gold);border:none;color:#000;font-weight:800}
+.hidden{display:none !important}
+.page{display:none}
+.page.active{display:block}
 
+/* tier banner */
+.tier-banner{
+  position:sticky;top:0;z-index:5;background:#141414;border-bottom:1px solid #222;
+  padding:8px 10px;font-size:12px
+}
+.tier-banner strong{color:var(--gold)}
+
+/* footer */
+.footer{
+  position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #222;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px
+}
+.fbtn{
+  padding:10px;border-radius:10px;border:1px solid #2a2a2a;background:#1c1c1e;color:#fff;text-align:center
+}
+.fbtn.primary{background:var(--gold);color:#000;font-weight:800}
+.total{display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold-2)}
+
+/* modal */
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:10
+}
+.modal .box{
+  width:92%;background:#111;border:1px solid #222;border-radius:14px;padding:12px
+}
+.modal input{width:100%;padding:10px;border-radius:10px;border:1px solid #2a2a2a;background:#0b0b0c;color:#fff;margin:6px 0}
+.modal .actions{display:flex;gap:8px;margin-top:6px}
+.modal .actions button{flex:1;padding:10px;border-radius:10px;border:1px solid #2a2a2a;background:#1c1c1e;color:#fff}
+.modal .actions .ok{background:var(--gold);color:#000;font-weight:800}
+
+/* tier themes (simple) */
+body.tier-a{--gold:#8e44ad;--gold-2:#b27bd8}
+body.tier-b{--gold:#16a085;--gold-2:#4dd6c3}
+
+/* cart */
+.cart-item{padding:10px;border-bottom:1px solid #222}
+.cart-item .t{font-size:13px}
+.cart-item .sub{font-size:12px;color:#bbb}
+.cart-item .row{margin-top:6px}
+.big-send{
+  width:100%;padding:14px;border-radius:12px;border:none;background:var(--ok);color:#000;font-weight:900;font-size:16px
+}
+.big-send[disabled]{opacity:.5}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">الأهرام للتجارة والتوزيع</div>
+  <div class="tagline">تشكيل كبير ومتنوع لأكبر شركات مستحضرات التجميل</div>
+</div>
+<div class="hero" id="heroImg"></div>
+
+<div class="topbar">
+  <button class="btn" onclick="openRepModal()">دخول مندوب</button>
+  <button class="btn" onclick="go('tiers')">اختر شريحتك</button>
+  <button class="btn" onclick="go('deals')">صفقة اليوم</button>
+</div>
+<div class="news" id="newsBar">—</div>
+
+<div id="tierBanner" class="tier-banner hidden"></div>
+
+<div class="search-wrap">
+  <input id="search" class="search" placeholder="ابحث باسم أو كود..." oninput="onSearch()"/>
+</div>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div id="brands" class="grid"></div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="products" class="page">
+  <div id="productsGrid" class="grid"></div>
+</div>
+
+<!-- TIERS -->
+<div id="tiers" class="page">
+  <div class="grid" id="tiersGrid"></div>
+  <div style="padding:10px">
+    <button class="fbtn" onclick="go('home')">الرئيسية</button>
+    <button class="fbtn" onclick="go('products')">الشركات</button>
+    <button id="cancelTierBtn" class="fbtn hidden" onclick="cancelTier()">إلغاء الشريحة</button>
+  </div>
+</div>
+
+<!-- DEALS -->
+<div id="deals" class="page">
+  <div style="padding:10px;font-size:18px;font-weight:800;color:var(--gold-2)">
+    انتهز الفرصة — الصفقات لفترة محدودة
+  </div>
+  <div id="dealsGrid" class="grid"></div>
+</div>
+
+<!-- CART -->
+<div id="cartPage" class="page">
+  <div id="cartList"></div>
+  <div style="padding:10px">
+    <div class="row"><input id="c_name" class="select" placeholder="اسم العميل"></div>
+    <div class="row"><input id="c_phone" class="select" placeholder="رقم الهاتف"></div>
+    <div class="row"><input id="c_addr" class="select" placeholder="العنوان"></div>
+    <div class="row"><input id="c_loc" class="select" placeholder="رابط اللوكيشن (اختياري)"></div>
+    <button id="sendBtn" class="big-send" disabled onclick="sendOrder()">إرسال الفاتورة</button>
+  </div>
+</div>
+
+<!-- REP MODAL -->
+<div id="repModal" class="modal">
+  <div class="box">
+    <div style="font-weight:800;margin-bottom:6px">دخول المندوب</div>
+    <input id="rep_id" placeholder="كود المندوب">
+    <input id="rep_pass" placeholder="الرقم السري" type="password">
+    <div class="actions">
+      <button onclick="closeRepModal()">إلغاء</button>
+      <button class="ok" onclick="loginRep()">دخول</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <button class="fbtn" onclick="quick()">التسوق السريع</button>
+  <div class="total" id="totalBox">0 ج</div>
+  <button class="fbtn primary" onclick="go('cartPage')">إتمام الشراء</button>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const API_URL = "PUT_YOUR_WEB_APP_URL";
+const CSV = {
+  products: "PUT_PRODUCTS_CSV",
+  brands: "PUT_BRANDS_CSV",
+  tiers: "PUT_TIERS_CSV",
+  reps: "PUT_REPS_CSV",
+  settings: "PUT_SETTINGS_CSV"
+};
+const DEFAULT_IMG = "https://i.ibb.co/35bpcFM1/file-000000006684720a8af00bcc1169c95a.png";
+
+/* ================= STATE ================= */
+let state = {
+  page:'home',
+  brands:[],
+  products:[],
+  tiers:[],
+  reps:[],
+  settings:{},
+  filteredProducts:[],
+  cart:[],
+  cartType:null, // normal | tier | deal
+  tier:null,
+  rep:null,
+  isSending:false
+};
+
+/* ================= INIT ================= */
+init();
+async function init(){
+  await loadAll();
+  renderHome();
+  renderDeals();
+  syncFooter();
+  bindBackNav();
+}
+
+/* ================= LOAD ================= */
+async function loadCSV(url){
+  const res = await fetch(url);
+  const txt = await res.text();
+  const rows = txt.trim().split('\n').map(r=>r.split(','));
+  const h = rows[0];
+  return rows.slice(1).map(r=>{
+    let o={}; h.forEach((k,i)=>o[k.trim()]= (r[i]||'').trim()); return o;
+  });
+}
+async function loadAll(){
+  try{
+    const [p,b,t,r,s] = await Promise.all([
+      loadCSV(CSV.products),
+      loadCSV(CSV.brands),
+      loadCSV(CSV.tiers),
+      loadCSV(CSV.reps),
+      loadCSV(CSV.settings)
+    ]);
+    state.products = p;
+    state.brands = b;
+    state.tiers = t;
+    state.reps = r;
+    state.settings = (s[0]||{});
+    state.filteredProducts = p;
+    document.getElementById('newsBar').textContent = state.settings.news || '';
+    document.getElementById('heroImg').style.backgroundImage = `url(${state.settings.hero||''})`;
+  }catch(e){
+    document.getElementById('newsBar').textContent = 'تعذر تحميل البيانات';
+  }
+}
+
+/* ================= NAV ================= */
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  state.page = id;
+  history.pushState({page:id}, "", "#"+id);
+  if(id==='cartPage') renderCart();
+}
+function bindBackNav(){
+  history.replaceState({page:'home'}, "", "#home");
+  window.onpopstate = (e)=>{
+    if(e.state && e.state.page){
+      go(e.state.page);
+    }else{
+      if(confirm("هل تريد الخروج؟")){
+        // allow exit
+      }else{
+        history.pushState({page:state.page}, "", "#"+state.page);
+      }
+    }
+  }
+}
+
+/* ================= HOME ================= */
+function renderHome(){
+  const box = document.getElementById('brands');
+  box.innerHTML='';
+  state.brands.forEach(b=>{
+    const img = b.image || DEFAULT_IMG;
+    const el = document.createElement('div');
+    el.className='brand-card';
+    el.innerHTML = `<img src="${img}"><div class="name">${b.name||''}</div>`;
+    el.onclick = ()=> openBrand(b.name);
+    box.appendChild(el);
+  });
+}
+
+/* ================= PRODUCTS ================= */
+function openBrand(name){
+  go('products');
+  const list = state.products.filter(p=>p.brand===name);
+  renderProducts(list);
+}
+function renderProducts(list){
+  const box = document.getElementById('productsGrid');
+  box.innerHTML='';
+  list.forEach(p=>{
+    if(state.tier && p.company==="صفقة اليوم") return;
+    const img = getImg(p);
+    const units = getUnits(p);
+    const base = units[0];
+    const price = getPrice(p, base);
+    const el = document.createElement('div');
+    el.className='product';
+    el.innerHTML = `
+      <img src="${img}">
+      <div class="p">
+        <div class="name">${p.name||''}</div>
+        <div class="price" id="price_${p.id}">${formatPrice(price, p, base)}</div>
+        <div class="row">
+          <select class="select" id="unit_${p.id}">
+            ${units.map(u=>`<option value="${u}">${u}</option>`).join('')}
+          </select>
+        </div>
+        <div class="row qty-wrap">
+          <button class="step" onclick="step('${p.id}',-1)">-</button>
+          <input id="qty_${p.id}" class="qty" value="1">
+          <button class="step" onclick="step('${p.id}',1)">+</button>
+        </div>
+        <button class="add" onclick="addToCart('${p.id}')">أضف للسلة</button>
+      </div>`;
+    box.appendChild(el);
+    document.getElementById(`unit_${p.id}`).onchange = ()=>{
+      const u = document.getElementById(`unit_${p.id}`).value;
+      const pr = getPrice(p,u);
+      document.getElementById(`price_${p.id}`).innerHTML = formatPrice(pr,p,u);
+    };
+  });
+}
+function getImg(p){ return (p.image && p.image.trim())? p.image : DEFAULT_IMG; }
+function getUnits(p){
+  const arr=[];
+  if(+p.carton>0) arr.push('كرتونة');
+  if(+p.pack>0) arr.push('دستة');
+  if(+p.piece>0) arr.push('قطعة');
+  return arr.length?arr:['قطعة'];
+}
+function getPrice(p,unit){
+  // tier price
+  if(state.tier){
+    const k = `tier_${state.tier.id}_${unit}`;
+    if(+p[k]>0) return +p[k];
+  }
+  // rep price
+  if(state.rep){
+    const k = `rep_${unit}`;
+    if(+p[k]>0) return +p[k];
+  }
+  // base
+  if(unit==='كرتونة') return +p.carton||0;
+  if(unit==='دستة') return +p.pack||0;
+  return +p.piece||0;
+}
+function formatPrice(pr,p,unit){
+  const base = (unit==='كرتونة'?+p.carton:(unit==='دستة'?+p.pack:+p.piece))||0;
+  if(state.tier && pr>0 && base>pr){
+    return `<span class="old">${base} ج</span>${pr} ج`;
+  }
+  return `${pr} ج`;
+}
+function step(id,inc){
+  const q = document.getElementById('qty_'+id);
+  let v = parseInt(q.value||'1') + inc;
+  if(v<1) v=1;
+  q.value = v;
+}
+
+/* ================= SEARCH ================= */
+function normalize(s){ return (s||'').toLowerCase().replace(/\s+/g,''); }
+function onSearch(){
+  const q = normalize(document.getElementById('search').value);
+  if(!q){ renderProducts(state.products); return; }
+  const res = state.products.filter(p=>{
+    const t = normalize((p.name||'') + (p.codo||''));
+    return q.split('').every(ch=> t.includes(ch));
+  });
+  renderProducts(res);
+}
+
+/* ================= DEALS ================= */
+function renderDeals(){
+  const box = document.getElementById('dealsGrid');
+  box.innerHTML='';
+  const list = state.products.filter(p=>p.company==="صفقة اليوم");
+  list.forEach(p=>{
+    const img = getImg(p);
+    const el = document.createElement('div');
+    el.className='product';
+    el.innerHTML = `
+      <img src="${img}">
+      <div class="p">
+        <div class="name">${p.name||''}</div>
+        <div class="row qty-wrap">
+          <button class="step" onclick="step('${p.id}',-1)">-</button>
+          <input id="qty_${p.id}" class="qty" value="1">
+          <button class="step" onclick="step('${p.id}',1)">+</button>
+        </div>
+        <button class="add" onclick="addDeal('${p.id}')">أضف للسلة</button>
+      </div>`;
+    box.appendChild(el);
+  });
+}
+
+/* ================= CART ================= */
+function addToCart(pid){
+  const p = state.products.find(x=>x.id==pid);
+  const unit = document.getElementById('unit_'+pid).value;
+  const qty = +document.getElementById('qty_'+pid).value||1;
+  if(!unit || qty<1){ alert('اختر وحدة وكمية صحيحة'); return; }
+
+  const newType = state.tier ? 'tier' : 'normal';
+  if(state.cart.length && state.cartType !== newType){
+    alert('❌ لا يمكن الجمع بين صفقة اليوم والشرائح');
+    return;
+  }
+  state.cartType = newType;
+
+  const price = getPrice(p,unit);
+  pushItem({id:pid,name:p.name,unit,qty,price});
+}
+function addDeal(pid){
+  const p = state.products.find(x=>x.id==pid);
+  const qty = +document.getElementById('qty_'+pid).value||1;
+
+  const newType = 'deal';
+  if(state.cart.length && state.cartType !== newType){
+    alert('❌ لا يمكن الجمع بين صفقة اليوم والشرائح');
+    return;
+  }
+  state.cartType = newType;
+
+  const price = +p.deal_price || +p.piece || 0;
+  pushItem({id:pid,name:p.name,unit:'—',qty,price});
+}
+function pushItem(it){
+  const i = state.cart.find(x=>x.id===it.id && x.unit===it.unit);
+  if(i){ i.qty += it.qty; } else { state.cart.push(it); }
+  syncFooter();
+}
+function syncFooter(){
+  const total = state.cart.reduce((s,i)=> s + i.qty*i.price, 0);
+  document.getElementById('totalBox').textContent = total + ' ج';
+}
+
+/* ================= CART PAGE ================= */
+function renderCart(){
+  const box = document.getElementById('cartList');
+  box.innerHTML='';
+  state.cart.forEach((i,idx)=>{
+    const el = document.createElement('div');
+    el.className='cart-item';
+    el.innerHTML = `
+      <div class="t">${i.name}</div>
+      <div class="sub">${i.unit}</div>
+      <div class="row">
+        <button class="step" onclick="chg(${idx},-1)">-</button>
+        <div>${i.qty}</div>
+        <button class="step" onclick="chg(${idx},1)">+</button>
+        <div style="margin-inline-start:auto">${i.qty*i.price} ج</div>
+      </div>`;
+    box.appendChild(el);
+  });
+  checkSendReady();
+}
+function chg(idx,inc){
+  state.cart[idx].qty = Math.max(1, state.cart[idx].qty+inc);
+  renderCart(); syncFooter();
+}
+
+/* ================= TIERS ================= */
+function renderTiers(){
+  const box = document.getElementById('tiersGrid');
+  box.innerHTML='';
+  state.tiers.forEach(t=>{
+    const el = document.createElement('div');
+    el.className='brand-card';
+    el.innerHTML = `<div class="name">${t.name}</div><div class="name">${t.desc||''}</div>`;
+    el.onclick = ()=> enterTier(t);
+    box.appendChild(el);
+  });
+  document.getElementById('cancelTierBtn').classList.toggle('hidden', !state.tier);
+}
+function enterTier(t){
+  if(t.password){
+    const p = prompt('ادخل باسورد الشريحة');
+    if(p !== t.password){ alert('باسورد غير صحيح'); return; }
+  }
+  state.tier = t;
+  applyTierTheme(t);
+  showTierBanner();
+  go('home');
+}
+function cancelTier(){
+  state.tier = null;
+  document.body.classList.remove('tier-a','tier-b');
+  hideTierBanner();
+}
+function applyTierTheme(t){
+  document.body.classList.remove('tier-a','tier-b');
+  if(t.theme==='a') document.body.classList.add('tier-a');
+  if(t.theme==='b') document.body.classList.add('tier-b');
+}
+function showTierBanner(){
+  const el = document.getElementById('tierBanner');
+  el.classList.remove('hidden');
+  el.innerHTML = `أنت على شريحة <strong>${state.tier.name}</strong>
+  <button onclick="cancelTier()" style="margin-inline-start:8px">إلغاء</button>`;
+}
+function hideTierBanner(){ document.getElementById('tierBanner').classList.add('hidden'); }
+
+/* ================= REP ================= */
+function openRepModal(){ document.getElementById('repModal').style.display='flex'; }
+function closeRepModal(){ document.getElementById('repModal').style.display='none'; }
+function loginRep(){
+  const id = document.getElementById('rep_id').value;
+  const pass = document.getElementById('rep_pass').value;
+  const r = state.reps.find(x=>x.Rep_ID==id && x.Password==pass && x.Active=='true');
+  if(!r){ alert('بيانات غير صحيحة'); return; }
+  state.rep = r;
+  closeRepModal();
+  alert('تم دخول المندوب: '+ r.Rep_Name);
+}
+
+/* ================= SEND ================= */
+function checkSendReady(){
+  const ok = state.cart.length &&
+    document.getElementById('c_name').value &&
+    document.getElementById('c_phone').value &&
+    document.getElementById('c_addr').value;
+  document.getElementById('sendBtn').disabled = !ok;
+}
+['c_name','c_phone','c_addr'].forEach(id=>{
+  document.addEventListener('input', e=>{
+    if(e.target.id===id) checkSendReady();
+  });
+});
+async function sendOrder(){
+  if(state.isSending) return;
+  state.isSending = true;
+  const data = buildOrder();
+  try{
+    await fetch(API_URL,{method:'POST',body:JSON.stringify(data)});
+    sendWhats(data);
+    resetAll();
+    go('home');
+    alert('تم إرسال الفاتورة');
+  }catch(e){
+    alert('فشل الإرسال');
+  }
+  state.isSending=false;
+}
+function buildOrder(){
+  return {
+    customer_name: document.getElementById('c_name').value,
+    phone: document.getElementById('c_phone').value,
+    address: document.getElementById('c_addr').value,
+    location: document.getElementById('c_loc').value,
+    user_type: state.rep?'rep':'customer',
+    rep_name: state.rep?state.rep.Rep_Name:'',
+    tier_name: state.tier?state.tier.name:'',
+    order_type: state.cartType||'normal',
+    total: state.cart.reduce((s,i)=>s+i.qty*i.price,0),
+    items: state.cart.map(i=>({
+      product_name:i.name,unit:i.unit,quantity:i.qty,price:i.price,total:i.qty*i.price
+    }))
+  };
+}
+function sendWhats(d){
+  let msg = `طلب شراء\n`;
+  if(d.rep_name) msg+=`مندوب: ${d.rep_name}\n`;
+  msg+=`العميل: ${d.customer_name}\n${d.phone}\n${d.address}\n`;
+  d.items.forEach(i=>{
+    msg+=`${i.product_name} | ${i.unit} | ${i.quantity} | ${i.total}\n`;
+  });
+  msg+=`الإجمالي: ${d.total}`;
+  window.open("https://wa.me/201552670465?text="+encodeURIComponent(msg),'_blank');
+}
+function resetAll(){
+  state.cart=[]; state.cartType=null; state.tier=null; state.rep=null;
+  hideTierBanner();
+  document.getElementById('c_name').value='';
+  document.getElementById('c_phone').value='';
+  document.getElementById('c_addr').value='';
+  document.getElementById('c_loc').value='';
+  syncFooter();
+}
+
+/* ================= QUICK ================= */
+function quick(){
+  go('products');
+  renderProducts(state.products.slice(0,20));
+}
+
+/* ================= START TIERS ================= */
+renderTiers();
+</script>
+</body>
+</html>
