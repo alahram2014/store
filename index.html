@@ -51,7 +51,7 @@ img{max-width:100%;display:block}
 .socialBtn{min-height:38px;border:none;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.10)}
 .socialBtn.phone{background:#fff;color:#0b3d91}.socialBtn.wa{background:#1f8b4c;color:#fff}.socialBtn.fb{background:#fff;color:#0b3d91}
 .newsTicker{background:linear-gradient(135deg,#fff0c1,#f0d46c);color:#5a4300;padding:6px 12px;font-size:12px;font-weight:800;min-height:32px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.5;border-top:1px solid rgba(255,255,255,.12)}
-.topActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px 12px 10px}
+.topActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px 12px 10px;position:relative;z-index:3300}
 .topBtn{min-height:44px;border:none;border-radius:16px;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.11);min-width:0;width:100%;padding:8px 10px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;justify-content:center;text-align:center;gap:6px;flex-direction:row}
 .topBtn.tier{background:linear-gradient(135deg,#fff7cf,#f0d46c);color:#5a4300}
 .topBtn.tier.active{background:linear-gradient(135deg,#1f8b4c,#2da35d);color:#fff;box-shadow:0 10px 20px rgba(31,139,76,.18);border:1px solid rgba(255,255,255,.25)}
@@ -88,7 +88,9 @@ img{max-width:100%;display:block}
 .unitSelect{height:38px;font-size:13px}
 .qtyRow{display:grid;grid-template-columns:40px 1fr 40px;gap:6px;align-items:center}
 .qtyBtn{height:40px;font-size:18px;font-weight:900;background:#e9edf3;border:none;border-radius:12px}
-.qtyInput{text-align:center}
+.qtyInput{text-align:center;color:#000;font-weight:900;font-size:16px;}
+.productCard .qtyInput{background:#fff !important;color:#000 !important;font-weight:900 !important;font-size:16px !important;}
+.qtyInput::placeholder{color:#9CA3AF;opacity:1}
 .addBtn,.primaryBtn,.secondaryBtn,.dangerBtn,.repAction{min-height:44px;font-weight:800;font-size:15px;border:none;border-radius:12px}
 .addBtn{background:linear-gradient(135deg,#c79b18,#f0d46c);color:#5a4300}
 .addBtn.offer{background:linear-gradient(135deg,#1f8b4c,#2da35d);color:#fff}
@@ -125,6 +127,19 @@ img{max-width:100%;display:block}
 .formHint{font-size:12px;color:var(--muted);line-height:1.7}
 .bigSend{min-height:54px;border:none;border-radius:18px;background:linear-gradient(135deg,#1f8b4c,#2da35d);color:#fff;font-size:17px;font-weight:900;box-shadow:0 14px 24px rgba(31,139,76,.18)}
 .bigSend:disabled{opacity:.48;cursor:not-allowed;filter:saturate(.65)}
+.laqtaBundleCard{padding:14px;overflow:hidden}
+.laqtaBundleTop{display:flex;flex-direction:column;gap:10px}
+.laqtaCountdownBig{font-size:clamp(26px,7vw,44px);font-weight:900;color:#c0392b;line-height:1.1;text-shadow:0 6px 18px rgba(192,57,43,.12)}
+.laqtaCountdownBig b{font-weight:900}
+.laqtaBundleImage{width:100%;max-height:280px;object-fit:cover;border-radius:24px;box-shadow:0 14px 30px rgba(10,37,64,.08)}
+.laqtaTitle{font-size:24px;font-weight:900;color:#0A2540;line-height:1.25}
+.laqtaDesc{font-size:14px;line-height:1.9;color:#4B5D73}
+.laqtaPrice{font-size:28px;font-weight:900;color:#1f8b4c;line-height:1.15}
+.laqtaCodeRow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.laqtaStatus{font-size:13px;line-height:1.7;color:#4B5D73}
+.laqtaStatus strong{color:#0A2540}
+.laqtaInactive{padding:12px;border-radius:18px;background:rgba(192,57,43,.08);color:#c0392b;font-weight:900;text-align:center}
+.laqtaControls{display:grid;grid-template-columns:1fr;gap:8px}
 .locationRow{display:flex;flex-direction:column;gap:8px}
 .locationStatus{font-size:13px;color:var(--muted)}
 .newsEmpty,.emptyCard{text-align:center;color:var(--muted)}
@@ -611,6 +626,7 @@ function getOfferPromoHTML(){
 function cartCompanyTotals(){
   const totals = new Map();
   for(const item of cartItems()){
+    if(clean(item.kind) === "laqta") continue;
     const p = state.products.find(x => productKey(x)===item.key || productCode(x)===item.code || productName(x)===item.name);
     const company = clean(item.company || (p ? companyName(p) : ""));
     if(!company) continue;
@@ -635,7 +651,7 @@ function tierCheckoutIssues(){
   }
   return issues;
 }
-function settingsRows(){ return state.settings || []; }
+function settingsRows(){function settingsRows(){ return state.settings || []; }
 function settingsFind(predicate){ for(const row of settingsRows()) if(predicate(row)) return row; return null; }
 function getSettingText(needles, fallback=""){ const arr=Array.isArray(needles)?needles:[needles]; const row=settingsFind(r=>{ const text=norm([r.type,r.key,r.value,r.extra].filter(Boolean).join(" ")); return arr.some(n=>text.includes(norm(n))); }); if(!row) return fallback; return clean(row.value || row.extra || row.key || fallback); }
 function getHeroImage(){ const row=settingsFind(r=>{ const text=norm([r.type,r.key].filter(Boolean).join(" ")); return text.includes("companyimage") || text.includes("heroimage") || text.includes("bannerimage") || text.includes("headerimage") || text.includes("hero") || text.includes("banner") || text.includes("header"); }); if(!row) return ""; return clean(row.value || row.extra || ""); }
@@ -647,7 +663,7 @@ function getBrandImage(company){   const product = state.products.find(     p =>
 function brandList(refresh=false){ if(!refresh && state.brands.length) return state.brands; const seen=new Set(); const arr=[]; for(const p of state.products){ if(!isActive(p)) continue; const c=clean(companyName(p)); if(!c || c === "صفقة اليوم") continue; const key=compact(c); if(seen.has(key)) continue; seen.add(key); arr.push(c); } state.brands=arr; return arr; }
 function tierTheme(row){ const direct={ gold:clean(row.theme_gold || row.gold || row.primary_color || ""), gold2:clean(row.theme_gold2 || row.gold2 || row.secondary_color || ""), gold3:clean(row.theme_gold3 || row.gold3 || row.accent_color || ""), bg:clean(row.theme_bg || row.bg_color || ""), card:clean(row.theme_card || row.card_color || ""), soft:clean(row.theme_soft || row.soft_color || ""), line:clean(row.theme_line || row.line_color || ""), text:clean(row.theme_text || row.text_color || ""), muted:clean(row.theme_muted || row.muted_color || ""), accent:clean(row.theme_accent || row.accent || ""), danger:clean(row.theme_danger || row.danger || ""), success:clean(row.theme_success || row.success || "") }; if(Object.values(direct).some(Boolean)){ const filled={...BASE_THEME}; Object.entries(direct).forEach(([k,v])=>{ if(v) filled[k]=v; }); return filled; } const k=compact(tierKey(row) || tierLabel(row) || ""); return { ...BASE_THEME, ...TIER_PALETTES[hashCode(k)%TIER_PALETTES.length] }; }
 function applyThemeForCurrentState(){ if(state.selectedTier) setTheme(tierTheme(state.selectedTier)); else resetTheme(); }
-function unitLabel(unit){ return { carton:"كرتونة", dozen:"دستة", piece:"قطعة", offer:"عرض" }[unit] || unit; }
+function unitLabel(unit){ return { carton:"كرتونة", dozen:"دستة", piece:"قطعة", offer:"عرض", bundle:"بيعة مجمعة", laqta:"لقطة اليوم" }[unit] || unit; }
 function primaryUnit(row){ const u=availableUnits(row); if(u.includes("carton")) return "carton"; if(u.includes("dozen")) return "dozen"; if(u.includes("piece")) return "piece"; return u[0] || ""; }
 function basePrice(row, unit){
   const map={ 
@@ -664,9 +680,10 @@ function effectivePrice(row, unit){ if(state.selectedTier){ const t=tierPrice(ro
 function availableUnits(row){ return ["carton","dozen","piece"].filter(u => effectivePrice(row,u) > 0); }
 function cartItems(){ return Object.values(state.cart || {}); }
 function cartTotal(){ return cartItems().reduce((sum,item)=>{ const p=state.products.find(x=>productKey(x)===item.key || productCode(x)===item.code || productName(x)===item.name) || null; const price=p ? effectivePrice(p,item.unit) : num(item.price); return sum + num(item.qty) * price; },0); }
-function cartHasDeal(){ return cartItems().some(i => clean(i.kind) === "deal" || clean(i.unit) === "offer" || i.company === "صفقة اليوم"); }
+function cartHasDeal(){ return cartItems().some(i => ["deal","laqta"].includes(clean(i.kind)) || clean(i.unit) === "offer" || clean(i.company) === "صفقة اليوم" || clean(i.company) === "لقطة اليوم"); }
 function cartHasTierItems(){ return cartItems().some(i => clean(i.kind) === "tier"); }
-function canMixWith(kind){ if(kind === "deal" && cartHasTierItems()) return false; if(kind === "tier" && cartHasDeal()) return false; return true; }
+function canMixWith(kind){ if((kind === "deal" || kind === "laqta") && cartHasTierItems()) return false; if(kind === "tier" && cartHasDeal()) return false; return true; }
+function clearCart(){ state.cart={}; saveState(); updateCartBadge(); }
 function clearCart(){ state.cart={}; saveState(); updateCartBadge(); }
 function setQty(key, qty){
   const item=state.cart[key];
@@ -811,7 +828,7 @@ function renderQuickShop(options={}){
 function renderBrand(company){ state.page="brand"; saveState(); const target=compact(company); const list=state.products.filter(p=>{ if(!isActive(p)) return false; if(state.selectedTier && isOffer(p)) return false; const c=compact(companyName(p)); return c===target || c.includes(target) || target.includes(c); }); els.app.innerHTML = `${state.selectedTier ? tierBannerHTML() : ""}<div class="sectionCard"><div class="sectionTitle">${html(company)}</div><div class="sectionSub">اختر الوحدة المتاحة فقط، ثم حدد الكمية وأضف للسلة.</div><div class="sectionSpacer"></div>${list.length ? `<div class="productGrid">${list.map(productCard).join("")}</div>` : `<div class="emptyCard">لا توجد منتجات في هذا القسم</div>`}</div>`; renderTopActions(); updateCartBadge(); }
 function priceMarkup(row, unit){ const base=basePrice(row,unit); const final=effectivePrice(row,unit); const unitName=html(unitLabel(unit)); if(!final) return `${unitName}: <span class="stockBadge">غير متاح</span>`; if(state.selectedTier && final < base) return `${unitName}: <span class="old">${Math.round(base).toLocaleString("en-US")} جنيه</span><span class="priceNow">${Math.round(final).toLocaleString("en-US")} جنيه</span>`; return `${unitName}: <span class="priceNow">${Math.round(final).toLocaleString("en-US")} جنيه</span>`; }
 function updateProductPrice(key, unit){ const p=state.products.find(x=>productKey(x)===clean(key)); if(!p) return; const el=document.getElementById(`price_${makeId(key)}`); if(el) el.innerHTML = priceMarkup(p, unit || primaryUnit(p)); }
-function productCard(p){ const key=productKey(p); const id=makeId(key); const img=clean(p.image || p.product_image || p.img || ""); const offer=isOffer(p); const name=productName(p); const selectedUnit = offer ? "offer" : (state.drafts?.[key]?.unit || primaryUnit(p) || ""); const qty=clean(state.drafts?.[key]?.qty || 1); const unitOptions = offer ? "" : availableUnits(p).map(u=>`<option value="${u}" ${selectedUnit === u ? "selected" : ""}>${unitLabel(u)}</option>`).join(""); const available=offer || availableUnits(p).length > 0; if(offer){ const offerTitle=offerLabelText(p); const offerQty=offerQuantity(p); const offerPriceVal=offerPrice(p); return `<div class="productCard offerCard ${img ? "" : "noImage"}" data-key="${html(key)}">${img ? `<img class="productImg" loading="lazy" decoding="async" src="${img}" alt="${html(name)}">` : ""}<div class="productName">${html(name)}</div><div class="offerLabel">${html(offerTitle)}</div><div class="productMeta">عدد العرض: ${Math.round(offerQty).toLocaleString("en-US")}</div><div class="priceLine">${offerPriceVal ? `${Math.round(offerPriceVal).toLocaleString("en-US")} جنيه` : `<span class="stockBadge error">سعر العرض غير متاح</span>`}</div><button class="addBtn offer" type="button" onclick="addProductToCart('${html(key)}','offer')">أضف العرض للسلة</button></div>`; } if(!available){ return `<div class="productCard noImage"><div class="productName">${html(name)}</div><div class="stockBadge error">نفذت الكمية سيصل قريباً</div></div>`; } return `<div class="productCard ${img ? "" : "noImage"}" data-key="${html(key)}">${img ? `<img class="productImg" loading="lazy" decoding="async" src="${img}" alt="${html(name)}">` : ""}<div class="productName">${html(name)}</div><div class="priceLine" id="price_${id}">${priceMarkup(p, selectedUnit)}</div><select class="unitSelect" id="unit_${id}" onchange="setDraftUnit('${html(key)}', this.value); updateProductPrice('${html(key)}', this.value)"><option value="">اختر الوحدة</option>${unitOptions}</select><div class="qtyRow"><button class="qtyBtn" type="button" onclick="changeDraftQty('${html(key)}', -1)">-</button><input class="qtyInput" id="qty_${id}" type="number" min="1" step="1" inputmode="numeric" style="background:transparent;color:#0A2540;text-align:center;font-weight:800;" value="${qty}" oninput="setDraftQty('${html(key)}', this.value)"><button class="qtyBtn" type="button" onclick="changeDraftQty('${html(key)}', 1)">+</button></div><button class="addBtn" type="button" onclick="addProductToCart('${html(key)}')">أضف للسلة</button></div>`; }
+function productCard(p){ const key=productKey(p); const id=makeId(key); const img=clean(p.image || p.product_image || p.img || ""); const offer=isOffer(p); const name=productName(p); const selectedUnit = offer ? "offer" : (state.drafts?.[key]?.unit || primaryUnit(p) || ""); const qty=clean(state.drafts?.[key]?.qty || 1); const unitOptions = offer ? "" : availableUnits(p).map(u=>`<option value="${u}" ${selectedUnit === u ? "selected" : ""}>${unitLabel(u)}</option>`).join(""); const available=offer || availableUnits(p).length > 0; if(offer){ const offerTitle=offerLabelText(p); const offerQty=offerQuantity(p); const offerPriceVal=offerPrice(p); return `<div class="productCard offerCard ${img ? "" : "noImage"}" data-key="${html(key)}">${img ? `<img class="productImg" loading="lazy" decoding="async" src="${img}" alt="${html(name)}">` : ""}<div class="productName">${html(name)}</div><div class="offerLabel">${html(offerTitle)}</div><div class="productMeta">عدد العرض: ${Math.round(offerQty).toLocaleString("en-US")}</div><div class="priceLine">${offerPriceVal ? `${Math.round(offerPriceVal).toLocaleString("en-US")} جنيه` : `<span class="stockBadge error">سعر العرض غير متاح</span>`}</div><button class="addBtn offer" type="button" onclick="addProductToCart('${html(key)}','offer')">أضف العرض للسلة</button></div>`; } if(!available){ return `<div class="productCard noImage"><div class="productName">${html(name)}</div><div class="stockBadge error">نفذت الكمية سيصل قريباً</div></div>`; } return `<div class="productCard ${img ? "" : "noImage"}" data-key="${html(key)}">${img ? `<img class="productImg" loading="lazy" decoding="async" src="${img}" alt="${html(name)}">` : ""}<div class="productName">${html(name)}</div><div class="priceLine" id="price_${id}">${priceMarkup(p, selectedUnit)}</div><select class="unitSelect" id="unit_${id}" onchange="setDraftUnit('${html(key)}', this.value); updateProductPrice('${html(key)}', this.value)"><option value="">اختر الوحدة</option>${unitOptions}</select><div class="qtyRow"><button class="qtyBtn" type="button" onclick="changeDraftQty('${html(key)}', -1)">-</button><input class="qtyInput" id="qty_${id}" type="number" min="1" step="1" inputmode="numeric" style="background:#fff;color:#000;text-align:center;font-weight:900;font-size:16px;" value="${qty}" oninput="setDraftQty('${html(key)}', this.value)"><button class="qtyBtn" type="button" onclick="changeDraftQty('${html(key)}', 1)">+</button></div><button class="addBtn" type="button" onclick="addProductToCart('${html(key)}')">أضف للسلة</button></div>`; }
 
 function addProductToCart(key, forcedUnit){
   const p=state.products.find(x=>productKey(x)===clean(key));
@@ -842,8 +859,19 @@ function addProductToCart(key, forcedUnit){
   updateCartBadge();
   toast("تمت الإضافة للسلة", "ok");
 }
-function cartItemHTML(item){ const p=state.products.find(x=>productKey(x)===item.key || productCode(x)===item.code || productName(x)===item.name); const price=p ? effectivePrice(p,item.unit) : num(item.price); const total=price * num(item.qty); return `<div class="cartCard cartItem"><div class="cartHead"><div><div class="cartName">${html(item.name)}${item.code ? ` (${html(item.code)})` : ""}</div><div class="cartLine">الوحدة: ${html(unitLabel(item.unit))}</div><div class="cartLine">السعر: ${Math.round(price).toLocaleString("en-US")} جنيه</div></div><button class="dangerBtn" onclick="removeItem('${html(item.key).replaceAll("'","&#39;")}')">حذف</button></div><div class="cartLine"><b>إجمالي الصنف:</b> ${Math.round(total).toLocaleString("en-US")} جنيه</div><div class="cartControls"><button class="qtyBtn" onclick="changeQty('${html(item.key).replaceAll("'","&#39;")}', -1)">-</button><input class="cartInput" value="${html(item.qty)}" inputmode="numeric" oninput="setQty('${html(item.key).replaceAll("'","&#39;")}', this.value)"><button class="qtyBtn" onclick="changeQty('${html(item.key).replaceAll("'","&#39;")}', 1)">+</button></div><div class="cartActions"><span class="badge green">إجمالي ${Math.round(total).toLocaleString("en-US")} جنيه</span></div></div>`; }
-function updateCustomer(field, value){ state.customer[field] = value; saveState(); }
+function cartItemHTML(item){
+  if(clean(item.kind) === "laqta"){
+    const title = clean(item.name || settingValueByKey("laqta_title", "لقطة اليوم"));
+    const desc = clean(item.description || settingValueByKey("laqta_desc", ""));
+    const price = num(item.price);
+    return `<div class="cartCard cartItem laqtaCartItem"><div class="cartHead"><div><div class="cartName">⚡ ${html(title)}</div><div class="cartLine">لقطة اليوم / بيعة مجمعة</div>${desc ? `<div class="cartLine">${html(desc)}</div>` : ""}<div class="cartLine">السعر: ${Math.round(price).toLocaleString("en-US")} جنيه</div></div><button class="dangerBtn" onclick="removeItem('${html(item.key).replaceAll("'","&#39;")}')">حذف</button></div><div class="cartActions"><span class="badge green">الكمية ثابتة 1</span><span class="badge gold">إجمالي ${Math.round(price).toLocaleString("en-US")} جنيه</span></div></div>`;
+  }
+  const p=state.products.find(x=>productKey(x)===item.key || productCode(x)===item.code || productName(x)===item.name);
+  const price=p ? effectivePrice(p,item.unit) : num(item.price);
+  const total=price * num(item.qty);
+  return `<div class="cartCard cartItem"><div class="cartHead"><div><div class="cartName">${html(item.name)}${item.code ? ` (${html(item.code)})` : ""}</div><div class="cartLine">الوحدة: ${html(unitLabel(item.unit))}</div><div class="cartLine">السعر: ${Math.round(price).toLocaleString("en-US")} جنيه</div></div><button class="dangerBtn" onclick="removeItem('${html(item.key).replaceAll("'","&#39;")}')">حذف</button></div><div class="cartLine"><b>إجمالي الصنف:</b> ${Math.round(total).toLocaleString("en-US")} جنيه</div><div class="cartControls"><button class="qtyBtn" onclick="changeQty('${html(item.key).replaceAll("'","&#39;")}', -1)">-</button><input class="cartInput" value="${html(item.qty)}" inputmode="numeric" oninput="setQty('${html(item.key).replaceAll("'","&#39;")}', this.value)"><button class="qtyBtn" onclick="changeQty('${html(item.key).replaceAll("'","&#39;")}', 1)">+</button></div><div class="cartActions"><span class="badge green">إجمالي ${Math.round(total).toLocaleString("en-US")} جنيه</span></div></div>`;
+}
+function updateCustomer(field, value){ state.customer[field] = value; saveState(); }function updateCustomer(field, value){ state.customer[field] = value; saveState(); }
 function addLocation(){ if(!navigator.geolocation) return toast("الموقع غير مدعوم على هذا الجهاز", "error"); navigator.geolocation.getCurrentPosition(pos=>{ state.customer.location = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`; saveState(); const st=document.getElementById("locationStatus"); if(st) st.textContent="✔ تم حفظ اللوكيشن"; toast("تم تحديد اللوكيشن", "ok"); },()=>toast("تعذر تحديد اللوكيشن", "error"), { enableHighAccuracy:true, timeout:12000, maximumAge:0 }); }
 function orderBlockingMessage(){
   const missing = [];
@@ -861,8 +889,101 @@ function orderBlockingMessage(){
 }
 function canSendOrder(){ return !orderBlockingMessage(); }
 
-function buildOrderPayload(){ const tier=currentTierRow(); const rep=currentRepRow(); return { type:"order", order_id:`ORD-${Date.now()}`, time:new Date().toISOString(), customer_name:clean(state.customer.name), phone:clean(state.customer.phone), address:clean(state.customer.address), location:clean(state.customer.location), user_type: rep ? "rep" : "customer", rep_name:rep ? repName(rep) : "", rep_phone:rep ? repPhone(rep) : "", rep_governorate:rep ? repGovernorate(rep) : "", tier_name:tier ? tierLabel(tier) : "", order_type:cartHasDeal() ? "deal" : (tier ? "tier" : "normal"), subtotal:cartTotal(), total:cartTotal(), items:cartItems().map(item=>{ const p=state.products.find(x=>productKey(x)===item.key || productCode(x)===item.code || productName(x)===item.name); const price=p ? effectivePrice(p,item.unit) : num(item.price); return { product_code:item.code || "", product_name:item.name || "", unit:item.unit || "", quantity:num(item.qty), price, total:num(item.qty) * price }; }) }; }
-function whatsappText(payload){ const rep=currentRepRow(); const lines=[]; lines.push("طلب شراء فاتورة من"); if(rep){ lines.push("بيانات المندوب"); lines.push(`الاسم : ${repName(rep)}`); if(repPhone(rep)) lines.push(`رقم التليفون : ${repPhone(rep)}`); if(repGovernorate(rep)) lines.push(`المحافظة : ${repGovernorate(rep)}`); lines.push(""); } lines.push("بيانات العميل"); lines.push(`الاسم : ${payload.customer_name}`); lines.push(`العنوان : ${payload.address}`); lines.push(`رقم التليفون : ${payload.phone}`); lines.push(`اللوكيشن : ${payload.location || ""}`); if(payload.tier_name){ lines.push(""); lines.push(`الشريحة : ${payload.tier_name}`); } lines.push(""); lines.push("بيان الفاتورة"); lines.push(""); payload.items.forEach(item=>{ lines.push(`كود الصنف : ${item.product_code}`); lines.push(`اسم الصنف : ${item.product_name}`); lines.push(`وحدة الصنف : ${unitLabel(item.unit)}`); lines.push(`الكميه : ${item.quantity}`); lines.push(`السعر : ${Math.round(item.price).toLocaleString("en-US")} جنيه`); lines.push(`اجمالى : ${Math.round(item.total).toLocaleString("en-US")} جنيه`); lines.push(""); }); lines.push(`إجمالي الفاتورة : ${Math.round(payload.total).toLocaleString("en-US")} جنيه`); return lines.join("\n"); }
+function serializeCartItem(item){
+  if(clean(item.kind) === "laqta"){
+    const title = clean(item.name || settingValueByKey("laqta_title", "لقطة اليوم"));
+    const price = num(item.price) || num(settingValueByKey("laqta_price", "0"));
+    return {
+      product_code: "",
+      product_name: title,
+      unit: "bundle",
+      quantity: 1,
+      price,
+      total: price,
+      kind: "laqta",
+      company: "لقطة اليوم"
+    };
+  }
+  const p = state.products.find(x=>productKey(x)===item.key || productCode(x)===item.code || productName(x)===item.name);
+  const price = p ? effectivePrice(p, item.unit) : num(item.price);
+  return {
+    product_code: item.code || "",
+    product_name: item.name || "",
+    unit: item.unit || "",
+    quantity: num(item.qty),
+    price,
+    total: num(item.qty) * price,
+    kind: clean(item.kind) || "",
+    company: clean(item.company || (p ? companyName(p) : ""))
+  };
+}
+function buildOrderPayload(){
+  const tier=currentTierRow();
+  const rep=currentRepRow();
+  const items = cartItems().map(serializeCartItem);
+  return {
+    type:"order",
+    order_id:`ORD-${Date.now()}`,
+    time:new Date().toISOString(),
+    customer_name:clean(state.customer.name),
+    phone:clean(state.customer.phone),
+    address:clean(state.customer.address),
+    location:clean(state.customer.location),
+    user_type: rep ? "rep" : "customer",
+    rep_name:rep ? repName(rep) : "",
+    rep_phone:rep ? repPhone(rep) : "",
+    rep_governorate:rep ? repGovernorate(rep) : "",
+    tier_name:tier ? tierLabel(tier) : "",
+    order_type:cartHasDeal() ? "deal" : (tier ? "tier" : "normal"),
+    subtotal:cartTotal(),
+    total:cartTotal(),
+    items
+  };
+}
+function whatsappText(payload){
+  const rep=currentRepRow();
+  const lines=[];
+  lines.push("طلب شراء فاتورة من");
+  if(rep){
+    lines.push("بيانات المندوب");
+    lines.push(`الاسم : ${repName(rep)}`);
+    if(repPhone(rep)) lines.push(`رقم التليفون : ${repPhone(rep)}`);
+    if(repGovernorate(rep)) lines.push(`المحافظة : ${repGovernorate(rep)}`);
+    lines.push("");
+  }
+  lines.push("بيانات العميل");
+  lines.push(`الاسم : ${payload.customer_name}`);
+  lines.push(`العنوان : ${payload.address}`);
+  lines.push(`رقم التليفون : ${payload.phone}`);
+  lines.push(`اللوكيشن : ${payload.location || ""}`);
+  if(payload.tier_name){
+    lines.push("");
+    lines.push(`الشريحة : ${payload.tier_name}`);
+  }
+  lines.push("");
+  lines.push("بيان الفاتورة");
+  lines.push("");
+  (payload.items || []).forEach(item=>{
+    if(item.kind === "laqta"){
+      lines.push(`نوع الصنف : لقطة اليوم / بيعة مجمعة`);
+      lines.push(`اسم البيعة : ${item.product_name}`);
+      lines.push(`الكمية : 1`);
+      lines.push(`السعر : ${Math.round(item.price).toLocaleString("en-US")} جنيه`);
+      lines.push(`الإجمالي : ${Math.round(item.total).toLocaleString("en-US")} جنيه`);
+      lines.push("");
+      return;
+    }
+    lines.push(`كود الصنف : ${item.product_code}`);
+    lines.push(`اسم الصنف : ${item.product_name}`);
+    lines.push(`وحدة الصنف : ${unitLabel(item.unit)}`);
+    lines.push(`الكميه : ${item.quantity}`);
+    lines.push(`السعر : ${Math.round(item.price).toLocaleString("en-US")} جنيه`);
+    lines.push(`اجمالى : ${Math.round(item.total).toLocaleString("en-US")} جنيه`);
+    lines.push("");
+  });
+  lines.push(`إجمالي الفاتورة : ${Math.round(payload.total).toLocaleString("en-US")} جنيه`);
+  return lines.join("\n");
+}
 async function sendOrder(){
   if(state.busySend) return;
   const reason = orderBlockingMessage();
@@ -1097,31 +1218,114 @@ function todayAt(hm){
   d.setHours(hm.h, hm.min, 0, 0);
   return d;
 }
+function timeToMinutes(value){
+  const match = clean(value).match(/^(\d{1,2}):(\d{2})$/);
+  if(!match) return null;
+  const h = Math.max(0, Math.min(23, parseInt(match[1], 10) || 0));
+  const m = Math.max(0, Math.min(59, parseInt(match[2], 10) || 0));
+  return (h * 60) + m;
+}
+function nowMinutes(){
+  const d = new Date();
+  return (d.getHours() * 60) + d.getMinutes();
+}
+function minutesToClock(totalMinutes){
+  const mins = Math.max(0, Math.floor(num(totalMinutes)));
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+function formatCountdown(ms){
+  const total = Math.max(0, Math.floor(num(ms) / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if(h > 0) return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
 function getLaqtaWindow(){
-  const startHM = parseHM(settingValueByKey("laqta_start"));
-  const endHM = parseHM(settingValueByKey("laqta_end"));
-  if(!startHM || !endHM) return null;
-  const start = todayAt(startHM);
-  const end = todayAt(endHM);
-  if(end <= start) end.setDate(end.getDate() + 1);
-  return { start, end };
-}
-function getLaqtaProduct(){
-  const pid = compact(settingValueByKey("laqta_product_id"));
-  if(!pid) return null;
-  return (state.products || []).find(p => compact(productCode(p)) === pid || compact(productKey(p)) === pid || compact(productName(p)) === pid) || null;
-}
-function getLaqtaCodes(){
-  return settingListByKey("laqta_codes").map(c => compact(c)).filter(Boolean);
+  const enabled = num(settingValueByKey("laqta_active", "1")) !== 0;
+  const start = timeToMinutes(settingValueByKey("laqta_start", "00:00"));
+  const end = timeToMinutes(settingValueByKey("laqta_end", "23:59"));
+  return {
+    enabled,
+    start: start === null ? 0 : start,
+    end: end === null ? 1439 : end
+  };
 }
 function laqtaActiveInfo(){
   const win = getLaqtaWindow();
-  if(!win) return { active:false, closed:false, start:null, end:null, remainingMs:0, beforeStart:false };
-  const now = new Date();
-  const active = now >= win.start && now < win.end;
-  return { active, closed: now >= win.end, beforeStart: now < win.start, start: win.start, end: win.end, remainingMs: Math.max(0, win.end - now) };
+  const now = nowMinutes();
+  const start = win.start;
+  const end = win.end;
+
+  if(!win.enabled){
+    return {
+      enabled: false,
+      active: false,
+      beforeStart: false,
+      closed: true,
+      start,
+      end,
+      now,
+      remainingMs: 0,
+      rangeText: `${minutesToClock(start)} - ${minutesToClock(end)}`
+    };
+  }
+
+  let active = false;
+  let beforeStart = false;
+  let closed = false;
+  let remainingMs = 0;
+
+  if(start === end){
+    active = true;
+    remainingMs = ((24 * 60) - ((now - start + (24 * 60)) % (24 * 60))) * 60000;
+  } else if(start < end){
+    active = now >= start && now <= end;
+    if(active){
+      remainingMs = (end - now) * 60000;
+    } else if(now < start){
+      beforeStart = true;
+      remainingMs = (start - now) * 60000;
+    } else {
+      closed = true;
+      remainingMs = ((24 * 60 - now) + start) * 60000;
+    }
+  } else {
+    active = now >= start || now <= end;
+    if(active){
+      remainingMs = (now >= start ? ((24 * 60 - now) + end) : (end - now)) * 60000;
+    } else {
+      beforeStart = true;
+      remainingMs = (start - now) * 60000;
+    }
+  }
+
+  return {
+    enabled: true,
+    active,
+    beforeStart,
+    closed: !active && !beforeStart && (closed || true),
+    start,
+    end,
+    now,
+    remainingMs,
+    rangeText: `${minutesToClock(start)} - ${minutesToClock(end)}`
+  };
 }
-function formatRemainingMinutes(ms){ return Math.max(0, Math.ceil(ms / 60000)).toLocaleString("en-US"); }
+function laqtaBundleData(){
+  const info = laqtaActiveInfo();
+  return {
+    title: clean(settingValueByKey("laqta_title", "لقطة اليوم")),
+    desc: clean(settingValueByKey("laqta_desc", "")),
+    price: num(settingValueByKey("laqta_price", "0")),
+    image: clean(settingValueByKey("laqta_image", "")),
+    codes: settingListByKey("laqta_codes").map(c => compact(c)).filter(Boolean),
+    info
+  };
+}
+function getLaqtaCodes(){ return settingListByKey("laqta_codes").map(c => compact(c)).filter(Boolean); }
 function tierMaxCompanyValue(){ const tier = currentTierRow(); return tier ? tierMin(tier) * 0.25 : Infinity; }
 function cartCompanyTotal(company, excludeKey=null){
   const target = compact(company);
@@ -1141,30 +1345,11 @@ function deactivateSearchMode(){ state.searchFocused = false; syncHeaderVisibili
 function syncHeaderVisibility(forceShow=false){
   const header = document.querySelector(".header");
   if(!header) return;
-  const searchPage = state.page === "home" || state.page === "quick";
-  const hide = !forceShow && searchPage && (state.searchFocused || clean(state.search).length > 0);
-  header.style.display = hide ? "none" : "";
+  header.style.display = "";
 }
 function setupHeaderBehavior(){
-  let lastY = window.scrollY || 0;
   window.addEventListener("scroll", () => {
-    const searchPage = state.page === "home" || state.page === "quick";
-    if(!searchPage || state.searchFocused || clean(state.search).length > 0){
-      syncHeaderVisibility();
-      lastY = window.scrollY || 0;
-      return;
-    }
-    const y = window.scrollY || 0;
-    if(y <= 24){
-      syncHeaderVisibility(true);
-    } else if(y > lastY + 8){
-      const header = document.querySelector(".header");
-      if(header) header.style.display = "none";
-    } else if(y < lastY - 8){
-      const header = document.querySelector(".header");
-      if(header) header.style.display = "";
-    }
-    lastY = y;
+    syncHeaderVisibility(true);
   }, { passive:true });
 }
 function setupButtonRipples(){
@@ -1195,33 +1380,46 @@ function formatHM(date){ return `${String(date.getHours()).padStart(2,"0")}:${St
 function renderLaqta(){
   state.page = "laqta";
   saveState();
-  const info = laqtaActiveInfo();
-  const product = getLaqtaProduct();
-  const codes = getLaqtaCodes();
-  const productHTML = product ? productCard(product) : `<div class="emptyCard">لم يتم تحديد منتج اللقطة بعد</div>`;
-  const countdownText = info.active ? `باقي <b>${formatRemainingMinutes(info.remainingMs)}</b> دقيقة على انتهاء العرض` : (info.beforeStart ? `سيبدأ العرض عند ${formatHM(info.start)}` : "انتهت اللقطة لهذا اليوم");
+  const bundle = laqtaBundleData();
+  const info = bundle.info;
+
   els.app.innerHTML = `
-    <div class="sectionCard" style="background:linear-gradient(135deg,rgba(199,155,24,.12),rgba(255,255,255,.88));">
-      <div class="sectionTitle">⚡ لقطة اليوم</div>
-      <div class="sectionSub" id="laqtaCountdown">${countdownText}</div>
+    <div class="sectionCard laqtaBundleCard" style="background:linear-gradient(135deg,rgba(199,155,24,.10),rgba(255,255,255,.92));">
+      <div class="laqtaBundleTop">
+        <div class="sectionTitle">⚡ لقطة اليوم / البيعة المجمعة</div>
+        <div class="laqtaCountdownBig" id="laqtaCountdownValue">${info.enabled ? formatCountdown(info.remainingMs) : "00:00"}</div>
+        <div class="laqtaStatus" id="laqtaStatusLine">${info.enabled ? (info.active ? `اللقطة تعمل الآن • المتاح حتى ${minutesToClock(info.end)}` : (info.beforeStart ? `تبدأ عند ${minutesToClock(info.start)}` : "انتهت اللقطة لهذا اليوم")) : "اللقطة موقفة من الشيت حالياً"}</div>
+      </div>
+      <div class="sectionSpacer"></div>
+      ${bundle.image ? `<img class="laqtaBundleImage" src="${html(bundle.image)}" alt="${html(bundle.title)}">` : `<div class="emptyCard">لا توجد صورة مرفوعة للبيعة المجمعة</div>`}
+      <div class="sectionSpacer"></div>
+      <div class="laqtaTitle">${html(bundle.title || "لقطة اليوم")}</div>
+      ${bundle.desc ? `<div class="laqtaDesc">${html(bundle.desc)}</div>` : `<div class="laqtaDesc">وصف العرض غير متوفر حالياً.</div>`}
+      <div class="sectionSpacer"></div>
+      <div class="laqtaPrice">${Math.round(bundle.price).toLocaleString("en-US")} جنيه</div>
       <div class="sectionSpacer"></div>
       <div class="badge gold">الشراء وقت العرض • الدفع مقدماً • التواصل للحصول على كود</div>
-      ${product ? `<div class="sectionSpacer"></div><div class="productGrid">${productHTML}</div>` : ""}
     </div>
+
     <div class="sectionCard">
       <div class="sectionTitle">شروط اللقطة</div>
-      <div class="sectionSub">• الشراء فقط خلال وقت العرض المحدد.</div>
+      <div class="sectionSub">• الشراء فقط خلال وقت العرض المحدد في الشيت.</div>
       <div class="sectionSub">• الدفع مقدماً قبل تثبيت الطلب.</div>
-      <div class="sectionSub">• التواصل مع المندوب للحصول على كود الشراء.</div>
+      <div class="sectionSub">• لا يتم التفعيل إلا بكود صحيح من أكواد اللقطة.</div>
+      <div class="sectionSub">• النطاق الزمني يعتمد على دقائق منتصف الليل لتفادي أي اختلاف توقيت.</div>
     </div>
+
     <div class="sectionCard">
       <div class="sectionTitle">كود الشراء</div>
-      <div class="formGrid">
-        <input class="formInput" id="laqtaCodeInput" placeholder="أدخل كود الشراء" autocomplete="off" oninput="updateLaqtaButton()">
-        <button class="bigSend" id="laqtaAddBtn" disabled onclick="addLaqtaToCart()">أضف للسلة</button>
+      <div class="laqtaControls">
+        <div class="laqtaCodeRow">
+          <input class="formInput" id="laqtaCodeInput" placeholder="أدخل كود الشراء" autocomplete="off" oninput="updateLaqtaButton()">
+          <button class="bigSend" id="laqtaAddBtn" disabled onclick="addLaqtaToCart()">أضف للسلة</button>
+        </div>
+        <div class="formHint">التفعيل لا يعمل إلا إذا كان الكود مطابقاً لأحد أكواد اللقطة المخزنة في الشيت.</div>
       </div>
-      <div class="formHint">التفعيل لا يعمل إلا إذا كان الكود مطابقاً لأكواد اللقطة المخزنة في الشيت.</div>
     </div>
+
     <div class="sectionCard">
       <button class="primaryBtn" style="width:100%;min-height:48px" onclick="goHome()">العودة للرئيسية</button>
     </div>
@@ -1230,11 +1428,37 @@ function renderLaqta(){
   updateFooterButtons();
   updateCartBadge();
   updateLaqtaButton();
+  startLaqtaTicker();
   syncHeaderVisibility();
-  if(!info.active && info.closed){
-    clearTimeout(window.__laqtaExpireTimer);
-    window.__laqtaExpireTimer = setTimeout(() => { if(state.page === "laqta") goHome(); }, 1200);
-  }
+}
+function startLaqtaTicker(){
+  clearInterval(window.__laqtaTimer);
+  const tick = () => {
+    const bundle = laqtaBundleData();
+    const info = bundle.info;
+    const countdown = document.getElementById("laqtaCountdownValue");
+    const status = document.getElementById("laqtaStatusLine");
+    const input = document.getElementById("laqtaCodeInput");
+    const btn = document.getElementById("laqtaAddBtn");
+    if(!countdown || !status) return;
+    if(!info.enabled){
+      countdown.textContent = "00:00";
+      status.textContent = "اللقطة موقفة من الشيت حالياً";
+      if(btn) btn.disabled = true;
+      return;
+    }
+    countdown.textContent = formatCountdown(info.remainingMs);
+    if(info.active){
+      status.textContent = `اللقطة تعمل الآن • المتاح حتى ${minutesToClock(info.end)}`;
+    } else if(info.beforeStart){
+      status.textContent = `تبدأ عند ${minutesToClock(info.start)}`;
+    } else {
+      status.textContent = "انتهت اللقطة لهذا اليوم";
+    }
+    if(btn) btn.disabled = !(info.active && bundle.codes.includes(compact(input?.value || "")));
+  };
+  tick();
+  window.__laqtaTimer = setInterval(tick, 1000);
 }
 function updateLaqtaButton(){
   const btn = document.getElementById("laqtaAddBtn");
@@ -1247,19 +1471,27 @@ function updateLaqtaButton(){
 }
 function addLaqtaToCart(){
   const info = laqtaActiveInfo();
-  if(!info.active) return toast("انتهت اللقطة", "error");
-  const product = getLaqtaProduct();
-  if(!product) return toast("منتج اللقطة غير محدد", "error");
+  if(!info.enabled) return toast("اللقطة موقفة من الشيت حالياً", "error");
+  if(!info.active) return toast("انتهت اللقطة لهذا اليوم", "error");
+  const bundle = laqtaBundleData();
+  if(!bundle.title) return toast("اسم العرض غير متوفر", "error");
   const code = compact(document.getElementById("laqtaCodeInput")?.value || "");
-  if(!getLaqtaCodes().includes(code)) return toast("كود الشراء غير صحيح", "error");
-  const key = productKey(product);
-  const unit = primaryUnit(product) || "piece";
-  const price = effectivePrice(product, unit);
-  if(!price) return toast("سعر لقطة اليوم غير متاح", "error");
-  state.cart[key] = { key, code:productCode(product), name:productName(product), company:companyName(product), unit, qty:1, price, kind:"deal" };
+  if(!bundle.codes.includes(code)) return toast("كود الشراء غير صحيح", "error");
+  if(!bundle.price) return toast("سعر اللقطة غير متاح", "error");
+  state.cart["laqta_bundle"] = {
+    key: "laqta_bundle",
+    code: "",
+    name: bundle.title,
+    company: "لقطة اليوم",
+    unit: "bundle",
+    qty: 1,
+    price: bundle.price,
+    kind: "laqta",
+    description: bundle.desc || ""
+  };
   saveState();
   updateCartBadge();
-  toast("تمت إضافة لقطة اليوم للسلة", "ok");
+  toast("تمت إضافة البيعة المجمعة للسلة", "ok");
 }
 function goLaqta(){ state.page="laqta"; saveState(); history.pushState({ page:"laqta" }, "", location.href); renderLaqta(); }
 function handleSearchFieldFocus(){ activateSearchMode(); }
@@ -1362,6 +1594,8 @@ function startApp(){
   loadData();
 }
 window.addEventListener("load", startApp);
+
+}
 </script>
 </body>
 </html>
