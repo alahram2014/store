@@ -109,7 +109,21 @@ img{max-width:100%;display:block}
 .footerBtn{min-height:46px;border:none;border-radius:14px;font-weight:800;cursor:pointer;font-family:inherit}
 .footerBtn.quick{background:linear-gradient(135deg,#8a5a00,#c79b18);color:#fff}
 .footerBtn.checkout{background:linear-gradient(135deg,#1f8b4c,#2da35d);color:#fff}
-.footerTotal{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:#fff;border-radius:14px;font-weight:900;color:#5a4300;box-shadow:0 6px 12px rgba(0,0,0,.04);min-height:46px;padding:0 10px}
+.footerTotal{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:#fff;border-radius:14px;font-weight:900;color:#5a4300;box-shadow:0 6px 12px rgba(0,0,0,.04);min-height:46px;padding:0 10px;cursor:pointer}
+.footerBtn.ai{background:linear-gradient(135deg,#173a84,#0b3d91);color:#fff}
+.aiBackdrop{position:fixed;inset:0;z-index:4500;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.45);backdrop-filter:blur(4px)}
+.aiBackdrop.show{display:flex}
+.aiCard{width:min(480px,100%);max-height:min(78vh,760px);display:flex;flex-direction:column;gap:10px}
+.aiMessages{display:flex;flex-direction:column;gap:8px;overflow:auto;padding:6px;max-height:46vh}
+.aiBubble{border:1px solid var(--line);border-radius:16px;padding:10px 12px;font-size:13px;line-height:1.8;box-shadow:0 6px 14px rgba(0,0,0,.03)}
+.aiBubble.bot{background:#fffdf6;color:#304156;align-self:flex-end}
+.aiBubble.user{background:#eef4ff;color:#173a84;align-self:flex-start}
+.aiBubble .aiActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.aiActionBtn{min-height:36px;border:none;border-radius:999px;background:linear-gradient(135deg,#8a5a00,#c79b18);color:#fff;padding:0 12px;font-weight:800;font-size:12px}
+.aiInputRow{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}
+.aiQuickRow{display:flex;gap:8px;flex-wrap:wrap}
+.aiQuickRow .secondaryBtn{min-height:36px;padding:0 10px;font-size:12px;border-radius:999px}
+
 .old{text-decoration:line-through;color:#8b8f98;margin-inline-end:6px}
 .priceNow{color:#c0392b;font-weight:900}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:800}
@@ -177,8 +191,8 @@ img{max-width:100%;display:block}
 
 <div class="footerDock">
   <button class="footerBtn quick" id="footerQuickBtn" onclick="quickShop()">التسوق السريع</button>
-  <div class="footerTotal" id="footerTotal">0 جنيه</div>
-  <button class="footerBtn checkout" id="footerCheckoutBtn" onclick="openCart()">إتمام الشراء</button>
+  <div class="footerTotal" id="footerTotal" onclick="openCart()" role="button" tabindex="0" title="افتح السلة">0 جنيه</div>
+  <button class="footerBtn ai" id="footerAiBtn" onclick="openAIChat()" aria-label="مساعد المبيعات">🤖</button>
 </div>
 
 <div id="app"><div class="emptyCard">جارٍ التحميل...</div></div>
@@ -219,6 +233,24 @@ img{max-width:100%;display:block}
     <div class="modalActions">
       <button class="primaryBtn" onclick="confirmExitSite()">الخروج</button>
       <button class="secondaryBtn" onclick="continueShopping()">مواصلة التسوق</button>
+    </div>
+  </div>
+</div>
+
+<div class="aiBackdrop" id="aiModal">
+  <div class="modalCard aiCard">
+    <div class="modalTitle">مساعد المبيعات 🤖</div>
+    <div class="modalSub">اسأل عن شركة أو صنف أو سعر أو وحدة، أو قلّي ضيفه للسلة، وأنا هساعدك باللهجة المصرية.</div>
+    <div class="aiMessages" id="aiMessages"></div>
+    <div class="aiInputRow">
+      <input class="formInput" id="aiInput" placeholder="اكتب سؤالك هنا..." autocomplete="off">
+      <button class="primaryBtn" onclick="sendAIMessage()">إرسال</button>
+    </div>
+    <div class="aiQuickRow">
+      <button class="secondaryBtn" onclick="aiQuick('اعرض البراندات')">البراندات</button>
+      <button class="secondaryBtn" onclick="aiQuick('صفقة اليوم')">العروض</button>
+      <button class="secondaryBtn" onclick="aiQuick('ارخص صنف')">الأرخص</button>
+      <button class="secondaryBtn" onclick="aiQuick('هلاقيه بكام؟')">السعر</button>
     </div>
   </div>
 </div>
@@ -277,6 +309,11 @@ const els = {
   repPassword: document.getElementById("repPassword"),
   tierPassword: document.getElementById("tierPassword"),
   tierModalText: document.getElementById("tierModalText")
+};
+const aiState = {
+  messages: [],
+  lastProductKey: "",
+  lastBrand: ""
 };
 function loadJSON(key, fallback){ try{ const raw=localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch { return fallback; } }
 function saveJSON(key,val){ try{ localStorage.setItem(key, JSON.stringify(val)); } catch {} }
@@ -338,8 +375,8 @@ function tierLabel(row){ return clean(row?.visible_label || row?.tier_name || ro
 function tierDescription(row){ return clean(row?.tier_description || row?.description || row?.details || ""); }
 function tierMin(row){ return num(row?.tier_min || row?.min || row?.minimum || row?.threshold || 0); }
 function tierPassword(row){ return clean(row?.tier_password || row?.password || row?.secret_code || row?.code || row?.pin || ""); }
-function tierIsProtected(row){ return !!tierKey(row); }
-function tierIsUnlocked(row){ return !tierIsProtected(row) || !!state.tierUnlocks[compact(tierKey(row))]; }
+function tierIsProtected(row){ return !tierIsUnlocked(row); }
+function tierIsUnlocked(row){ return !!state.tierUnlocks[compact(tierKey(row))]; }
 function repCode(row){ return clean(row?.repId || row?.rep_id || row?.code || row?.id || ""); }
 function repPassword(row){ return clean(row?.repPassword || row?.rep_password || row?.password || row?.pass || row?.pin || ""); }
 function repName(row){ return clean(row?.repName || row?.rep_name || row?.name || ""); }
@@ -509,13 +546,285 @@ async function submitRepLogin(){
     if(btn){ btn.textContent = "دخول"; btn.disabled = false; }
   }
 }
-function openTierPasswordModal(row){ state.pendingTier=row; els.tierPassword.value=""; els.tierModalText.textContent=`أدخل الرقم السري لتفعيل الشريحة: ${tierLabel(row)}`; els.tierModal.classList.add("show"); setTimeout(()=>els.tierPassword.focus(), 50); }
+
+function openAIChat(){
+  const modal = document.getElementById("aiModal");
+  if(!modal) return;
+  modal.classList.add("show");
+  if(!aiState.messages.length){
+    aiState.messages.push({
+      role: "bot",
+      text: "أهلاً بيك 👋 أنا مساعد المبيعات بتاع الأهرام. اسألني عن أي شركة أو صنف أو سعر أو وحدة، أو قولّي ضيفه للسلة."
+    });
+  }
+  renderAIChat();
+  setTimeout(()=>document.getElementById("aiInput")?.focus(), 50);
+}
+
+function closeAIChat(){
+  document.getElementById("aiModal")?.classList.remove("show");
+}
+
+function aiQuick(text){
+  const input = document.getElementById("aiInput");
+  if(input) input.value = text;
+  sendAIMessage();
+}
+
+function aiOpenBrand(name){
+  openBrand(name);
+  appendAIMessage("bot", `تمام يا باشا، فتحتلك منتجات ${clean(name)} ✅`);
+}
+
+function aiAddByKey(key, unit){
+  const product = state.products.find(p => productKey(p) === clean(key));
+  if(!product) return;
+  addProductToCart(key, unit || primaryUnit(product) || "carton");
+  appendAIMessage("bot", `تم يا كبير، ضفت ${productName(product)} للسلة ✅`);
+}
+
+function aiRenderProductActions(product){
+  const key = productKey(product);
+  const brand = companyName(product);
+  return [
+    { label: "افتح البراند", js: `aiOpenBrand(${JSON.stringify(brand)})` },
+    { label: "ضيف للسلة", js: `aiAddByKey(${JSON.stringify(key)})` }
+  ];
+}
+
+function aiProductText(product){
+  const unitList = availableUnits(product).map(unitLabel).join("، ") || "غير متاح";
+  const prices = [];
+  ["carton","dozen","piece"].forEach(u=>{
+    const price = effectivePrice(product, u);
+    if(price > 0) prices.push(`${unitLabel(u)}: ${Math.round(price).toLocaleString("en-US")} جنيه`);
+  });
+  return `لقيتلك ${productName(product)} من ${companyName(product)}.\nالوحدات: ${unitList}.${prices.length ? `\nالأسعار: ${prices.join(" | ")}` : ""}`;
+}
+
+function aiAppendWelcome(){
+  aiState.messages = [];
+  appendAIMessage("bot", "أهلاً بيك 👋 قولّي عايز تدور على إيه، وأنا أقولك البراند، السعر، والوحدات، ولو تحب أضيفه للسلة.");
+}
+
+function appendAIMessage(role, text, actions=[]){
+  aiState.messages.push({ role, text, actions });
+  renderAIChat();
+}
+
+function renderAIChat(){
+  const box = document.getElementById("aiMessages");
+  if(!box) return;
+  box.innerHTML = aiState.messages.map(msg=>{
+    const actions = Array.isArray(msg.actions) && msg.actions.length
+      ? `<div class="aiActions">${msg.actions.map(a=>`<button class="aiActionBtn" type="button" onclick='${a.js}'>${html(a.label)}</button>`).join("")}</div>`
+      : "";
+    return `<div class="aiBubble ${msg.role === "user" ? "user" : "bot"}">${html(msg.text).replace(/\n/g,"<br>")}${actions}</div>`;
+  }).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+function aiFindCandidates(raw){
+  const q = clean(raw);
+  if(!q) return [];
+  return searchCatalog(q).slice(0, 6);
+}
+
+function aiPickCheapest(list){
+  let best = null;
+  let bestPrice = Infinity;
+  for(const p of list){
+    const units = availableUnits(p);
+    for(const u of units){
+      const price = effectivePrice(p, u);
+      if(price > 0 && price < bestPrice){
+        best = { product: p, unit: u, price };
+        bestPrice = price;
+      }
+    }
+  }
+  return best;
+}
+
+function aiBuildResponse(query){
+  const raw = clean(query);
+  const q = norm(raw);
+  const qc = compact(raw);
+  const candidates = aiFindCandidates(raw);
+  const offers = state.products.filter(p => isActive(p) && isOffer(p));
+  const brands = brandList(true);
+
+  if(!raw){
+    return {
+      text: "اكتبلي سؤالك يا معلم، وأنا أساعدك في البراندات والأسعار والوحدات.",
+      actions: []
+    };
+  }
+
+  if(/^(اهلا|اهلاً|مرحبا|سلام|هاي|هلو|ازيك|صباح الخير|مساء الخير)/.test(q)){
+    return {
+      text: "أهلاً بيك يا باشا 👋 أنا معاك خطوة بخطوة. اسألني عن أي صنف أو شركة أو سعر، أو قولّي ضيفه للسلة.",
+      actions: [
+        { label: "البراندات", js: `goHome()` },
+        { label: "العروض", js: `goOffers()` }
+      ]
+    };
+  }
+
+  if(q.includes("صفقة اليوم") || q.includes("العروض") || q.includes("عرض")){
+    const list = offers.slice(0, 4);
+    if(!list.length) return { text: "مفيش عروض شغالة دلوقتي، بس أقدر أدورلك على بديل مناسب.", actions: [] };
+    aiState.lastProductKey = productKey(list[0]);
+    aiState.lastBrand = companyName(list[0]);
+    return {
+      text: `دي شوية عروض حلوين 👇\n${list.map(p => `- ${productName(p)} | ${companyName(p)} | ${Math.round(effectivePrice(p,"offer")).toLocaleString("en-US")} جنيه`).join("\n")}`,
+      actions: [
+        { label: "افتح العروض", js: `goOffers()` },
+        { label: "ضيف أول عرض", js: `aiAddByKey(${JSON.stringify(productKey(list[0]))}, "offer")` }
+      ]
+    };
+  }
+
+  if(q.includes("براند") || q.includes("شرك") || q.includes("شركات")){
+    const list = brands.slice(0, 8);
+    return {
+      text: `عندي براندات وشركات كتيير، وأهم اللي ظاهرين دلوقتي:\n${list.map(b => `- ${b}`).join("\n")}`,
+      actions: list.slice(0, 2).map(b => ({ label: `افتح ${b}`, js: `aiOpenBrand(${JSON.stringify(b)})` }))
+    };
+  }
+
+  if(q.includes("ارخص") || q.includes("الأرخص") || q.includes("اقل سعر") || q.includes("أقل سعر")){
+    const picked = aiPickCheapest(state.products.filter(isActive).filter(p => !isOffer(p)));
+    if(!picked) return { text: "مش لاقي صنف مناسب حالياً.", actions: [] };
+    aiState.lastProductKey = productKey(picked.product);
+    aiState.lastBrand = companyName(picked.product);
+    return {
+      text: `أرخص اختيار لقيته: ${productName(picked.product)} من ${companyName(picked.product)} بسعر ${Math.round(picked.price).toLocaleString("en-US")} جنيه، ووحدته ${unitLabel(picked.unit)}.`,
+      actions: [
+        { label: "ضيفه للسلة", js: `aiAddByKey(${JSON.stringify(productKey(picked.product))}, ${JSON.stringify(picked.unit)})` },
+        { label: "افتح البراند", js: `aiOpenBrand(${JSON.stringify(companyName(picked.product))})` }
+      ]
+    };
+  }
+
+  if(q.includes("وحدة") || q.includes("وحدات") || q.includes("متاح") || q.includes("المتاح")){
+    const product = candidates[0];
+    if(!product) return { text: "قولي اسم الصنف أو البراند الأول، وأنا أقولك الوحدات المتاحة.", actions: [] };
+    aiState.lastProductKey = productKey(product);
+    aiState.lastBrand = companyName(product);
+    const units = availableUnits(product).map(unitLabel).join("، ") || "مفيش وحدات مسعرة";
+    return {
+      text: `الصنف ${productName(product)} من ${companyName(product)} متاح بوحدات: ${units}.`,
+      actions: [
+        { label: "ضيف للسلة", js: `aiAddByKey(${JSON.stringify(productKey(product))})` },
+        { label: "افتح البراند", js: `aiOpenBrand(${JSON.stringify(companyName(product))})` }
+      ]
+    };
+  }
+
+  if(q.includes("ضيف") || q.includes("اضف") || q.includes("أضف") || q.includes("حط")){
+    let product = candidates[0];
+    if(!product && aiState.lastProductKey){
+      product = state.products.find(p => productKey(p) === aiState.lastProductKey) || null;
+    }
+    if(!product){
+      return { text: "قولّي اسم الصنف الأول عشان أضيفه صح للسلة.", actions: [] };
+    }
+    const unit = primaryUnit(product) || "carton";
+    aiState.lastProductKey = productKey(product);
+    aiState.lastBrand = companyName(product);
+    return {
+      text: `تمام يا باشا، ضفت ${productName(product)} للسلة ✅`,
+      actions: [
+        { label: "افتح البراند", js: `aiOpenBrand(${JSON.stringify(companyName(product))})` }
+      ]
+    };
+  }
+
+  if(q.includes("سعر") || q.includes("بكام") || q.includes("كام") || q.includes("السعر")){
+    const product = candidates[0];
+    if(!product) return { text: "ابعتلي اسم الصنف أو كود الصنف، وأنا أطلعلك السعر فورًا.", actions: [] };
+    aiState.lastProductKey = productKey(product);
+    aiState.lastBrand = companyName(product);
+    const units = availableUnits(product);
+    const details = units.map(u => `${unitLabel(u)}: ${Math.round(effectivePrice(product, u)).toLocaleString("en-US")} جنيه`).join(" | ");
+    return {
+      text: `الصنف ${productName(product)} من ${companyName(product)}.\n${details || "مفيش سعر متاح دلوقتي."}`,
+      actions: [
+        { label: "ضيف للسلة", js: `aiAddByKey(${JSON.stringify(productKey(product))})` },
+        { label: "افتح البراند", js: `aiOpenBrand(${JSON.stringify(companyName(product))})` }
+      ]
+    };
+  }
+
+  if(q.includes("افتح") || q.includes("اعرض") || q.includes("شوف")){
+    const product = candidates[0];
+    if(product){
+      aiState.lastProductKey = productKey(product);
+      aiState.lastBrand = companyName(product);
+      return {
+        text: aiProductText(product),
+        actions: [
+          { label: "افتح البراند", js: `aiOpenBrand(${JSON.stringify(companyName(product))})` },
+          { label: "ضيف للسلة", js: `aiAddByKey(${JSON.stringify(productKey(product))})` }
+        ]
+      };
+    }
+    const brand = brands.find(b => compact(b).includes(qc) || qc.includes(compact(b)));
+    if(brand){
+      return {
+        text: `تمام، فتحتلك ${brand} 👌`,
+        actions: [{ label: `افتح ${brand}`, js: `aiOpenBrand(${JSON.stringify(brand)})` }]
+      };
+    }
+  }
+
+  if(candidates.length){
+    const product = candidates[0];
+    aiState.lastProductKey = productKey(product);
+    aiState.lastBrand = companyName(product);
+    return {
+      text: aiProductText(product),
+      actions: [
+        { label: "ضيف للسلة", js: `aiAddByKey(${JSON.stringify(productKey(product))})` },
+        { label: "افتح البراند", js: `aiOpenBrand(${JSON.stringify(companyName(product))})` }
+      ]
+    };
+  }
+
+  return {
+    text: "مش لاقي المطلوب بالظبط، بس لو كتبت اسم الصنف أو البراند بشكل أقرب هجيبّهولك بسرعة.",
+    actions: [
+      { label: "البراندات", js: `goHome()` },
+      { label: "العروض", js: `goOffers()` }
+    ]
+  };
+}
+
+function sendAIMessage(){
+  const input = document.getElementById("aiInput");
+  if(!input) return;
+  const msg = clean(input.value);
+  if(!msg) return toast("اكتب سؤالك الأول", "error");
+  input.value = "";
+  appendAIMessage("user", msg);
+  const result = aiBuildResponse(msg);
+  appendAIMessage("bot", result.text, result.actions || []);
+}
+
+window.openAIChat = openAIChat;
+window.closeAIChat = closeAIChat;
+window.sendAIMessage = sendAIMessage;
+window.aiQuick = aiQuick;
+window.aiOpenBrand = aiOpenBrand;
+window.aiAddByKey = aiAddByKey;
+
+function openTierPasswordModal(row){ state.pendingTier=row; els.tierPassword.value=""; els.tierModalText.textContent=`أدخل الرقم السري لتفعيل الشريحة: ${tierLabel(row)}. لو الشريحة مفتوحة اترك الحقل فارغ واضغط دخول.`; els.tierModal.classList.add("show"); setTimeout(()=>els.tierPassword.focus(), 50); }
 function closeTierPassword(){ state.pendingTier=null; els.tierModal.classList.remove("show"); }
 function submitTierPassword(){
   const row = state.pendingTier;
   const entered = clean(els.tierPassword.value);
   if(!row) return closeTierPassword();
-  if(!entered) return toast("أدخل الرقم السري", "error");
   const btn = document.querySelector("#tierModal .primaryBtn");
   if(btn){ btn.textContent = "جارٍ التحقق..."; btn.disabled = true; }
   authRequest("check_tier", { tierId: tierKey(row), password: entered })
@@ -535,7 +844,7 @@ function submitTierPassword(){
     });
 }
 function activateTier(row){ if(cartHasDeal()) return toast("لا يمكن تفعيل الشريحة مع وجود صفقة اليوم في السلة", "error"); state.selectedTier=row; saveState(); applyThemeForCurrentState(); renderTopActions(); render(); toast(`تم الدخول إلى نظام الشريحة ${tierLabel(row)}`, "ok"); }
-function selectTier(row){ if(!row) return; if(tierIsProtected(row) && !tierIsUnlocked(row)){ openTierPasswordModal(row); return; } activateTier(row); updateSendButtonState(); }
+function selectTier(row){ if(!row) return; if(!tierIsUnlocked(row)){ openTierPasswordModal(row); return; } activateTier(row); updateSendButtonState(); }
 function pickTier(key){ const row=state.tiers.find(t=>tierKey(t) === clean(key)); if(row) selectTier(row); }
 function clearTier(){ state.selectedTier=null; saveState(); applyThemeForCurrentState(); renderTopActions(); render(); updateSendButtonState(); toast("تم الخروج من نظام الشرائح", "info"); }
 function exitTierMode(){ clearTier(); }
@@ -555,7 +864,7 @@ function bindBrandClicks(){ if(window.__brandClickBound) return; window.__brandC
 function openBrand(name){ const company=clean(name); if(!company) return; state.currentBrand=company; state.page="brand"; saveState(); history.pushState({ page:"brand" }, "", location.href); renderBrand(company); }
 function renderOffers(){ state.page="offers"; saveState(); if(state.selectedTier){ els.app.innerHTML = `${tierBannerHTML()}<div class="sectionCard"><div class="sectionTitle">صفقة اليوم</div><div class="emptyCard">صفقة اليوم مخفية أثناء تفعيل الشريحة.</div></div>`; renderTopActions(); return; } const offers=state.products.filter(p=>isActive(p) && isOffer(p)); els.app.innerHTML = `<div class="sectionCard"><div class="sectionTitle">🔥 صفقة اليوم</div><div class="sectionSub">اختيار العدد فقط ثم الإضافة للسلة.</div><div class="sectionSpacer"></div>${offers.length ? `<div class="productGrid">${offers.map(productCard).join("")}</div>` : `<div class="emptyCard">لا توجد عروض حالياً</div>`}</div>`; renderTopActions(); }
 function renderTiers(){ state.page="tiers"; saveState(); const tiers=state.tiers.filter(r=>{ const active=clean(r.active || "1"); const status=clean(r.status || "").toLowerCase(); return active === "1" || status === "active" || status === "فعال"; }); els.app.innerHTML = `<div class="pageActions"><button class="secondaryBtn" onclick="goCompanies()">الشركات</button><button class="primaryBtn" onclick="goHome()">الرئيسية</button></div>${state.selectedTier ? tierBannerHTML() : ""}<div class="sectionCard"><div class="sectionTitle">شرائح الجملة</div><div class="sectionSub">اختر الشريحة المناسبة. إذا كانت الشريحة محمية بكود، سيُطلب الرقم السري من الشيت.</div></div><div class="tierGrid">${tiers.length ? tiers.map(tierCardHTML).join("") : `<div class="emptyCard">لا توجد شرائح متاحة</div>`}</div>${state.selectedTier ? `<div class="sectionCard"><button class="primaryBtn" style="width:100%;min-height:48px" onclick="exitTierMode()">اضغط للخروج من نظام الشرائح واكمال التسوق بدون شرائح</button></div>` : ""}`; renderTopActions(); }
-function tierCardHTML(t){ const key=tierKey(t); const protectedTier=tierIsProtected(t); const unlocked=tierIsUnlocked(t); const active=state.selectedTier && tierKey(state.selectedTier) === key; const btnText = active ? "الشريحة الحالية" : (protectedTier && !unlocked ? "دخول" : "اختيار الشريحة"); const badge=protectedTier ? (unlocked ? "🔓 مفتوح" : "🔒 مقفل") : "متاح"; return `<div class="tierCard"><div class="tierTitle"><span class="tierName">${html(tierLabel(t))}</span><span class="badge ${protectedTier ? "gold" : "green"}">${badge}</span></div><div class="tierMeta">الحد الأدنى: <b>${Math.round(tierMin(t)).toLocaleString("en-US")} جنيه</b></div>${tierDescription(t) ? `<div class="tierMeta">${html(tierDescription(t))}</div>` : ""}<div class="tierActionRow"><button class="primaryBtn" onclick="pickTier('${html(key).replaceAll("'", "&#39;")}')">${html(btnText)}</button></div></div>`; }
+function tierCardHTML(t){ const key=tierKey(t); const unlocked=tierIsUnlocked(t); const active=state.selectedTier && tierKey(state.selectedTier) === key; const btnText = active ? "الشريحة الحالية" : (unlocked ? "الشريحة مفعلة" : "دخول"); const badge=unlocked ? "🔓 مفتوح" : "🔒 مقفل"; return `<div class="tierCard"><div class="tierTitle"><span class="tierName">${html(tierLabel(t))}</span><span class="badge ${unlocked ? "green" : "gold"}">${badge}</span></div><div class="tierMeta">الحد الأدنى: <b>${Math.round(tierMin(t)).toLocaleString("en-US")} جنيه</b></div>${tierDescription(t) ? `<div class="tierMeta">${html(tierDescription(t))}</div>` : ""}<div class="tierActionRow"><button class="primaryBtn" onclick="pickTier('${html(key).replaceAll("'", "&#39;")}')">${html(btnText)}</button></div></div>`; }
 function renderCart(){ state.page="cart"; saveState(); const items=cartItems(); const total=cartTotal(); const tier=currentTierRow(); const tierOk=!tier || total >= tierMin(tier); const tierBlock=tier ? `<div class="tierBanner"><div class="tierBannerTop"><div class="tierBannerTitle">الشريحة الحالية: <b>${html(tierLabel(tier))}</b>${tierOk ? " — تم تحقيق الشريحة" : ` — المتبقي <b>${Math.max(0, tierMin(tier) - total).toLocaleString("en-US")} جنيه</b>`}</div><div style="display:flex;gap:8px;flex-wrap:wrap">${tierOk ? `<button class="tierBannerBtn" onclick="goCart()">اذهب للسلة لاتمام</button>` : ""}<button class="tierBannerBtn" onclick="exitTierMode()">اضغط للخروج من نظام الشرائح واكمال التسوق بدون شرائح</button></div></div></div>` : ""; els.app.innerHTML = `${tierBlock}<div class="cartWrap"><div class="cartCard cartSummary"><div class="sectionTitle">إجمالي المشتريات</div><div class="priceLine">${Math.round(total).toLocaleString("en-US")} جنيه</div></div>${items.length ? items.map(cartItemHTML).join("") : `<div class="emptyCard">السلة فارغة</div>`}<div class="cartCard"><div class="sectionTitle">بيانات العميل</div><div class="formGrid"><input class="formInput" placeholder="اسم العميل" value="${html(state.customer.name || "")}" oninput="updateCustomer('name', this.value)"><input class="formInput" placeholder="رقم الهاتف" value="${html(state.customer.phone || "")}" oninput="updateCustomer('phone', this.value)"><input class="formInput" placeholder="العنوان" value="${html(state.customer.address || "")}" oninput="updateCustomer('address', this.value)"><div class="locationRow"><button class="secondaryBtn" onclick="addLocation()">إضافة اللوكيشن</button><div class="locationStatus" id="locationStatus">${state.customer.location ? "✔ تم حفظ اللوكيشن" : "اللوكيشن اختياري"}</div></div><button class="bigSend" id="sendBtn" onclick="sendOrder()">إرسال الفاتورة</button><div class="formHint">لن يعمل الإرسال إلا بعد اكتمال البيانات المطلوبة، ومع تحقيق شروط الشريحة إن وجدت.</div></div></div></div>`; updateSendButtonState(); renderTopActions(); updateCartBadge(); }
 function addNewSearchResultRender(){ if(state.page === "quick") renderQuickShop({ preserveFocus:true }); else renderHome({ preserveFocus:true }); }
 function liveSearch(v){ state.search = typeof v === "string" ? v : clean(v?.value || ""); saveState(); clearTimeout(window.__searchTimer); window.__searchTimer = setTimeout(addNewSearchResultRender, 90); }
@@ -591,8 +900,8 @@ window.addEventListener("beforeunload", e=>{ if(cartItems().length){ e.preventDe
 function openCart(){ goCart(); }
 window.openRepLogin = openRepLogin; window.closeRepLogin = closeRepLogin; window.submitRepLogin = submitRepLogin; window.openCart = openCart; window.openTiersPage = goTiers; window.openOffersPage = goOffers; window.openBrand = openBrand; window.chooseTier = selectTier; window.openTierPasswordModal = openTierPasswordModal; window.closeTierPassword = closeTierPassword; window.submitTierPassword = submitTierPassword; window.activateTier = activateTier; window.renderHome = renderHome; window.renderCart = renderCart; window.renderBrand = renderBrand; window.renderOffers = renderOffers; window.renderTiers = renderTiers; window.pickTier = pickTier; window.clearTier = clearTier; window.addLocation = addLocation; window.changeQty = changeQty; window.setQty = setQty; window.removeItem = function(key){ delete state.cart[key]; saveState(); updateCartBadge(); renderCart(); }; window.addProductToCart = addProductToCart; window.setDraftUnit = setDraftUnit; window.setDraftQty = setDraftQty; window.changeDraftQty = changeDraftQty; window.liveSearch = liveSearch; window.runSearch = runSearch; window.clearSearch = clearSearch; window.sendOrder = sendOrder; window.exitTierMode = exitTierMode; window.confirmExitSite = confirmExitSite; window.continueShopping = continueShopping; window.quickShop = quickShop; window.renderQuickShop = renderQuickShop; window.goHome = goHome; window.goCompanies = goCompanies; window.goCart = goCart; window.goOffers = goOffers; window.goTiers = goTiers;
 function openBrandFromButton(name){ openBrand(name); }
-document.addEventListener("click", e=>{ const btn=e.target.closest?.(".brandCard[data-brand]"); if(btn){ const brand=clean(btn.getAttribute("data-brand")); if(brand) openBrand(brand); } const repModal=document.getElementById("repModal"); const tierModal=document.getElementById("tierModal"); const exitModal=document.getElementById("exitModal"); if(repModal && e.target === repModal) closeRepLogin(); if(tierModal && e.target === tierModal) closeTierPassword(); if(exitModal && e.target === exitModal) closeExitModal(); });
-function bindStaticModalKeys(){ document.getElementById("repModal").addEventListener("keydown", e=>{ if(e.key === "Enter") submitRepLogin(); }); document.getElementById("tierModal")?.addEventListener("keydown", e=>{ if(e.key === "Enter") submitTierPassword(); }); document.getElementById("exitModal")?.addEventListener("keydown", e=>{ if(e.key === "Enter") confirmExitSite(); }); }
+document.addEventListener("click", e=>{ const btn=e.target.closest?.(".brandCard[data-brand]"); if(btn){ const brand=clean(btn.getAttribute("data-brand")); if(brand) openBrand(brand); } const repModal=document.getElementById("repModal"); const tierModal=document.getElementById("tierModal"); const exitModal=document.getElementById("exitModal"); const aiModal=document.getElementById("aiModal"); if(repModal && e.target === repModal) closeRepLogin(); if(tierModal && e.target === tierModal) closeTierPassword(); if(exitModal && e.target === exitModal) closeExitModal(); if(aiModal && e.target === aiModal) closeAIChat(); });
+function bindStaticModalKeys(){ document.getElementById("repModal").addEventListener("keydown", e=>{ if(e.key === "Enter") submitRepLogin(); }); document.getElementById("tierModal")?.addEventListener("keydown", e=>{ if(e.key === "Enter") submitTierPassword(); }); document.getElementById("exitModal")?.addEventListener("keydown", e=>{ if(e.key === "Enter") confirmExitSite(); }); document.getElementById("aiModal")?.addEventListener("keydown", e=>{ if(e.key === "Enter") sendAIMessage(); }); }
 async function loadData(){
   state.loading = true;
   renderLoading();
