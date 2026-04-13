@@ -1,1 +1,245 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>الأهرام للتجارة والتوزيع</title>
+<meta name="theme-color" content="#c79b18" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+:root{
+  --gold:#c79b18; --gold2:#f0d46c; --gold3:#8a5a00; --bg:#fbf4de; --card:#ffffff;
+  --soft:#fffdf6; --line:#ead08a; --text:#1d2633; --muted:#667085; --accent:#0b3d91;
+  --danger:#c0392b; --success:#1f8b4c;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:'Cairo',sans-serif;
+  background:linear-gradient(180deg,#fff7df,#fbf4de 30%,#f8f0da);
+  color:var(--text); -webkit-tap-highlight-color:transparent;
+}
+button,input,select{font-family:inherit}
+#app{padding:12px 12px 116px;max-width:980px;margin:0 auto}
+.header{position:static;z-index:1000;background:linear-gradient(180deg,#c79b18,#8a5a00);color:#fff;box-shadow:0 6px 20px rgba(0,0,0,0.08);overflow:hidden}
+.hero{position:relative;height:116px;background:linear-gradient(135deg,#8a5a00,#c79b18);display:flex;align-items:center;padding:0 20px}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.4}
+.heroText{position:relative;z-index:2;text-align:right;width:100%}
+.companyName{font-weight:900;font-size:22px;text-shadow:0 2px 4px rgba(0,0,0,0.3)}
+.tagline{font-size:12px;opacity:0.9}
+.socialRow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 12px;background:rgba(255,255,255,0.06)}
+.socialBtn{min-height:38px;border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;background:#fff;color:var(--gold3)}
+.socialBtn.wa{background:#1f8b4c;color:#fff}
+.topActions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px}
+.topBtn{min-height:44px;border:none;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer;background:#fff;color:var(--text);box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.topBtn.active{background:var(--gold3);color:#fff}
+.searchBox{margin:10px 0;background:#fff;border-radius:15px;padding:10px;border:1px solid var(--line)}
+.searchRow{display:grid;grid-template-columns:1fr 70px;gap:8px}
+.searchInput{width:100%;height:40px;border:1px solid #ddd;border-radius:10px;padding:0 10px}
+.searchBtn{background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:700}
+.brandGrid,.productGrid,.tierGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.brandCard,.productCard,.tierCard{background:#fff;border-radius:15px;padding:12px;border:1px solid var(--line);text-align:center}
+.brandImg,.productImg{width:100%;height:120px;object-fit:contain;margin-bottom:8px}
+.priceNow{color:var(--danger);font-weight:900;font-size:16px;display:block;margin:5px 0}
+.qtyRow{display:grid;grid-template-columns:35px 1fr 35px;gap:5px;margin:10px 0}
+.addBtn,.primaryBtn{height:40px;width:100%;background:linear-gradient(135deg,#c79b18,#f0d46c);border:none;border-radius:10px;font-weight:800;cursor:pointer}
+.footerDock{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:10px;background:#fff;border-top:1px solid var(--line);z-index:3000}
+.footerTotal{display:flex;align-items:center;justify-content:center;font-weight:900;border:1px solid var(--line);border-radius:10px}
+.footerBtn{height:45px;border:none;border-radius:10px;font-weight:800;color:#fff}
+.footerBtn.checkout{background:var(--success)}
+.footerBtn.home{background:var(--gold3)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:5000;padding:20px}
+.modal.show{display:flex}
+.modalCard{background:#fff;padding:20px;border-radius:20px;width:100%;max-width:400px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;padding:10px 20px;border-radius:20px;display:none;z-index:9999}
+@media (min-width:700px){.brandGrid,.productGrid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hero">
+    <img id="heroImage" src="" />
+    <div class="heroText">
+      <div class="companyName">الأهرام للتجارة والتوزيع</div>
+      <div id="heroTagline" class="tagline">جارٍ التحميل...</div>
+    </div>
+  </div>
+  <div class="socialRow">
+    <button class="socialBtn" onclick="window.open('tel:01040880002')">📞 اتصل</button>
+    <button class="socialBtn wa" onclick="window.open('https://wa.me/201040880002')">واتساب</button>
+    <button class="socialBtn" onclick="window.open('https://facebook.com/alahram2014')">فيسبوك</button>
+  </div>
+  <div id="topActions" class="topActions"></div>
+</div>
 
+<div id="app"></div>
+
+<div class="footerDock">
+  <button class="footerBtn home" onclick="renderHome()">الرئيسية</button>
+  <div class="footerTotal" id="footerTotal">0 جنيه</div>
+  <button class="footerBtn checkout" onclick="renderCart()">السلة</button>
+</div>
+
+<div class="modal" id="repModal">
+  <div class="modalCard">
+    <h3>دخول المندوب</h3>
+    <input class="searchInput" id="repCode" placeholder="كود المندوب" style="margin-bottom:10px">
+    <input class="searchInput" id="repPassword" type="password" placeholder="الرقم السري">
+    <button class="primaryBtn" style="margin-top:15px" onclick="submitRepLogin()">دخول</button>
+    <button class="primaryBtn" style="background:#eee;margin-top:8px" onclick="closeModals()">إلغاء</button>
+  </div>
+</div>
+
+<div class="modal" id="tierModal">
+  <div class="modalCard">
+    <h3 id="tierTitle">تفعيل الشريحة</h3>
+    <p id="tierDesc"></p>
+    <input class="searchInput" id="tierPassInput" type="password" placeholder="الرقم السري للشريحة">
+    <button class="primaryBtn" style="margin-top:15px" onclick="submitTierAuth()">تفعيل</button>
+    <button class="primaryBtn" style="background:#eee;margin-top:8px" onclick="closeModals()">إلغاء</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  products: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1503749054&single=true&output=csv",
+  settings: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=47255050&single=true&output=csv",
+  reps: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=1633587789&single=true&output=csv",
+  tiers: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSRFXsca9uGfjZBwUH68RB1b_4Qcow1Ena2qeLo4WK_33rUAcqrQPrp2wD0MTaPaHKkQ3kC-BYH8QSK/pub?gid=917474192&single=true&output=csv",
+  auth: "https://script.google.com/macros/s/AKfycbwaB-bv-GdQ78TdFmX_p3RKjze2bMjlHAuNip1yaPashWGhqXEO6-i8_2jmh48K1GuYzw/exec"
+};
+
+let state = { products:[], settings:[], reps:[], tiers:[], cart:{}, rep:null, tier:null, pendingTier:null };
+
+function toast(m) { const t=document.getElementById("toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",2000); }
+function closeModals() { document.querySelectorAll(".modal").forEach(m=>m.classList.remove("show")); }
+
+async function load() {
+  const [p, s, r, t] = await Promise.all([f(DATA.products), f(DATA.settings), f(DATA.reps), f(DATA.tiers)]);
+  state.products=p; state.settings=s; state.reps=r; state.tiers=t;
+  renderHome(); updateUI();
+}
+function f(u){ return new Promise(res=>Papa.parse(u,{download:true,header:true,complete:r=>res(r.data)})); }
+
+function updateUI() {
+  const hero = state.settings.find(x=>x.key==="heroimage")?.value;
+  if(hero) document.getElementById("heroImage").src=hero;
+  document.getElementById("heroTagline").textContent = state.settings.find(x=>x.key==="tagline")?.value || "الأهرام للتوزيع";
+  
+  document.getElementById("topActions").innerHTML = `
+    <button class="topBtn ${state.tier?'active':''}" onclick="renderTiers()">🏷️ ${state.tier?state.tier.tier_name:'الشرائح'}</button>
+    <button class="topBtn" onclick="toast('عروض اليوم متاحة')">🔥 العروض</button>
+    <button class="topBtn" onclick="openRepModal()">${state.rep?state.rep.repName:'دخول مندوب'}</button>
+  `;
+}
+
+function renderHome() {
+  const brands = [...new Set(state.products.map(p=>p.company))].filter(Boolean);
+  let h = `<div class="searchBox"><div class="searchRow"><input class="searchInput" id="search" placeholder="ابحث..."><button class="searchBtn">بحث</button></div></div><div class="brandGrid">`;
+  brands.forEach(b=>{
+    const img = state.products.find(p=>p.company===b)?.brand_image || "";
+    h += `<div class="brandCard" onclick="renderBrand('${b}')">${img?`<img class="brandImg" src="${img}">`:''}<b>${b}</b></div>`;
+  });
+  document.getElementById("app").innerHTML = h + `</div>`;
+}
+
+function renderBrand(b) {
+  const list = state.products.filter(p=>p.company===b);
+  let h = `<button class="primaryBtn" style="margin-bottom:15px" onclick="renderHome()">⬅ رجوع</button><div class="productGrid">`;
+  list.forEach(p=>{
+    let price = getPrice(p);
+    h += `<div class="productCard">
+      <img class="productImg" src="${p.image||''}">
+      <div style="font-size:12px;height:35px;overflow:hidden">${p.name}</div>
+      <b class="priceNow">${price} ج</b>
+      <button class="addBtn" onclick="addToCart('${p.codo}')">أضف للسلة</button>
+    </div>`;
+  });
+  document.getElementById("app").innerHTML = h + `</div>`;
+}
+
+function getPrice(p) {
+  if(state.tier) {
+    const tKey = `price_${state.tier.tier_id}_piece`;
+    if(p[tKey]) return p[tKey];
+  }
+  return p.price_piece || 0;
+}
+
+function renderTiers() {
+  let h = `<button class="primaryBtn" style="margin-bottom:15px" onclick="renderHome()">⬅ رجوع</button><div class="tierGrid">`;
+  state.tiers.forEach(t=>{
+    h += `<div class="tierCard">
+      <h4>${t.visible_label || t.tier_name}</h4>
+      <p style="font-size:11px">حد أدنى: ${t.tier_min} ج</p>
+      <button class="addBtn" onclick="attemptTier('${t.tier_id}')">تفعيل</button>
+    </div>`;
+  });
+  document.getElementById("app").innerHTML = h + `</div>`;
+}
+
+function attemptTier(id) {
+  const t = state.tiers.find(x=>x.tier_id===id);
+  if(t.tier_password) {
+    state.pendingTier = t;
+    document.getElementById("tierDesc").textContent = "هذه الشريحة محمية برقم سري";
+    document.getElementById("tierModal").classList.add("show");
+  } else {
+    state.tier = t; toast("تم تفعيل شريحة " + t.tier_name); updateUI(); renderHome();
+  }
+}
+
+async function submitTierAuth() {
+  const pass = document.getElementById("tierPassInput").value;
+  const btn = document.querySelector("#tierModal .primaryBtn");
+  btn.textContent = "تحقق...";
+  const res = await fetch(DATA.auth, {method:"POST", body:JSON.stringify({action:"check_tier", tierId:state.pendingTier.tier_id, password:pass})});
+  const r = await res.json();
+  if(r.success) { state.tier=state.pendingTier; toast("تم التفعيل"); closeModals(); updateUI(); renderHome(); }
+  else toast("خطأ في الرقم السري");
+  btn.textContent = "تفعيل";
+}
+
+function addToCart(c) {
+  state.cart[c] = (state.cart[c] || 0) + 1;
+  let total = 0;
+  for(let k in state.cart) { total += (state.cart[k] * getPrice(state.products.find(x=>x.codo===k))); }
+  document.getElementById("footerTotal").textContent = Math.round(total) + " ج";
+  toast("تمت الإضافة");
+}
+
+function renderCart() {
+  let h = `<h3>السلة</h3>`;
+  for(let k in state.cart) {
+    const p = state.products.find(x=>x.codo===k);
+    h += `<div class="sectionCard"><b>${p.name}</b><br>الكمية: ${state.cart[k]} | السعر: ${getPrice(p)} ج</div>`;
+  }
+  h += `<button class="addBtn" style="background:var(--success);color:#fff" onclick="send()">إرسال واتساب</button>`;
+  document.getElementById("app").innerHTML = h;
+}
+
+function send() {
+  let t = "طلب جديد:\n";
+  for(let k in state.cart) { t += `- ${state.products.find(x=>x.codo===k).name} (${state.cart[k]})\n`; }
+  window.open(`https://wa.me/201040880002?text=${encodeURIComponent(t)}`);
+}
+
+function openRepModal() { document.getElementById("repModal").classList.add("show"); }
+async function submitRepLogin() {
+  const code = document.getElementById("repCode").value;
+  const pass = document.getElementById("repPassword").value;
+  const res = await fetch(DATA.auth, {method:"POST", body:JSON.stringify({action:"check_rep", code, password:pass})});
+  const r = await res.json();
+  if(r.success) { state.rep=r.repData; toast("أهلاً يا " + r.repData.repName); closeModals(); updateUI(); }
+  else toast("بيانات خطأ");
+}
+
+window.onload = load;
+</script>
+</body>
+</html>
