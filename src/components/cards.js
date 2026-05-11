@@ -380,12 +380,8 @@ export function tierCard(
 
       <div class="tier-card__stats">
         <div class="tier-card__stat">
-          <span>الحد الأدنى</span>
+          <span>الحد الأدنى للمشتريات</span>
           <strong>${dom.escape(formatTierMinimum(tier.min_order || 0))}</strong>
-        </div>
-        <div class="tier-card__stat">
-          <span>الخصم</span>
-          <strong>${formatMoney(tier.discount_percent || 0)}%</strong>
         </div>
       </div>
 
