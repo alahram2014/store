@@ -215,7 +215,7 @@
 .toast-item__body p { color: var(--muted); font-size: var(--text-sm); line-height: 1.7; }
 @media (max-width: 699px) {
   .header-row--primary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .section-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .section-grid {   grid-template-columns: 1fr; }
   .company-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .tiers-grid { grid-template-columns: 1fr; }
