@@ -113,10 +113,10 @@ function formatTierMinimum(value) {
 
 function getTierVisual(tier) {
   const label = String(tier.visible_label || tier.tier_name || '').toLowerCase();
-  if (label.includes('الماس') || label.includes('diamond')) return { icon: '◆', description: 'أعلى أولوية تسعيرية' };
-  if (label.includes('ذهب') || label.includes('gold')) return { icon: '⬢', description: 'خصم يصل الى 4%' };
-  if (label.includes('فض') || label.includes('silver')) return { icon: '◈', description: 'توازن جيد للتوريد' };
-  if (label.includes('برون') || label.includes('bronze')) return { icon: '⬡', description: 'نقطة بداية نمو' };
+  if (label.includes('الماس') || label.includes('diamond')) return { icon: '◆', description: 'السعر الاساسى بدون شرائح' };
+  if (label.includes('ذهب') || label.includes('gold')) return { icon: '⬢', description: 'خصم يصل الى 5%' };
+  if (label.includes('فض') || label.includes('silver')) return { icon: '◈', description: 'خصم يصل الى 4%' };
+  if (label.includes('برون') || label.includes('bronze')) return { icon: '⬡', description: 'خصم يصل الى 3%' };
   return { icon: '○', description: 'المدخل الأساسي للحساب' };
 }
 
