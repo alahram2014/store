@@ -32,7 +32,7 @@ import { renderTiersPage } from '../pages/tiersPage.js';
 import { renderCartPage, renderCheckoutPage, renderInvoicePage } from '../pages/cartCheckoutPages.js';
 import { renderLoginPage, renderRegisterPage } from '../pages/authPages.js';
 import { renderCustomersPage, renderInvoicesPage, renderAccountPage } from '../pages/customerPages.js';
-import { storageKeys, , loadJSON, removeValue, purgeLegacyStorage } from '../core/storage.js';
+import { storageKeys, loadJSON, removeValue, purgeLegacyStorage } from '../core/storage.js';
 
 function createInitialData() {
   return createInitialState();
