@@ -32,7 +32,7 @@ import { renderTiersPage } from '../pages/tiersPage.js';
 import { renderCartPage, renderCheckoutPage, renderInvoicePage } from '../pages/cartCheckoutPages.js';
 import { renderLoginPage, renderRegisterPage } from '../pages/authPages.js';
 import { renderCustomersPage, renderInvoicesPage, renderAccountPage } from '../pages/customerPages.js';
-import { storageKeys, saveJSON, loadJSON, removeValue, purgeLegacyStorage } from '../core/storage.js';
+import { storageKeys, , loadJSON, removeValue, purgeLegacyStorage } from '../core/storage.js';
 
 function createInitialData() {
   return createInitialState();
@@ -333,7 +333,7 @@ async function ensureCompanyCatalogLoaded(store, api, companyId) {
         draft.commerce.cart = syncCartPrices(draft.commerce.cart, draft.commerce.catalog.productIndex);
       }, { dirty: ['page', 'drawer', 'modals', 'header'] });
       const cache = loadJSON(storageKeys.companyRowsCache, {});
-      saveJSON(storageKeys.companyRowsCache, { ...(cache && typeof cache === 'object' ? cache : {}), [trimmed]: rows });
+      (storageKeys.companyRowsCache, { ...(cache && typeof cache === 'object' ? cache : {}), [trimmed]: rows });
       persistCart(store.getState().commerce.cart);
       return;
     }
@@ -1183,8 +1183,9 @@ export async function bootstrapApp() {
     setRuntimeLifecycle(store, { cartSynced: true });
     persistSelectedTier(selectedTier);
     persistCart(reconciledCart);
-    if (catalogHasMeaningfulData(catalog)) {
-      saveJSON(storageKeys.catalog, { ...catalog, offers: catalog.offers || { daily: [], flash: [] } });
+   if (catalogHasMeaningfulData(catalog)) {
+  // saveJSON(storageKeys.catalog, { ...catalog, offers: catalog.offers || { daily: [], flash: [] } });
+}
     }
     scheduler.schedule('page', 'toast');
   } catch (error) {
@@ -1222,7 +1223,7 @@ export async function bootstrapApp() {
     persistSelectedTier(selectedTier);
     persistCart(reconciledCart);
     if (catalogHasMeaningfulData(fallbackCatalog)) {
-      saveJSON(storageKeys.catalog, { ...fallbackCatalog, offers: fallbackCatalog.offers || { daily: [], flash: [] } });
+      (storageKeys.catalog, { ...fallbackCatalog, offers: fallbackCatalog.offers || { daily: [], flash: [] } });
     }
     scheduler.schedule('page', 'toast');
   }
