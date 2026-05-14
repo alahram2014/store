@@ -3,13 +3,26 @@ import { computeDisplayPrice, labelForUnit } from '../services/pricingService.js
 import { formatMoney } from '../services/invoiceService.js';
 
 export function companyCard(company) {
+  if (!company || !company.company_id || !company.company_name) {
+    return '';
+  }
+
   return `
     <article class="company-card" data-action="open-company" data-company-id="${dom.escape(company.company_id)}">
       <div class="company-card__logo">
-        ${company.company_logo ? `<img src="${dom.escape(company.company_logo)}" alt="${dom.escape(company.company_name)}" loading="lazy" />` : `<span>${dom.escape((company.company_name || '').slice(0, 1) || 'A')}</span>`}
+        ${company.company_logo
+          ? `<img src="${dom.escape(company.company_logo)}" alt="${dom.escape(company.company_name)}" loading="lazy" />`
+          : `<span>${dom.escape(company.company_name.slice(0, 1))}</span>`
+        }
       </div>
-      <h3 class="company-card__title">${dom.escape(company.company_name)}</h3>
-      <button class="btn btn--ghost company-card__action" type="button">تصفح المنتجات</button>
+
+      <h3 class="company-card__title">
+        ${dom.escape(company.company_name)}
+      </h3>
+
+      <button class="btn btn--ghost company-card__action" type="button">
+        تصفح المنتجات
+      </button>
     </article>
   `;
 }
