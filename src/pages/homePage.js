@@ -44,10 +44,25 @@ function productsByIds(state, ids) {
 }
 
 function topCompanyCards(state) {
-  const topCompanies = (state.commerce.catalog.top?.companies || []).slice(0, 8);
-  const companyLookup = new Map((state.commerce.catalog.companies || []).map((company) => [String(company.company_id), company]));
-  const companies = topCompanies.map((row) => companyLookup.get(String(row.company_id)) || { company_id: row.company_id, company_name: row.company_name, company_logo: '' });
-  return companies.length ? companies.map(companyCard).join('') : getVisibleCompanies(state).slice(0, 8).map(companyCard).join('');
+  const topCompanies = (state.commerce.catalog.top?.companies || []);
+
+  const companyLookup = new Map(
+    (state.commerce.catalog.companies || [])
+      .map((company) => [String(company.company_id), company])
+  );
+
+  const companies = topCompanies
+    .map((row) =>
+      companyLookup.get(String(row.company_id)) || {
+        company_id: row.company_id,
+        company_name: row.company_name,
+        company_logo: '',
+      }
+    );
+
+  return companies.length
+    ? companies.map(companyCard).join('')
+    : getVisibleCompanies(state).map(companyCard).join('');
 }
 
 export function renderHomePage(state) {
