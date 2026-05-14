@@ -1183,9 +1183,9 @@ export async function bootstrapApp() {
     setRuntimeLifecycle(store, { cartSynced: true });
     persistSelectedTier(selectedTier);
     persistCart(reconciledCart);
-   if (catalogHasMeaningfulData(catalog)) {
-  // saveJSON(storageKeys.catalog, { ...catalog, offers: catalog.offers || { daily: [], flash: [] } });
-    }
+ if (catalogHasMeaningfulData(catalog)) {
+  // catalog cache disabled temporarily
+}
     scheduler.schedule('page', 'toast');
   } catch (error) {
     console.error(error);
