@@ -1185,7 +1185,6 @@ export async function bootstrapApp() {
     persistCart(reconciledCart);
    if (catalogHasMeaningfulData(catalog)) {
   // saveJSON(storageKeys.catalog, { ...catalog, offers: catalog.offers || { daily: [], flash: [] } });
-}
     }
     scheduler.schedule('page', 'toast');
   } catch (error) {
