@@ -425,7 +425,7 @@ export async function loadCompanyCatalog(api, companyId, selectedTierName = null
     return { companyId: trimmedCompanyId, rows: [], aggregated: new Map(), productIndex: {}, products: [] };
   }
 
-  const rows = await loadRowsWithFallback(api, ['v_runtime_products_full', 'v_runtime_products_safe', 'v_runtime_products_mobile'], {
+  const rows = await loadRowsWithFallback(api, ['v_runtime_products_mobile'], {
     select: 'company_id,company_name,company_logo,product_id,product_name,category,product_image,status,visible,unit_code,tier_name,final_price,available_qty,reserved_qty,allow_backorder,runtime_healthy,is_sellable,unit_active,min_qty,display_order',
     company_id: `eq.${trimmedCompanyId}`,
     order: 'display_order.asc',
