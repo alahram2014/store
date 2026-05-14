@@ -374,7 +374,7 @@ export async function loadHomeCatalog(api, selectedTierName = null) {
   const daily = requests[3].status === 'fulfilled' && Array.isArray(requests[3].value) && requests[3].value.length ? requests[3].value : [];
   const flash = requests[4].status === 'fulfilled' && Array.isArray(requests[4].value) && requests[4].value.length ? requests[4].value : [];
 
-  const catalogRows = await loadRowsWithFallback(api, ['v_catalog_products', 'v_runtime_products_safe', 'v_runtime_products_mobile'], {
+  const catalogRows = await loadRowsWithFallback(api, ['v_runtime_products_mobile'], {
     select: 'product_id,product_name,company_id,company_name,company_logo,category,product_image,status,visible,unit_code,tier_name,final_price,available_qty,reserved_qty,allow_backorder,unit_active,can_buy,availability_reason,display_order',
     order: 'product_id.asc,unit_code.asc,display_order.asc',
   }, 160);
