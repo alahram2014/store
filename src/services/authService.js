@@ -26,8 +26,8 @@ export function normalizeSessionRecord(session) {
   return {
     ...session,
     sales_rep_id: salesRepId || session.sales_rep_id || session.rep_id || session.created_by_rep_id || null,
-    rep_id: session.rep_id ?? salesRepId ?? null,
-    created_by_rep_id: session.created_by_rep_id ?? salesRepId ?? null,
+    rep_id: session.rep_id ?? null,
+    created_by_rep_id: session.created_by_rep_id ?? null,
     userType,
     user_type: userType,
   };
