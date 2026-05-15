@@ -134,6 +134,9 @@ if (!rows?.length) {
   ).catch(() => []);
 }
 
+console.log('CAPABILITY_ROWS', rows);
+}
+
   if (!Array.isArray(rows) || !rows.length) {
     return session;
   }
