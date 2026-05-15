@@ -67,7 +67,7 @@ async function fetchUserProfile(api, table, identifier) {
 }
 
 async function fetchIdentityProfiles(api, identifier) {
-  const tables = ['admins', 'sales_reps', 'customers'];
+  const tables = ['admins', 'sales_reps'];
   const results = await Promise.allSettled(tables.map((table) => fetchUserProfile(api, table, identifier)));
   return tables.map((table, index) => ({
     table,
