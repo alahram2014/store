@@ -104,6 +104,64 @@ async function authenticateWithServer(api, identifier, password) {
   throw new Error('AUTH_BACKEND_REQUIRED');
 }
 
+async function enrichOperationalSession(api, session) {
+  const identifier = normalizeIdentifier(
+    session?.username
+      || session?.phone
+      || ''
+  );
+
+  if (!identifier) {
+    return session;
+  }
+
+  const rows = await api.get(
+    'v_system_users_capabilities',
+    {
+      select: '*',
+      or: `(phone.eq.${identifier},username.eq.${identifier})`,
+    },
+  ).catch(() => []);
+
+  if (!Array.isArray(rows) || !rows.length) {
+    return session;
+  }
+
+  const first = rows[0];
+
+  const capabilities = [
+    ...new Set(
+      rows
+        .map((row) => row.capability_key)
+        .filter(Boolean),
+    ),
+  ];
+
+  const domains = [
+    ...new Set(
+      rows
+        .map((row) => row.domain_key)
+        .filter(Boolean),
+    ),
+  ];
+
+  return {
+    ...session,
+
+    system_user: {
+      id: first.system_user_id,
+      full_name: first.full_name,
+      username: first.username,
+      user_type: first.user_type,
+      is_active: first.is_active,
+      is_blocked: first.is_blocked,
+    },
+
+    capabilities,
+    domains,
+  };
+}
+
 export async function login(api, identifier, password) {
   const trimmedIdentifier = normalizeIdentifier(identifier);
   const trimmedPassword = String(password || '').trim();
@@ -134,8 +192,18 @@ export async function login(api, identifier, password) {
     throw new Error('AUTH_ROLE_UNRESOLVED');
   }
 
-  saveJSON(storageKeys.session, session);
-  return session;
+ const enrichedSession =
+  await enrichOperationalSession(
+    api,
+    session,
+  );
+
+saveJSON(
+  storageKeys.session,
+  enrichedSession,
+);
+
+return enrichedSession;
 }
 
 export function logout() {
