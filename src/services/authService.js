@@ -22,7 +22,7 @@ export function normalizeSessionRecord(session) {
     || (session.customer_id ? 'customer' : null),
     null,
   );
-  const salesRepId = normalizeIdentifier(session.sales_rep_id || session.rep_id || session.created_by_rep_id || session.id || '');
+  const salesRepId = normalizeIdentifier(session.sales_rep_id || session.rep_id || session.created_by_rep_id || '');
   return {
     ...session,
     sales_rep_id: salesRepId || session.sales_rep_id || session.rep_id || session.created_by_rep_id || null,
