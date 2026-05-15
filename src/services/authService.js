@@ -209,7 +209,7 @@ export async function login(api, identifier, password) {
 
 const enrichedSession = await enrichOperationalSession(api, session);
 
-console.log('ENRICHED_SESSION', enrichedSession);
+console.log('ENRICHED_SESSION', JSON.stringify(enrichedSession, null, 2));
 
 saveJSON(storageKeys.session, enrichedSession);
 
