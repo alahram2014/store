@@ -695,7 +695,7 @@ function bindInteractions(store, api, schedule) {
     }
 
     if (action === 'refresh-invoices') {
-      await loadInvoicesIntoState(store, api);
+      loadInvoicesIntoState(store, api).catch(console.error);
       schedule('page');
       return;
     }
@@ -820,9 +820,9 @@ function bindInteractions(store, api, schedule) {
         persistSelectedCustomer(null);
         notify(store, 'success', 'تم الدخول', session.name || session.username || '');
         if (isSalesRepSession(session)) {
-          await loadCustomersIntoState(store, api, session);
+          loadCustomersIntoState(store, api, session).catch(console.error);
         }
-        await loadInvoicesIntoState(store, api);
+        loadInvoicesIntoState(store, api).catch(console.error);
         if (pendingFlow?.name === 'checkout' && isSalesRepSession(session)) {
           setPendingFlow(store, pendingFlow);
           notify(store, 'info', 'يجب اختيار العميل أولًا', 'اختر العميل ثم ستعود مباشرة إلى إتمام الطلب');
