@@ -72,7 +72,7 @@ export async function submitOrder(api, state, tier, totals) {
 
   const userType = normalizeUserType(session?.user_type || session?.userType || 'customer', 'customer');
   const customer = state.auth.selectedCustomer || (userType === 'customer' ? session : null);
-  const salesRepId = getOwnershipActorId(session) || customer?.sales_rep_id || customer?.rep_id || null;
+  const salesRepId = isSalesRepSession(session) ? getOwnershipActorId(session) : (customer?.sales_rep_id || customer?.rep_id || null);
 
   if (!customer?.id && !isSalesRepSession(session)) throw new Error('INVALID_CUSTOMER');
 
