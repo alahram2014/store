@@ -24,7 +24,7 @@ import { renderThemeSwitcher, AVAILABLE_THEMES } from '../layout/themeSwitcher.j
 import { renderHero } from '../layout/hero.js';
 import { renderFooter } from '../layout/footer.js';
 import { renderLoginModal, renderCustomerModal, renderProductModal, renderInvoiceModal } from '../layout/modals.js';
-import { renderDrawer, renderToasts } from '../layout/overlays.js';
+import { renderDrawer, renderToasts, renderFloatingCart } from '../layout/overlays.js';
 import { renderHomePage } from '../pages/homePage.js';
 import { renderSearchPage } from '../pages/searchPage.js';
 import { renderCompaniesPage, renderCompanyPage } from '../pages/companiesPage.js';
