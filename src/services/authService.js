@@ -48,7 +48,7 @@ export function getOwnershipActorId(session) {
 const PROFILE_SELECT = {
   admins: 'id,name,phone,username,is_active,is_blocked,blocked_reason',
   sales_reps: 'id,name,phone,username,region,default_tier_name,is_active,is_blocked,blocked_reason',
-  customers: 'id,name,phone,username,location,default_tier_name,is_active,is_blocked,blocked_reason',
+  customers: 'id,name,phone,username,region,default_tier_name,is_active,is_blocked,blocked_reason',
 };
 
 async function fetchUserProfile(api, table, identifier) {
@@ -119,13 +119,12 @@ export async function login(api, identifier, password) {
 
   const authoritativeTable = USER_TYPE_TO_TABLE[authoritativeType];
   const authoritativeProfile = authoritativeTable ? profileMap[authoritativeTable] || null : null;
-  const fallbackProfile = authoritativeProfile || authenticated;
   if (!authoritativeProfile) {
     throw new Error('AUTH_PROFILE_MISSING');
   }
 
   const session = normalizeSessionRecord({
-    ...fallbackProfile,
+    ...authoritativeProfile,
     ...authenticated,
     userType: authoritativeType,
     user_type: authoritativeType,
