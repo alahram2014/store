@@ -17,7 +17,7 @@ export function normalizeSessionRecord(session) {
   const explicit = session.userType || session.user_type || session.role || null;
   const userType = normalizeUserType(
     explicit
-    || (session.sales_rep_id || session.rep_id || session.created_by_rep_id ? 'sales_rep' : null)
+    || (session.rep_code ? 'sales_rep' : null)
     || (session.admin_id ? 'admin' : null)
     || (session.customer_id ? 'customer' : null),
     null,
