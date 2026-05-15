@@ -115,13 +115,23 @@ async function enrichOperationalSession(api, session) {
     return session;
   }
 
-  const rows = await api.get(
+  let rows = await api.get(
+  'v_system_users_capabilities',
+  {
+    select: '*',
+    phone: `eq.${identifier}`,
+  },
+).catch(() => []);
+
+if (!rows?.length) {
+  rows = await api.get(
     'v_system_users_capabilities',
     {
       select: '*',
-      or: `(phone.eq.${identifier},username.eq.${identifier})`,
+      username: `eq.${identifier}`,
     },
   ).catch(() => []);
+}
 
   if (!Array.isArray(rows) || !rows.length) {
     return session;
