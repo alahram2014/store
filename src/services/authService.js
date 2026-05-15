@@ -198,8 +198,8 @@ export async function login(api, identifier, password) {
   }
 
   const session = normalizeSessionRecord({
-    ...authoritativeProfile,
     ...authenticated,
+    ...authoritativeProfile,
     userType: authoritativeType,
     user_type: authoritativeType,
   });
