@@ -139,10 +139,28 @@ async function enrichOperationalSession(api, session) {
 
   console.log('CAPABILITY_ROWS', rows);
   console.log('ROWS_IS_ARRAY', Array.isArray(rows));
+  let salesRepProfile = null;
+
+if (session?.sales_rep_id) {
+  const repRows = await api.get(
+    'sales_reps',
+    {
+      select: 'id,name,phone',
+      id: `eq.${session.sales_rep_id}`,
+      limit: '1',
+    },
+  ).catch(() => []);
+
+  salesRepProfile = repRows?.[0] || null;
+}
 
   if (!Array.isArray(rows) || !rows.length) {
-  return normalizeSessionRecord(session);
-  }
+  return {
+    ...normalizeSessionRecord(session),
+    sales_rep_name: salesRepProfile?.name || null,
+    sales_rep_phone: salesRepProfile?.phone || null,
+  };
+}
 
   const first = rows[0];
 
@@ -163,6 +181,8 @@ async function enrichOperationalSession(api, session) {
 
   return {
     ...session,
+    sales_rep_name: salesRepProfile?.name || null,
+    sales_rep_phone: salesRepProfile?.phone || null,
 
     system_user: {
       id: first.system_user_id,
