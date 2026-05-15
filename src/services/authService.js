@@ -141,7 +141,7 @@ async function enrichOperationalSession(api, session) {
   console.log('ROWS_IS_ARRAY', Array.isArray(rows));
 
   if (!Array.isArray(rows) || !rows.length) {
-    return session;
+  return normalizeSessionRecord(session);
   }
 
   const first = rows[0];
