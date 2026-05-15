@@ -116,15 +116,7 @@ async function enrichOperationalSession(api, session) {
     return session;
   }
 
-  let rows = await api.get(
-  'v_system_users_capabilities',
-  {
-    select: '*',
-    phone: `eq.${identifier}`,
-  },
-).catch(() => []);
-
-if (!rows?.length) {
+  if (!rows?.length) {
   rows = await api.get(
     'v_system_users_capabilities',
     {
