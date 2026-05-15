@@ -63,6 +63,7 @@ async function fetchUserProfile(api, table, identifier) {
     if (phone?.length) return phone;
     return await api.get(table, { select, username: `eq.${trimmed}`, limit: '1' }).catch(() => []);
   });
+  console.log('PROFILE_RESPONSE', table, rows);
   return rows?.[0] || null;
 }
 
