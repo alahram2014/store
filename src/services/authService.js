@@ -48,7 +48,7 @@ export function getOwnershipActorId(session) {
 const PROFILE_SELECT = {
   admins: 'id,name,phone,username,is_active,is_blocked,blocked_reason',
   sales_reps: 'id,name,phone,username,region,default_tier_name,is_active,is_blocked,blocked_reason',
-  customers: 'id,name,phone,username,region,default_tier_name,is_active,is_blocked,blocked_reason',
+  customers: 'id,name,phone,username,location,default_tier_name,is_active,is_blocked,blocked_reason',
 };
 
 async function fetchUserProfile(api, table, identifier) {
