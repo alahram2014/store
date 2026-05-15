@@ -105,6 +105,7 @@ async function authenticateWithServer(api, identifier, password) {
 }
 
 async function enrichOperationalSession(api, session) {
+  console.log('ENRICH_FUNCTION_RUNNING');
   const identifier = normalizeIdentifier(
     session?.username
       || session?.phone
