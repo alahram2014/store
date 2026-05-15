@@ -119,13 +119,12 @@ export async function login(api, identifier, password) {
 
   const authoritativeTable = USER_TYPE_TO_TABLE[authoritativeType];
   const authoritativeProfile = authoritativeTable ? profileMap[authoritativeTable] || null : null;
-  if (!authoritativeProfile) {
-    throw new Error('AUTH_PROFILE_MISSING');
+ const fallbackProfile = authoritativeProfile || authenticated;
   }
 
   const session = normalizeSessionRecord({
-    ...authoritativeProfile,
-    ...authenticated,
+  ...fallbackProfile,
+  ...authenticated,
     userType: authoritativeType,
     user_type: authoritativeType,
   });
