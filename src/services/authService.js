@@ -135,6 +135,7 @@ if (!rows?.length) {
 }
 
 console.log('CAPABILITY_ROWS', rows);
+console.log('ROWS_IS_ARRAY', Array.isArray(rows));
 }
 
   if (!Array.isArray(rows) || !rows.length) {
