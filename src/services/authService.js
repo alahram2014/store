@@ -192,16 +192,11 @@ export async function login(api, identifier, password) {
     throw new Error('AUTH_ROLE_UNRESOLVED');
   }
 
- const enrichedSession =
-  await enrichOperationalSession(
-    api,
-    session,
-  );
+const enrichedSession = await enrichOperationalSession(api, session);
 
-saveJSON(
-  storageKeys.session,
-  enrichedSession,
-);
+console.log('ENRICHED_SESSION', enrichedSession);
+
+saveJSON(storageKeys.session, enrichedSession);
 
 return enrichedSession;
 }
