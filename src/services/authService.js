@@ -105,7 +105,9 @@ async function authenticateWithServer(api, identifier, password) {
 }
 
 async function enrichOperationalSession(api, session) {
+
   console.log('ENRICH_FUNCTION_RUNNING');
+
   const identifier = normalizeIdentifier(
     session?.username
       || session?.phone
@@ -116,19 +118,26 @@ async function enrichOperationalSession(api, session) {
     return session;
   }
 
-  if (!rows?.length) {
-  rows = await api.get(
+  let rows = await api.get(
     'v_system_users_capabilities',
     {
       select: '*',
-      username: `eq.${identifier}`,
+      phone: `eq.${identifier}`,
     },
   ).catch(() => []);
-}
 
-console.log('CAPABILITY_ROWS', rows);
-console.log('ROWS_IS_ARRAY', Array.isArray(rows));
-}
+  if (!rows?.length) {
+    rows = await api.get(
+      'v_system_users_capabilities',
+      {
+        select: '*',
+        username: `eq.${identifier}`,
+      },
+    ).catch(() => []);
+  }
+
+  console.log('CAPABILITY_ROWS', rows);
+  console.log('ROWS_IS_ARRAY', Array.isArray(rows));
 
   if (!Array.isArray(rows) || !rows.length) {
     return session;
@@ -143,7 +152,6 @@ console.log('ROWS_IS_ARRAY', Array.isArray(rows));
         .filter(Boolean),
     ),
   ];
-
   const domains = [
     ...new Set(
       rows
