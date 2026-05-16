@@ -1046,20 +1046,19 @@ function bindInteractions(store, api, schedule) {
         } else {
           schedule('page', 'header', 'modals');
         }
-      catch (error) {
-  console.error(error);
-  notify(
-    store,
-    'error',
-    error?.message || 'تعذر إضافة العميل',
-    ''
-  );
-}
+      } catch (error) {
+        console.error(error);
+
+        notify(
+          store,
+          'error',
+          error?.message || 'تعذر إضافة العميل',
+          ''
+        );
       }
+
       return;
     }
-  });
-}
 
 async function loadInvoicesIntoState(store, api) {
   const state = store.getState();
