@@ -540,7 +540,7 @@ function bindInteractions(store, api, schedule) {
     if (action === 'go-invoices') return navigateAuthority(store, 'invoices');
     if (action === 'go-account') return navigateAuthority(store, 'account');
     }
-    if (action === 'pwa-install') {
+    if (action === 'pwa-install') 
       closeTransientSurfaces(store, { keepDrawer: false });
       const pwa = window.__ALAHRAM_PWA__ || {};
       if (pwa.installed) {
