@@ -80,11 +80,11 @@ export async function submitOrder(api, state, tier, totals) {
 
   const items = state.commerce.cart.map((item) => normalizeOrderItem(item, tier));
 
- const orderPayload = {
+const orderPayload = {
   customer_id: customer?.id || session.id,
   tier_name: tier?.tier_name || tier?.name || 'base',
   total_amount: Number(Number(totals.grand || 0).toFixed(2)),
-  status: 'submitted',
+  status: 'submitted'
 };
 
 console.log('FINAL ORDER PAYLOAD', orderPayload);
