@@ -86,7 +86,6 @@ export async function submitOrder(api, state, tier, totals) {
   total_amount: Number(Number(totals.grand || 0).toFixed(2)),
   status: 'submitted',
   workflow_state_key: 'pending',
-  sales_rep_id: salesRepId
 };
 
 console.log('FINAL ORDER PAYLOAD', orderPayload);
