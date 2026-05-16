@@ -351,8 +351,7 @@ function buildPriorityOrders(orders = [], session = {}, limit = 6) {
 }
 
 async function loadManagerCustomers(api, ownerId, session = {}) {
-  const select = 'id,name,phone,address,location,location_lat,location_lng,username,created_at,sales_rep_id,created_by,created_by_rep_id,customer_type,owner_user_id,owner_user_type,owner_scope,is_active,is_blocked,blocked_reason';
-  const rows = await api.get('customers', isGlobalOperationalScope(session) ? {
+const select = 'id,name,phone,address,location,location_lat,location_lng,username,created_at,sales_rep_id,created_by,created_by_rep_id,customer_type,owner_user_id,owner_user_type,is_active,is_blocked,blocked_reason';  const rows = await api.get('customers', isGlobalOperationalScope(session) ? {
     select,
     order: 'created_at.desc',
     limit: '100',
