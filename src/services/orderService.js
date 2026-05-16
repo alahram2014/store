@@ -85,7 +85,6 @@ export async function submitOrder(api, state, tier, totals) {
   tier_name: tier?.tier_name || tier?.name || 'base',
   total_amount: Number(Number(totals.grand || 0).toFixed(2)),
   status: 'submitted',
-  workflow_state_key: 'pending',
 };
 
 console.log('FINAL ORDER PAYLOAD', orderPayload);
