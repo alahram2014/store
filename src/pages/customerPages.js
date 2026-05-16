@@ -11,9 +11,9 @@ function getRoleLabel(session) {
 }
 
 export function renderCustomersPage(state) {
-  if (!isSalesRepSession(state.auth.session)) {
-    return `<section class="empty-panel"><div class="empty-state">هذه الصفحة متاحة للحساب التشغيلي المرتبط فقط</div></section>`;
-  }
+  if (!state.auth.session) {
+  return `<section class="empty-panel"><div class="empty-state">يجب تسجيل الدخول أولًا</div></section>`;
+}
   const customers = state.commerce.customers || [];
   const selectedId = state.auth.selectedCustomer?.id;
   const pendingFlow = state.ui.pendingFlow;
