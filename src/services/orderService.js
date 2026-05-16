@@ -80,18 +80,16 @@ export async function submitOrder(api, state, tier, totals) {
 
   const items = state.commerce.cart.map((item) => normalizeOrderItem(item, tier));
 
-  const orderPayload = {
-    customer_id: customer?.id || session.id,
-    tier_id: tier?.tier_name || tier?.id || 'base',
-    payment_type: state.ui?.checkoutPaymentType || 'cash',
-    delivery_type: state.ui?.checkoutDeliveryType || 'pickup',
-    total_amount: Number(Number(totals.grand || 0).toFixed(2)),
-    status: 'submitted',
-    workflow_state_key: 'pending',
-    sales_rep_id: salesRepId,
-  };
+ const orderPayload = {
+  customer_id: customer?.id || session.id,
+  tier_name: tier?.tier_name || tier?.name || 'base',
+  total_amount: Number(Number(totals.grand || 0).toFixed(2)),
+  status: 'submitted',
+  workflow_state_key: 'pending',
+  sales_rep_id: salesRepId
+};
 
-  console.log('FINAL ORDER PAYLOAD', orderPayload);
+console.log('FINAL ORDER PAYLOAD', orderPayload);
 
   const orderRows = await api.post('orders', orderPayload);
   const order = Array.isArray(orderRows) ? orderRows[0] : orderRows;
