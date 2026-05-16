@@ -67,7 +67,7 @@ export function validateCheckout(state, tier, totals) {
   return { ok: true };
 }
 
-export async function submitOrder(api, state, tier, totals) {
+export async function submitOrder(, state, tier, totals) {
   const session = state.auth.session;
   if (!session?.id) throw new Error('INVALID_SESSION');
 
@@ -96,6 +96,7 @@ export async function submitOrder(api, state, tier, totals) {
     tier_name: tier?.tier_name || 'base',
   };
 
+  console.log('ORDER PAYLOAD', orderPayload);
   const orderRows = await api.post('orders', orderPayload);
   const order = Array.isArray(orderRows) ? orderRows[0] : orderRows;
   if (!order?.id) throw new Error('ORDER_CREATE_FAILED');
