@@ -1005,7 +1005,7 @@ function bindInteractions(store, api, schedule) {
       return;
     }
 
-    if (formType === 'customer-create') 
+    if (formType === 'customer-create') {
       const session = store.getState().auth.session;
      if (!session) return notify(store, 'warning', 'يجب تسجيل الدخول أولًا', '');
       const rawLat = String(form.location_lat?.value || '').trim();
