@@ -176,13 +176,6 @@ export function isSalesRepSession(session) {
     || normalized?.username
   );
 }
-  return Boolean(
-    normalized?.rep_code
-    || normalized?.sales_rep_id
-    || normalized?.salesRepId
-    || normalized?.default_tier_name
-  );
-}
 
 export function getOwnershipActorId(session) {
   const normalized = normalizeSessionRecord(session);
