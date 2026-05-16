@@ -539,36 +539,63 @@ function bindInteractions(store, api, schedule) {
     if (action === 'go-customers') return navigateAuthority(store, 'customers');
     if (action === 'go-invoices') return navigateAuthority(store, 'invoices');
     if (action === 'go-account') return navigateAuthority(store, 'account');
-    }
-    if (action === 'pwa-install') 
-      closeTransientSurfaces(store, { keepDrawer: false });
-      const pwa = window.__ALAHRAM_PWA__ || {};
-      if (pwa.installed) {
-        notify(store, 'info', 'التطبيق مثبت بالفعل', 'يمكنك استخدامه من الشاشة الرئيسية أو المتصفح');
-        return;
+
+if (action === 'pwa-install') {
+  closeTransientSurfaces(store, { keepDrawer: false });
+
+  const pwa = window.__ALAHRAM_PWA__ || {};
+
+  if (pwa.installed) {
+    notify(store, 'info', 'التطبيق مثبت بالفعل', 'يمكنك استخدامه من الشاشة الرئيسية أو المتصفح');
+    return;
+  }
+
+  if (pwa.deferredPrompt && typeof pwa.deferredPrompt.prompt === 'function') {
+    const promptEvent = pwa.deferredPrompt;
+
+    pwa.deferredPrompt = null;
+    pwa.installAvailable = false;
+
+    try {
+      promptEvent.prompt();
+
+      const choice = await promptEvent.userChoice;
+
+      if (choice?.outcome === 'accepted') {
+        pwa.installed = true;
+
+        notify(
+          store,
+          'success',
+          'تم تثبيت التطبيق',
+          'يمكنك الآن استخدامه كتطبيق مستقل'
+        );
+      } else {
+        notify(store, 'info', 'تم إلغاء التثبيت', '');
       }
-      if (pwa.deferredPrompt && typeof pwa.deferredPrompt.prompt === 'function') {
-        const promptEvent = pwa.deferredPrompt;
-        pwa.deferredPrompt = null;
-        pwa.installAvailable = false;
-        try {
-          promptEvent.prompt();
-          const choice = await promptEvent.userChoice;
-          if (choice?.outcome === 'accepted') {
-            pwa.installed = true;
-            notify(store, 'success', 'تم تثبيت التطبيق', 'يمكنك الآن استخدامه كتطبيق مستقل');
-          } else {
-            notify(store, 'info', 'تم إلغاء التثبيت', '');
-          }
-        } catch (error) {
-          console.error(error);
-          notify(store, 'warning', 'تعذر تثبيت التطبيق', 'حاول مرة أخرى من قائمة المتصفح');
-        }
-        return;
-      }
-      notify(store, 'info', 'تثبيت التطبيق', 'استخدم قائمة المتصفح أو افتح التطبيق من الشاشة الرئيسية');
-      return;
+    } catch (error) {
+      console.error(error);
+
+      notify(
+        store,
+        'warning',
+        'تعذر تثبيت التطبيق',
+        'حاول مرة أخرى من قائمة المتصفح'
+      );
     }
+
+    return;
+  }
+
+  notify(
+    store,
+    'info',
+    'تثبيت التطبيق',
+    'استخدم قائمة المتصفح أو افتح التطبيق من الشاشة الرئيسية'
+  );
+
+  return;
+}
 
     if (action === 'go-flash') return navigateAuthority(store, 'offers');
     if (action === 'clear-search') { store.patch({ ui: { ...state.ui, search: '' } }); clearTimeout(searchTypingTimer); schedule('header', 'theme', 'banner', 'hero', 'page', 'search'); return; }
