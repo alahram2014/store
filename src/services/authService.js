@@ -169,18 +169,13 @@ export function normalizeSessionRecord(session) {
 export function isSalesRepSession(session) {
   const normalized = normalizeSessionRecord(session);
 
-  const type = normalizeUserType(
-    normalized?.userType
-    || normalized?.user_type
-    || normalized?.role
-    || null,
-    null
+  return Boolean(
+    normalized?.rep_code
+    || normalized?.repCode
+    || normalized?.default_tier_name
+    || normalized?.username
   );
-
-  if (type === 'sales_rep') {
-    return true;
-  }
-
+}
   return Boolean(
     normalized?.rep_code
     || normalized?.sales_rep_id
