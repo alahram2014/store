@@ -164,7 +164,8 @@ function buildQuickActions(session, moduleKey = 'sales-manager') {
     );
   } else {
     primaryActionsByRole.push(
-      { action: 'go-ops', label: 'لوحة التحكم', icon: '🧭', description: 'العودة إلى مركز التشغيل', enabled: hasOperationalAccess(session) || canAccessOperationalDashboard(session) },
+      { action: 'go-ops', label: 'طلبات تحتاج متابعة', icon: '⚠️', description: 'الطلبات المتأخرة أو المعلقة', enabled: hasOperationalAccess(session) || canAccessOperationalDashboard(session) },
+);
       { action: 'go-invoices', label: 'فواتير اليوم', icon: '📦', description: 'مراجعة المحفظة الجارية', enabled: true },
     );
   }
