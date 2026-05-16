@@ -1212,9 +1212,6 @@ function bindInteractions(store, api, schedule) {
         sales_rep_id: isSalesRepSession(session) ? ownershipActorId : null,
         created_by: session.id,
         created_by_rep_id: isSalesRepSession(session) ? ownershipActorId : null,
-        owner_user_id: session.id,
-        owner_user_type: session?.userType || session?.user_type || 'customer',
-        owner_scope: isSalesRepSession(session) ? 'sales_rep' : 'customer',
         is_active: true,
       };
       if (!payload.name) return notify(store, 'warning', 'اسم العميل مطلوب', '');
