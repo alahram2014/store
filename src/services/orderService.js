@@ -83,10 +83,9 @@ export async function submitOrder(api, state, tier, totals) {
 const orderPayload = {
   customer_id: customer?.id || session.id,
   total_amount: Number(Number(totals.grand || 0).toFixed(2)),
-  status: 'submitted'
+  status: 'submitted',
+  user_type: session?.user_type || 'system_user'
 };
-
-console.log('FINAL ORDER PAYLOAD', orderPayload);
 
 console.log('FINAL ORDER PAYLOAD', orderPayload);
 
