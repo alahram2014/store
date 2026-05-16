@@ -88,7 +88,7 @@ export async function submitOrder(api, state, tier, totals) {
     flash_total: Number(Number(totals.flash || 0).toFixed(2)),
     status: 'submitted',
     workflow_state_key: 'pending',
-    customer_id: customer?.id || session.id,
+    customer_id: customer?.id || null,
     user_id: session.id,
     sales_rep_id: salesRepId,
     rep_id: salesRepId,
