@@ -367,7 +367,25 @@ async function loadManagerCustomers(api, ownerId, session = {}) {
   }).catch(() => []);
   const list = Array.isArray(rows) ? rows : [];
   if (isGlobalOperationalScope(session)) return list;
-  return list.filter((row) => matchesAnyOwner(row, ownerId, ['owner_user_id', 'sales_rep_id', 'created_by_rep_id', 'created_by']));
+
+const repId =
+  session?.sales_rep_id
+  || session?.salesRepId
+  || session?.sales_rep?.id
+  || session?.rep_id;
+
+return list.filter((row) =>
+  matchesAnyOwner(
+    row,
+    repId || ownerId,
+    [
+      'owner_user_id',
+      'sales_rep_id',
+      'created_by_rep_id',
+      'created_by'
+    ]
+  )
+);
 }
 
 async function loadManagerReps(api, ownerId, session = {}) {
