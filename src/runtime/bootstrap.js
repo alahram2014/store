@@ -1557,8 +1557,6 @@ export async function bootstrapApp() {
       else setTimeout(resolve, 0);
     });
 
-    let summary = null;
-    let selectedTier = normalizeTierName(store.getState().commerce.selectedTier) || null;
     const currentSession = normalizeSessionRecord(store.getState().auth.session);
     if (currentSession) {
       try {
