@@ -1007,7 +1007,7 @@ function bindInteractions(store, api, schedule) {
 
     if (formType === 'customer-create') {
       const session = store.getState().auth.session;
-      if (!isSalesRepSession(session)) return notify(store, 'warning', 'المندوب فقط', '');
+     if (!session) return notify(store, 'warning', 'يجب تسجيل الدخول أولًا', '');
       const rawLat = String(form.location_lat?.value || '').trim();
       const rawLng = String(form.location_lng?.value || '').trim();
       const payload = {
