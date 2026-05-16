@@ -5,22 +5,34 @@ function normalizeIdentity(value) {
 function toUniqueList(rows, keySelector) {
   const seen = new Set();
   const result = [];
+
   for (const row of Array.isArray(rows) ? rows : []) {
     const key = keySelector(row);
-    if (!key || seen.has(key)) continue;
+
+    if (!key || seen.has(key)) {
+      continue;
+    }
+
     seen.add(key);
     result.push(row);
   }
+
   return result;
 }
 
 function mapByKey(rows, keySelector) {
   const map = new Map();
+
   for (const row of Array.isArray(rows) ? rows : []) {
     const key = keySelector(row);
-    if (!key) continue;
+
+    if (!key) {
+      continue;
+    }
+
     map.set(key, row);
   }
+
   return map;
 }
 
@@ -29,48 +41,12 @@ export async function loadGovernanceProjection() {
     systemUser: null,
     capabilities: [],
     workflowTransitions: [],
+    workflowStates: [],
     loaded: true,
     loading: false,
     failed: false,
   };
 }
-
-  const select = 'id,full_name,phone,username,user_type,manager_user_id,is_active,is_blocked,blocked_reason,created_at,updated_at';
-  const byPhone = await api.get('system_users', {
-    select,
-    phone: `eq.${identity}`,
-    limit: '1',
-  }).catch(() => []);
-  const userRows = Array.isArray(byPhone) && byPhone.length
-    ? byPhone
-    : await api.get('system_users', {
-        select,
-        username: `eq.${identity}`,
-        limit: '1',
-      }).catch(() => []);
-
-  const systemUser = Array.isArray(userRows) ? userRows[0] || null : null;
-  if (!systemUser?.id) {
-    const workflowStates = await api.get('workflow_states', {
-      select: 'id,state_key,display_name,description,is_initial,is_terminal,is_active,sort_order',
-      is_active: 'eq.true',
-      order: 'sort_order.asc',
-    }).catch(() => []);
-    const workflowTransitions = await api.get('workflow_transitions', {
-      select: 'id,from_state_id,to_state_id,is_active,created_at',
-      is_active: 'eq.true',
-    }).catch(() => []);
-    return {
-      systemUser: null,
-      capabilities: [],
-      workflowTransitions: Array.isArray(workflowTransitions) ? workflowTransitions : [],
-      workflowStates: Array.isArray(workflowStates) ? workflowStates : [],
-      loaded: true,
-      loading: false,
-      failed: false,
-    };
-  }
-
   const userCapabilityRows = await api.get('user_capabilities', {
     select: 'capability_id,is_active,granted_at,expires_at',
     system_user_id: `eq.${systemUser.id}`,
