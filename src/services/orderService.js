@@ -80,6 +80,8 @@ export async function submitOrder(api, state, tier, totals) {
 
   const items = state.commerce.cart.map((item) => normalizeOrderItem(item, tier));
 
+console.log('SESSION USER TYPE', session?.user_type);
+
 const normalizedUserType =
   session?.user_type === 'sales_rep'
     ? 'rep'
