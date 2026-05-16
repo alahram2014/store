@@ -348,16 +348,20 @@ export function readPersistedSession() {
 }
 
 export function canAccessCustomerManagement(session) {
-  return hasOperationalAccess(session) || hasCapability(session, [
-    'sales_manager.access',
-    'sales_manager.assign_customers',
-    'sales_manager.manage_reps',
-    'customers.manage',
-    'customers.create',
-    'customers.view',
-    'dashboard.admin',
-    'system.manage_dashboard',
-  ]);
+  return (
+    isSalesRepSession(session)
+    || hasOperationalAccess(session)
+    || hasCapability(session, [
+      'sales_manager.access',
+      'sales_manager.assign_customers',
+      'sales_manager.manage_reps',
+      'customers.manage',
+      'customers.create',
+      'customers.view',
+      'dashboard.admin',
+      'system.manage_dashboard',
+    ])
+  );
 }
 
 export function canAccessOperationalDashboard(session) {
