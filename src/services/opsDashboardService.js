@@ -156,19 +156,18 @@ function buildQuickActions(session, moduleKey = 'sales-manager') {
   const primaryActionsByRole = [];
 
   if (isSalesRepSession(session)) {
-    primaryActionsByRole.push(
-      { action: 'go-checkout', label: 'إنشاء طلب', icon: '🛒', description: 'فتح مسار الطلب مباشرة', enabled: true },
-      { action: 'go-customers', label: 'عملائي', icon: '👥', description: 'العملاء المرتبطون بي', enabled: true },
-      { action: 'go-invoices', label: 'فواتير اليوم', icon: '📦', description: 'الفواتير والطلبات السابقة', enabled: true },
-      { action: 'go-ops', label: 'طلبات تحتاج متابعة', icon: '⚠️', description: 'الطلبات المتأخرة أو المعلقة', enabled: hasOperationalAccess(session) || canAccessOperationalDashboard(session),
-    );
-  } else {
-    primaryActionsByRole.push(
-      { action: 'go-ops', label: 'طلبات تحتاج متابعة', icon: '⚠️', description: 'الطلبات المتأخرة أو المعلقة', enabled: hasOperationalAccess(session) || canAccessOperationalDashboard(session) },
-);
-      { action: 'go-invoices', label: 'فواتير اليوم', icon: '📦', description: 'مراجعة المحفظة الجارية', enabled: true },
-    );
-  }
+  primaryActionsByRole.push(
+    { action: 'go-checkout', label: 'إنشاء طلب', icon: '🛒', description: 'فتح مسار الطلب مباشرة', enabled: true },
+    { action: 'go-customers', label: 'عملائي', icon: '👥', description: 'العملاء المرتبطون بي', enabled: true },
+    { action: 'go-invoices', label: 'فواتير اليوم', icon: '📦', description: 'الفواتير والطلبات السابقة', enabled: true },
+    { action: 'go-ops', label: 'طلبات تحتاج متابعة', icon: '⚠️', description: 'الطلبات المتأخرة أو المعلقة', enabled: hasOperationalAccess(session) || canAccessOperationalDashboard(session) },
+  );
+} else {
+  primaryActionsByRole.push(
+    { action: 'go-ops', label: 'طلبات تحتاج متابعة', icon: '⚠️', description: 'الطلبات المتأخرة أو المعلقة', enabled: hasOperationalAccess(session) || canAccessOperationalDashboard(session) },
+    { action: 'go-invoices', label: 'فواتير اليوم', icon: '📦', description: 'مراجعة المحفظة الجارية', enabled: true },
+  );
+}
 
   if (moduleKey === 'warehouse' || capabilities.includes('warehouse.prepare')) {
     primaryActionsByRole.push(
