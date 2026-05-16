@@ -146,15 +146,7 @@ export function readPersistedSession() {
 }
 
 export function canAccessCustomerManagement(session) {
-  return isSalesRepSession(session) || hasCapability(session, [
-    'sales_manager.access',
-    'sales_manager.assign_customers',
-    'sales_manager.manage_reps',
-    'customers.manage',
-    'customers.create',
-    'dashboard.admin',
-    'system.manage_dashboard',
-  ]);
+  return true;
 }
 
 export function canAccessOperationalDashboard(session) {
