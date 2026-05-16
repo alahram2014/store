@@ -97,7 +97,6 @@ export function renderAccountPage(state) {
           <div class="account-card">
             <div class="account-card__row"><span>الاسم</span><strong>${session.name || session.username || '—'}</strong></div>
             <div class="account-card__row"><span>الهاتف</span><strong>${session.phone || '—'}</strong></div>
-            <div class="account-card__row"><span>النوع التصميمي</span><strong>${state.ui.theme}</strong></div>
             <div class="account-card__actions">
               <button class="btn btn--ghost" type="button" data-action="go-invoices">فواتيري</button>
               ${showCustomers ? '<button class="btn btn--ghost" type="button" data-action="go-customers">عملائي</button>' : ''}
