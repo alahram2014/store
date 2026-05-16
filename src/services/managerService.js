@@ -377,8 +377,7 @@ async function loadManagerReps(api, ownerId, session = {}) {
 }
 
 async function loadManagerOrders(api, ownerId, customerIds = [], session = {}) {
-  const select = 'id,order_number,invoice_number,created_at,total_amount,status,workflow_status,workflow_state_key,customer_id,user_id,sales_rep_id,rep_id,user_type,customer_type,payment_method,payment_status';
-  const rows = await api.get('orders', isGlobalOperationalScope(session) ? {
+const select = 'id,order_number,invoice_number,created_at,total_amount,status,workflow_status,workflow_state_key,customer_id,user_id,sales_rep_id,rep_id,user_type,customer_type';  const rows = await api.get('orders', isGlobalOperationalScope(session) ? {
     select,
     order: 'created_at.desc',
     limit: '100',
