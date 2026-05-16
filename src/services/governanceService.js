@@ -24,18 +24,16 @@ function mapByKey(rows, keySelector) {
   return map;
 }
 
-export async function loadGovernanceProjection(api, session) {
-  const identity = normalizeIdentity(session?.phone || session?.username || session?.id || session?.name);
-  if (!identity) {
-    return {
-      systemUser: null,
-      capabilities: [],
-      workflowTransitions: [],
-      loaded: true,
-      loading: false,
-      failed: false,
-    };
-  }
+export async function loadGovernanceProjection() {
+  return {
+    systemUser: null,
+    capabilities: [],
+    workflowTransitions: [],
+    loaded: true,
+    loading: false,
+    failed: false,
+  };
+}
 
   const select = 'id,full_name,phone,username,user_type,manager_user_id,is_active,is_blocked,blocked_reason,created_at,updated_at';
   const byPhone = await api.get('system_users', {
