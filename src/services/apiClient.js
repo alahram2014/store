@@ -25,13 +25,17 @@ export function createApiClient(customConfig = {}) {
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      const error = new Error(`${method} ${path} failed (${response.status})`);
-      error.status = response.status;
-      error.details = text;
-      throw error;
-    }
+   if (!response.ok) {
+  const text = await response.text();
+
+  console.error('SUPABASE ERROR BODY', text);
+
+  const error = new Error(`${method} ${path} failed (${response.status})`);
+  error.status = response.status;
+  error.details = text;
+
+  throw error;
+}
 
     const text = await response.text();
     if (!text) return [];
