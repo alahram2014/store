@@ -33,65 +33,70 @@ export function persistInvoices(invoices) {
   void invoices;
 }
 
-export function buildWhatsAppInvoice({ order, items, session, customer, tierLabel, supportWhatsapp }) {
-  const actingCustomer = customer || session || {};
+function normalizeText(value) {
+  return String(value ?? '').trim();
+}
 
-  const isRepManagedCustomer =
-    actingCustomer?.customer_type === 'rep'
-    && actingCustomer?.sales_rep_id;
+function resolveCustomerLocation(customer = {}) {
+  const lat = customer?.location_lat ?? customer?.lat ?? customer?.latitude ?? '';
+  const lng = customer?.location_lng ?? customer?.lng ?? customer?.longitude ?? '';
+  if (lat === '' && lng === '') return normalizeText(customer?.location || customer?.address || 'غير محدد');
+  return `${normalizeText(lat)}, ${normalizeText(lng)}`.trim();
+}
 
-  const senderBlock = `👤 بيانات المرسل
-الاسم: ${actingCustomer.name || ''}
-الهاتف: ${actingCustomer.phone || ''}
+function resolveRepActor(session = {}) {
+  return {
+    name: normalizeText(session?.system_user?.full_name || session?.sales_rep_name || session?.name || 'مندوب'),
+    phone: normalizeText(session?.system_user?.username || session?.sales_rep_phone || session?.phone || ''),
+  };
+}
 
-العنوان: ${actingCustomer.address || 'غير محدد'}
-اللوكيشن: ${actingCustomer.location || 'غير محدد'}
-`;
+function resolveCustomerActor(customer = {}) {
+  return {
+    name: normalizeText(customer?.name || customer?.customer_name || 'عميل'),
+    phone: normalizeText(customer?.phone || ''),
+    area: normalizeText(customer?.area || customer?.address || customer?.location || 'غير محدد'),
+  };
+}
 
-  const repDelegationBlock = isRepManagedCustomer
-    ? `
-━━━━━━━━━━━━━━
-🧾 المندوب المسؤل
+function renderSenderSection({ session, customer }) {
+  const rep = resolveRepActor(session);
+  const buyer = resolveCustomerActor(customer);
+  const customerType = normalizeText(customer?.customer_type || session?.customer_type || '').toLowerCase();
+  const hasRepAssignment = Boolean(customer?.sales_rep_id || session?.sales_rep_id || session?.rep_id);
 
-المندوب: ${session?.system_user?.full_name || session?.sales_rep_name || 'مندوب تابع'}
-رقم المندوب: ${session?.system_user?.username || session?.sales_rep_phone || ''}
-`
-    : '';
-
-  let message = `📦  طلب شراء
-
-رقم الفاتورة: ${order.order_number || order.invoice_number || order.id}
-
-━━━━━━━━━━━━━━
-${senderBlock}${repDelegationBlock}
-━━━━━━━━━━━━━━
-
-🏷️ الشريحة
-${tierLabel || 'base'}
-
-━━━━━━━━━━━━━━
-
-🛒 تفاصيل الطلب
-`;
-
-  for (const item of items) {
-    message += `
-📦 ${item.title || item.name || ''}
-
-كود: ${item.id || item.product_id || ''}
-الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
-سعر الوحدة: ${formatMoney(item.price)} جنيه
-الكمية: ${item.qty || 1}
-الإجمالي: ${formatMoney(Number(item.qty || 0) * Number(item.price || 0))} جنيه
-
-━━━━━━━━━━━━━━
-`;
+  if (customerType === 'direct' || (!hasRepAssignment && customerType !== 'managed')) {
+    return `العميل: ${buyer.name} - ${buyer.phone}`;
   }
 
-  message += `
-💰 إجمالي الفاتورة:
-${formatMoney(order.total_amount)} جنيه
-`;
+  return [
+    `المندوب: ${rep.name} - ${rep.phone}`,
+    `العميل: ${buyer.name} - ${buyer.area} - ${buyer.phone}`,
+  ].join('\n');
+}
+
+function renderInvoiceItem(item) {
+  const name = normalizeText(item?.product_name || item?.title || item?.name || '');
+  const code = normalizeText(item?.code || item?.sku || item?.id || item?.product_id || '');
+  const unit = normalizeText(item?.unitLabel || item?.unit || 'قطعة');
+  const qty = Number(item?.qty || 1);
+  const price = Number(item?.price || 0);
+  const total = qty * price;
+  return `${name}\nكود: ${code} | الوحدة: ${unit}\nالكمية: ${qty} | السعر: ${formatMoney(price)}\nالإجمالي: ${formatMoney(total)}`;
+}
+
+export function buildWhatsAppInvoice({ order, items, session, customer, tierLabel, supportWhatsapp }) {
+  const buyer = customer || session || {};
+  const senderSection = renderSenderSection({ session, customer: buyer });
+  const locationText = resolveCustomerLocation(buyer);
+
+  let message = `طلب فاتورة شراء رقم ${order.order_number || order.invoice_number || order.id}\n\n${senderSection}\nلوكيشن العميل:\n${locationText}\n\n━━━━━━━━━━━━━━\nبيان الطلب\n\n`;
+
+  for (const item of items) {
+    message += `${renderInvoiceItem(item)}\n\n`;
+  }
+
+  message += `━━━━━━━━━━━━━━\nإجمالي الفاتورة: ${formatMoney(order.total_amount)}\n\n${tierLabel ? `الشريحة: ${tierLabel}` : ''}`.trim();
 
   return `https://wa.me/${supportWhatsapp}?text=${encodeURIComponent(message)}`;
 }
