@@ -57,37 +57,30 @@ export function buildWhatsAppInvoice({
 
   let senderBlock = '';
 
-  ```js
-if (isDelegatedOrder) {
-  senderBlock =
-    'المندوب: ' +
-    (session?.sales_rep_name || session?.name || 'غير محدد') +
-    ' - ' +
-    (session?.sales_rep_phone || session?.phone || 'غير محدد') +
-    '\n\n' +
-    'العميل: ' +
-    (actingCustomer.name || '') +
-    ' - ' +
-    (actingCustomer.address || 'غير محدد') +
-    ' - ' +
-    (actingCustomer.phone || '') +
-    '\n\n' +
-    'لوكيشن العميل:\n' +
-    (actingCustomer.location || 'غير محدد');
-} else {
-```
+  if (isDelegatedOrder) {
+    senderBlock = `المندوب: ${session?.sales_rep_name || session?.name || 'غير محدد'} - ${session?.sales_rep_phone || session?.phone || 'غير محدد'}
 
+العميل: ${actingCustomer.name || ''} - ${actingCustomer.address || 'غير محدد'} - ${actingCustomer.phone || ''}
+
+لوكيشن العميل:
+${actingCustomer.location || 'غير محدد'}`;
+  } else {
+    senderBlock = `العميل: ${actingCustomer.name || ''} - ${actingCustomer.address || 'غير محدد'} - ${actingCustomer.phone || ''}
+
+لوكيشن العميل:
+${actingCustomer.location || 'غير محدد'}`;
+  }
 
   let message = `طلب فاتورة شراء رقم ${order.order_number || order.invoice_number || order.id}
 
 ${senderBlock}
 
 ━━━━━━━━━━━━━━
-بيان الطلب
-`;
+بيان الطلب`;
 
   for (const item of items) {
     message += `
+
 ${item.title || item.name || ''}
 كود: ${item.id || item.product_id || ''} | الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
 الكمية: ${item.qty || 1} | السعر: ${formatMoney(item.price)} جنيه
