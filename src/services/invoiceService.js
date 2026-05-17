@@ -1,4 +1,3 @@
-```js id="m3vlyf"
 import { getWorkflowStateLabel, normalizeWorkflowStateKey } from './workflowService.js';
 
 const STATUS_MAP = {
@@ -23,13 +22,10 @@ const STATUS_MAP = {
 
 export function formatStatus(status) {
   const normalizedWorkflow = normalizeWorkflowStateKey(status);
-
   if (normalizedWorkflow) {
     return getWorkflowStateLabel(normalizedWorkflow);
   }
-
   const key = String(status || '').trim().toLowerCase();
-
   return STATUS_MAP[key] || String(status || 'غير معروف');
 }
 
@@ -37,115 +33,67 @@ export function persistInvoices(invoices) {
   void invoices;
 }
 
-export function buildWhatsAppInvoice({
-  order,
-  items,
-  session,
-  customer,
-  tierLabel,
-  supportWhatsapp,
-}) {
+export function buildWhatsAppInvoice({ order, items, session, customer, tierLabel, supportWhatsapp }) {
   const actingCustomer = customer || session || {};
 
-  const isRepManagedCustomer = Boolean(
-    actingCustomer && actingCustomer.sales_rep_id
-  );
+  const isRepManagedCustomer =
+    actingCustomer?.customer_type === 'rep'
+    && actingCustomer?.sales_rep_id;
 
-  let senderBlock = '';
+  const senderBlock = `👤 بيانات المرسل
+الاسم: ${actingCustomer.name || ''}
+الهاتف: ${actingCustomer.phone || ''}
 
-  if (isRepManagedCustomer) {
-    senderBlock =
-      'بيانات المندوب\n' +
-      'الاسم: ' +
-      (session?.system_user?.full_name ||
-        session?.sales_rep_name ||
-        'غير محدد') +
-      '\n' +
-      'الهاتف: ' +
-      (session?.system_user?.username ||
-        session?.sales_rep_phone ||
-        'غير محدد') +
-      '\n\n' +
-      '━━━━━━━━━━━━━━\n' +
-      'بيانات العميل\n' +
-      'الاسم: ' +
-      (actingCustomer.name || '') +
-      '\n' +
-      'الهاتف: ' +
-      (actingCustomer.phone || '') +
-      '\n\n' +
-      'العنوان: ' +
-      (actingCustomer.address || 'غير محدد') +
-      '\n' +
-      'اللوكيشن: ' +
-      (actingCustomer.location || 'غير محدد');
-  } else {
-    senderBlock =
-      'بيانات العميل\n' +
-      'الاسم: ' +
-      (actingCustomer.name || '') +
-      '\n' +
-      'الهاتف: ' +
-      (actingCustomer.phone || '') +
-      '\n\n' +
-      'العنوان: ' +
-      (actingCustomer.address || 'غير محدد') +
-      '\n' +
-      'اللوكيشن: ' +
-      (actingCustomer.location || 'غير محدد');
-  }
+العنوان: ${actingCustomer.address || 'غير محدد'}
+اللوكيشن: ${actingCustomer.location || 'غير محدد'}
+`;
 
-  let message =
-    'فاتورة طلب شراء\n\n' +
-    'رقم الفاتورة: ' +
-    (order.order_number || order.invoice_number || order.id) +
-    '\n\n' +
-    '━━━━━━━━━━━━━━\n' +
-    senderBlock +
-    '\n━━━━━━━━━━━━━━\n\n' +
-    'الشريحة\n' +
-    (tierLabel || 'base') +
-    '\n\n━━━━━━━━━━━━━━\n\n' +
-    'تفاصيل الطلب\n';
+  const repDelegationBlock = isRepManagedCustomer
+    ? `
+━━━━━━━━━━━━━━
+🧾 تم الإرسال نيابة عن
+
+المندوب: ${session?.system_user?.full_name || session?.sales_rep_name || 'مندوب تابع'}
+رقم المندوب: ${session?.system_user?.username || session?.sales_rep_phone || ''}
+`
+    : '';
+
+  let message = `📦 فاتورة طلب شراء
+
+رقم الفاتورة: ${order.order_number || order.invoice_number || order.id}
+
+━━━━━━━━━━━━━━
+${senderBlock}${repDelegationBlock}
+━━━━━━━━━━━━━━
+
+🏷️ الشريحة
+${tierLabel || 'base'}
+
+━━━━━━━━━━━━━━
+
+🛒 تفاصيل الطلب
+`;
 
   for (const item of items) {
-    const qty = Number(item.qty || 0);
-    const price = Number(item.price || 0);
-    const total = qty * price;
+    message += `
+📦 ${item.title || item.name || ''}
 
-    message +=
-      '\n' +
-      (item.title || item.name || '') +
-      '\n\n' +
-      'كود: ' +
-      (item.id || item.product_id || '') +
-      '\n' +
-      'الوحدة: ' +
-      (item.unitLabel || item.unit || 'قطعة') +
-      '\n' +
-      'الكمية: ' +
-      qty +
-      '\n' +
-      'سعر الوحدة: ' +
-      formatMoney(price) +
-      ' جنيه\n' +
-      'الإجمالي: ' +
-      formatMoney(total) +
-      ' جنيه\n\n' +
-      '━━━━━━━━━━━━━━\n';
+كود: ${item.id || item.product_id || ''}
+الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
+سعر الوحدة: ${formatMoney(item.price)} جنيه
+الكمية: ${item.qty || 1}
+الإجمالي: ${formatMoney(Number(item.qty || 0) * Number(item.price || 0))} جنيه
+
+━━━━━━━━━━━━━━
+`;
   }
 
-  message +=
-    '\nإجمالي الفاتورة:\n' +
-    formatMoney(order.total_amount) +
-    ' جنيه';
+  message += `
+💰 إجمالي الفاتورة:
+${formatMoney(order.total_amount)} جنيه
+`;
 
-  return (
-    'https://wa.me/' +
-    supportWhatsapp +
-    '?text=' +
-    encodeURIComponent(message)
-  );
+  return `https://wa.me/${supportWhatsapp}?text=${encodeURIComponent(message)}`;
 }
 
 export function formatMoney(value) {
@@ -156,4 +104,3 @@ export function formatMoney(value) {
     maximumFractionDigits: 2,
   }).format(n);
 }
-```
