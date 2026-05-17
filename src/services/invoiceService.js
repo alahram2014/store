@@ -1,3 +1,4 @@
+```js
 import { getWorkflowStateLabel, normalizeWorkflowStateKey } from './workflowService.js';
 
 const STATUS_MAP = {
@@ -22,10 +23,13 @@ const STATUS_MAP = {
 
 export function formatStatus(status) {
   const normalizedWorkflow = normalizeWorkflowStateKey(status);
+
   if (normalizedWorkflow) {
     return getWorkflowStateLabel(normalizedWorkflow);
   }
+
   const key = String(status || '').trim().toLowerCase();
+
   return STATUS_MAP[key] || String(status || 'غير معروف');
 }
 
@@ -33,20 +37,39 @@ export function persistInvoices(invoices) {
   void invoices;
 }
 
-export function buildWhatsAppInvoice({ order, items, session, customer, tierLabel, supportWhatsapp }) {
+export function buildWhatsAppInvoice({
+  order,
+  items,
+  session,
+  customer,
+  tierLabel,
+  supportWhatsapp,
+}) {
   const actingCustomer = customer || session || {};
 
-  const isRepManagedCustomer = !!actingCustomer?.sales_rep_id;
+  const isManagedCustomer =
+    actingCustomer?.customer_type === 'managed';
 
-  const senderBlock = `
-${isRepManagedCustomer ? `👨‍💼 بيانات المندوب
-الاسم: ${session?.system_user?.full_name || session?.sales_rep_name || 'غير محدد'}
-الهاتف: ${session?.system_user?.username || session?.sales_rep_phone || 'غير محدد'}
+  const isSalesRepSession =
+    session?.user_type === 'sales_rep';
+
+  const isDelegatedOrder =
+    isManagedCustomer && isSalesRepSession;
+
+  const senderBlock = isDelegatedOrder
+    ? `بيانات المندوب
+الاسم: ${session?.sales_rep_name || session?.name || 'غير محدد'}
+الهاتف: ${session?.sales_rep_phone || session?.phone || 'غير محدد'}
 
 ━━━━━━━━━━━━━━
-🏪 بيانات العميل
-` : ''}
+بيانات العميل
+الاسم: ${actingCustomer.name || ''}
+الهاتف: ${actingCustomer.phone || ''}
 
+العنوان: ${actingCustomer.address || 'غير محدد'}
+اللوكيشن: ${actingCustomer.location || 'غير محدد'}
+`
+    : `بيانات العميل
 الاسم: ${actingCustomer.name || ''}
 الهاتف: ${actingCustomer.phone || ''}
 
@@ -54,48 +77,40 @@ ${isRepManagedCustomer ? `👨‍💼 بيانات المندوب
 اللوكيشن: ${actingCustomer.location || 'غير محدد'}
 `;
 
-  const repDelegationBlock = isRepManagedCustomer
-    ? `
-━━━━━━━━━━━━━━
-🧾 تم الإرسال نيابة عن
-
-المندوب: ${session?.system_user?.full_name || session?.sales_rep_name || 'مندوب تابع'}
-رقم المندوب: ${session?.system_user?.username || session?.sales_rep_phone || ''}
-`
-    : '';
-
-  let message = `📦 فاتورة طلب شراء
+  let message = `فاتورة طلب شراء
 
 رقم الفاتورة: ${order.order_number || order.invoice_number || order.id}
 
 ━━━━━━━━━━━━━━
-${senderBlock}${repDelegationBlock}
+${senderBlock}
 ━━━━━━━━━━━━━━
 
-🏷️ الشريحة
+الشريحة
 ${tierLabel || 'base'}
 
 ━━━━━━━━━━━━━━
 
-🛒 تفاصيل الطلب
+تفاصيل الطلب
 `;
 
   for (const item of items) {
     message += `
-📦 ${item.title || item.name || ''}
+${item.title || item.name || ''}
 
-كود: ${item.id || item.product_id || ''}
+كود الصنف: ${item.id || item.product_id || ''}
 الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
-سعر الوحدة: ${formatMoney(item.price)} جنيه
 الكمية: ${item.qty || 1}
-الإجمالي: ${formatMoney(Number(item.qty || 0) * Number(item.price || 0))} جنيه
+سعر الوحدة: ${formatMoney(item.price)} جنيه
+إجمالي الصنف: ${formatMoney(
+  Number(item.qty || 0) * Number(item.price || 0)
+)} جنيه
 
 ━━━━━━━━━━━━━━
 `;
   }
 
   message += `
-💰 إجمالي الفاتورة:
+إجمالي الفاتورة:
 ${formatMoney(order.total_amount)} جنيه
 `;
 
@@ -110,3 +125,4 @@ export function formatMoney(value) {
     maximumFractionDigits: 2,
   }).format(n);
 }
+```
