@@ -119,7 +119,8 @@ export function buildWhatsAppInvoice({
       '\n\n━━━━━━━━━━━━━━';
   }
 
- message +=
+ ```js
+message +=
   '\n\nإجمالي الفاتورة: ' +
   formatMoney(order.total_amount) +
   ' جنيه';
