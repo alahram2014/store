@@ -1,4 +1,4 @@
-```js
+```js id="m3vlyf"
 import { getWorkflowStateLabel, normalizeWorkflowStateKey } from './workflowService.js';
 
 const STATUS_MAP = {
@@ -47,67 +47,105 @@ export function buildWhatsAppInvoice({
 }) {
   const actingCustomer = customer || session || {};
 
-  const isRepManagedCustomer = !!actingCustomer?.sales_rep_id;
+  const isRepManagedCustomer = Boolean(
+    actingCustomer && actingCustomer.sales_rep_id
+  );
 
-  const senderBlock = isRepManagedCustomer
-    ? `👨‍💼 بيانات المندوب
-الاسم: ${session?.system_user?.full_name || session?.sales_rep_name || 'غير محدد'}
-الهاتف: ${session?.system_user?.username || session?.sales_rep_phone || 'غير محدد'}
+  let senderBlock = '';
 
-━━━━━━━━━━━━━━
-بيانات العميل
-الاسم: ${actingCustomer.name || ''}
-الهاتف: ${actingCustomer.phone || ''}
-
-العنوان: ${actingCustomer.address || 'غير محدد'}
-اللوكيشن: ${actingCustomer.location || 'غير محدد'}
-`
-    : `👤 بيانات العميل
-الاسم: ${actingCustomer.name || ''}
-الهاتف: ${actingCustomer.phone || ''}
-
-العنوان: ${actingCustomer.address || 'غير محدد'}
-اللوكيشن: ${actingCustomer.location || 'غير محدد'}
-`;
-
-  let message = `📦 فاتورة طلب شراء
-
-رقم الفاتورة: ${order.order_number || order.invoice_number || order.id}
-
-━━━━━━━━━━━━━━
-${senderBlock}
-━━━━━━━━━━━━━━
-
- الشريحة
-${tierLabel || 'base'}
-
-━━━━━━━━━━━━━━
-
- تفاصيل الطلب
-`;
-
-  for (const item of items) {
-    message += `
- ${item.title || item.name || ''}
-
-كود: ${item.id || item.product_id || ''}
-الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
-الكمية: ${item.qty || 1}
-سعر الوحدة: ${formatMoney(item.price)} جنيه
-الإجمالي: ${formatMoney(
-  Number(item.qty || 0) * Number(item.price || 0)
-)} جنيه
-
-━━━━━━━━━━━━━━
-`;
+  if (isRepManagedCustomer) {
+    senderBlock =
+      'بيانات المندوب\n' +
+      'الاسم: ' +
+      (session?.system_user?.full_name ||
+        session?.sales_rep_name ||
+        'غير محدد') +
+      '\n' +
+      'الهاتف: ' +
+      (session?.system_user?.username ||
+        session?.sales_rep_phone ||
+        'غير محدد') +
+      '\n\n' +
+      '━━━━━━━━━━━━━━\n' +
+      'بيانات العميل\n' +
+      'الاسم: ' +
+      (actingCustomer.name || '') +
+      '\n' +
+      'الهاتف: ' +
+      (actingCustomer.phone || '') +
+      '\n\n' +
+      'العنوان: ' +
+      (actingCustomer.address || 'غير محدد') +
+      '\n' +
+      'اللوكيشن: ' +
+      (actingCustomer.location || 'غير محدد');
+  } else {
+    senderBlock =
+      'بيانات العميل\n' +
+      'الاسم: ' +
+      (actingCustomer.name || '') +
+      '\n' +
+      'الهاتف: ' +
+      (actingCustomer.phone || '') +
+      '\n\n' +
+      'العنوان: ' +
+      (actingCustomer.address || 'غير محدد') +
+      '\n' +
+      'اللوكيشن: ' +
+      (actingCustomer.location || 'غير محدد');
   }
 
-  message += `
- إجمالي الفاتورة:
-${formatMoney(order.total_amount)} جنيه
-`;
+  let message =
+    'فاتورة طلب شراء\n\n' +
+    'رقم الفاتورة: ' +
+    (order.order_number || order.invoice_number || order.id) +
+    '\n\n' +
+    '━━━━━━━━━━━━━━\n' +
+    senderBlock +
+    '\n━━━━━━━━━━━━━━\n\n' +
+    'الشريحة\n' +
+    (tierLabel || 'base') +
+    '\n\n━━━━━━━━━━━━━━\n\n' +
+    'تفاصيل الطلب\n';
 
-  return `https://wa.me/${supportWhatsapp}?text=${encodeURIComponent(message)}`;
+  for (const item of items) {
+    const qty = Number(item.qty || 0);
+    const price = Number(item.price || 0);
+    const total = qty * price;
+
+    message +=
+      '\n' +
+      (item.title || item.name || '') +
+      '\n\n' +
+      'كود: ' +
+      (item.id || item.product_id || '') +
+      '\n' +
+      'الوحدة: ' +
+      (item.unitLabel || item.unit || 'قطعة') +
+      '\n' +
+      'الكمية: ' +
+      qty +
+      '\n' +
+      'سعر الوحدة: ' +
+      formatMoney(price) +
+      ' جنيه\n' +
+      'الإجمالي: ' +
+      formatMoney(total) +
+      ' جنيه\n\n' +
+      '━━━━━━━━━━━━━━\n';
+  }
+
+  message +=
+    '\nإجمالي الفاتورة:\n' +
+    formatMoney(order.total_amount) +
+    ' جنيه';
+
+  return (
+    'https://wa.me/' +
+    supportWhatsapp +
+    '?text=' +
+    encodeURIComponent(message)
+  );
 }
 
 export function formatMoney(value) {
