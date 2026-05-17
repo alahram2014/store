@@ -36,11 +36,17 @@ export function persistInvoices(invoices) {
 export function buildWhatsAppInvoice({ order, items, session, customer, tierLabel, supportWhatsapp }) {
   const actingCustomer = customer || session || {};
 
-  const isRepManagedCustomer =
-    actingCustomer?.customer_type === 'rep'
-    && actingCustomer?.sales_rep_id;
+  const isRepManagedCustomer = !!actingCustomer?.sales_rep_id;
 
-  const senderBlock = `👤 بيانات المرسل
+  const senderBlock = `
+${isRepManagedCustomer ? `👨‍💼 بيانات المندوب
+الاسم: ${session?.system_user?.full_name || session?.sales_rep_name || 'غير محدد'}
+الهاتف: ${session?.system_user?.username || session?.sales_rep_phone || 'غير محدد'}
+
+━━━━━━━━━━━━━━
+🏪 بيانات العميل
+` : ''}
+
 الاسم: ${actingCustomer.name || ''}
 الهاتف: ${actingCustomer.phone || ''}
 
