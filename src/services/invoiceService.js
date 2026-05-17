@@ -51,14 +51,14 @@ export function buildWhatsAppInvoice({ order, items, session, customer, tierLabe
   const repDelegationBlock = isRepManagedCustomer
     ? `
 ━━━━━━━━━━━━━━
-🧾 تم الإرسال نيابة عن
+🧾 المندوب المسؤل
 
 المندوب: ${session?.system_user?.full_name || session?.sales_rep_name || 'مندوب تابع'}
 رقم المندوب: ${session?.system_user?.username || session?.sales_rep_phone || ''}
 `
     : '';
 
-  let message = `📦 فاتورة طلب شراء
+  let message = `📦  طلب شراء
 
 رقم الفاتورة: ${order.order_number || order.invoice_number || order.id}
 
