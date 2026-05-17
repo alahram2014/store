@@ -1,4 +1,3 @@
-```js
 import { getWorkflowStateLabel, normalizeWorkflowStateKey } from './workflowService.js';
 
 const STATUS_MAP = {
@@ -23,13 +22,10 @@ const STATUS_MAP = {
 
 export function formatStatus(status) {
   const normalizedWorkflow = normalizeWorkflowStateKey(status);
-
   if (normalizedWorkflow) {
     return getWorkflowStateLabel(normalizedWorkflow);
   }
-
   const key = String(status || '').trim().toLowerCase();
-
   return STATUS_MAP[key] || String(status || 'غير معروف');
 }
 
@@ -37,95 +33,67 @@ export function persistInvoices(invoices) {
   void invoices;
 }
 
-export function buildWhatsAppInvoice({
-  order,
-  items,
-  session,
-  customer,
-  tierLabel,
-  supportWhatsapp,
-}) {
+export function buildWhatsAppInvoice({ order, items, session, customer, tierLabel, supportWhatsapp }) {
   const actingCustomer = customer || session || {};
 
-  const isManagedCustomer =
-    actingCustomer?.customer_type === 'managed';
+  const isRepManagedCustomer =
+    actingCustomer?.customer_type === 'rep'
+    && actingCustomer?.sales_rep_id;
 
-  const isSalesRepSession =
-    session?.user_type === 'sales_rep';
+  const senderBlock = `👤 بيانات المرسل
+الاسم: ${actingCustomer.name || ''}
+الهاتف: ${actingCustomer.phone || ''}
 
-  const isDelegatedOrder =
-    isManagedCustomer && isSalesRepSession;
+العنوان: ${actingCustomer.address || 'غير محدد'}
+اللوكيشن: ${actingCustomer.location || 'غير محدد'}
+`;
 
-  let senderBlock = '';
+  const repDelegationBlock = isRepManagedCustomer
+    ? `
+━━━━━━━━━━━━━━
+🧾 تم الإرسال نيابة عن
 
-  if (isDelegatedOrder) {
-    senderBlock =
-      'المندوب: ' +
-      (session?.sales_rep_name || session?.name || 'غير محدد') +
-      ' - ' +
-      (session?.sales_rep_phone || session?.phone || 'غير محدد') +
-      '\n\n' +
-      'العميل: ' +
-      (actingCustomer.name || '') +
-      ' - ' +
-      (actingCustomer.address || 'غير محدد') +
-      ' - ' +
-      (actingCustomer.phone || '') +
-      '\n\n' +
-      'لوكيشن العميل:\n' +
-      (actingCustomer.location || 'غير محدد');
-  } else {
-    senderBlock =
-      'العميل: ' +
-      (actingCustomer.name || '') +
-      ' - ' +
-      (actingCustomer.address || 'غير محدد') +
-      ' - ' +
-      (actingCustomer.phone || '') +
-      '\n\n' +
-      'لوكيشن العميل:\n' +
-      (actingCustomer.location || 'غير محدد');
-  }
+المندوب: ${session?.system_user?.full_name || session?.sales_rep_name || 'مندوب تابع'}
+رقم المندوب: ${session?.system_user?.username || session?.sales_rep_phone || ''}
+`
+    : '';
 
-  let message =
-    'طلب فاتورة شراء رقم ' +
-    (order.order_number || order.invoice_number || order.id) +
-    '\n\n' +
-    senderBlock +
-    '\n\n━━━━━━━━━━━━━━\n' +
-    'بيان الطلب';
+  let message = `📦 فاتورة طلب شراء
+
+رقم الفاتورة: ${order.order_number || order.invoice_number || order.id}
+
+━━━━━━━━━━━━━━
+${senderBlock}${repDelegationBlock}
+━━━━━━━━━━━━━━
+
+🏷️ الشريحة
+${tierLabel || 'base'}
+
+━━━━━━━━━━━━━━
+
+🛒 تفاصيل الطلب
+`;
 
   for (const item of items) {
-    message +=
-      '\n\n' +
-      (item.title || item.name || '') +
-      '\n' +
-      'كود: ' +
-      (item.id || item.product_id || '') +
-      ' | الوحدة: ' +
-      (item.unitLabel || item.unit || 'قطعة') +
-      '\n' +
-      'الكمية: ' +
-      (item.qty || 1) +
-      ' | السعر: ' +
-      formatMoney(item.price) +
-      ' جنيه' +
-      '\n' +
-      'الإجمالي: ' +
-      formatMoney(
-        Number(item.qty || 0) * Number(item.price || 0)
-      ) +
-      ' جنيه' +
-      '\n\n━━━━━━━━━━━━━━';
+    message += `
+📦 ${item.title || item.name || ''}
+
+كود: ${item.id || item.product_id || ''}
+الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
+سعر الوحدة: ${formatMoney(item.price)} جنيه
+الكمية: ${item.qty || 1}
+الإجمالي: ${formatMoney(Number(item.qty || 0) * Number(item.price || 0))} جنيه
+
+━━━━━━━━━━━━━━
+`;
   }
 
- ```js
-message +=
-  '\n\nإجمالي الفاتورة: ' +
-  formatMoney(order.total_amount) +
-  ' جنيه';
+  message += `
+💰 إجمالي الفاتورة:
+${formatMoney(order.total_amount)} جنيه
+`;
 
-return 'https://wa.me/' + supportWhatsapp + '?text=' + encodeURIComponent(message);
+  return `https://wa.me/${supportWhatsapp}?text=${encodeURIComponent(message)}`;
 }
 
 export function formatMoney(value) {
@@ -136,4 +104,3 @@ export function formatMoney(value) {
     maximumFractionDigits: 2,
   }).format(n);
 }
-```
