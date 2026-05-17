@@ -1,3 +1,4 @@
+```js
 import { getWorkflowStateLabel, normalizeWorkflowStateKey } from './workflowService.js';
 
 const STATUS_MAP = {
@@ -93,7 +94,9 @@ ${tierLabel || 'base'}
 الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
 الكمية: ${item.qty || 1}
 سعر الوحدة: ${formatMoney(item.price)} جنيه
-الإجمالي: ${formatMoney(Number(item.qty || 0) * Number(item.price || 0))} جنيه
+الإجمالي: ${formatMoney(
+  Number(item.qty || 0) * Number(item.price || 0)
+)} جنيه
 
 ━━━━━━━━━━━━━━
 `;
