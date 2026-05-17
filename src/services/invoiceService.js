@@ -55,7 +55,7 @@ export function buildWhatsAppInvoice({
 الهاتف: ${session?.system_user?.username || session?.sales_rep_phone || 'غير محدد'}
 
 ━━━━━━━━━━━━━━
-🏪 بيانات العميل
+بيانات العميل
 الاسم: ${actingCustomer.name || ''}
 الهاتف: ${actingCustomer.phone || ''}
 
@@ -78,17 +78,17 @@ export function buildWhatsAppInvoice({
 ${senderBlock}
 ━━━━━━━━━━━━━━
 
-🏷️ الشريحة
+ الشريحة
 ${tierLabel || 'base'}
 
 ━━━━━━━━━━━━━━
 
-🛒 تفاصيل الطلب
+ تفاصيل الطلب
 `;
 
   for (const item of items) {
     message += `
-📦 ${item.title || item.name || ''}
+ ${item.title || item.name || ''}
 
 كود: ${item.id || item.product_id || ''}
 الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
@@ -103,7 +103,7 @@ ${tierLabel || 'base'}
   }
 
   message += `
-💰 إجمالي الفاتورة:
+ إجمالي الفاتورة:
 ${formatMoney(order.total_amount)} جنيه
 `;
 
