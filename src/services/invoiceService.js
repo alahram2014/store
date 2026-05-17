@@ -124,8 +124,7 @@ export function buildWhatsAppInvoice({
     formatMoney(order.total_amount) +
     ' جنيه';
 
-  return (
-    `https://wa.me/${supportWhatsapp}?text=${encodeURIComponent(message)}`
+ return `https://wa.me/${supportWhatsapp}?text=${encodeURIComponent(message)}`;
   );
 }
 
