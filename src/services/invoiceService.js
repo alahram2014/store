@@ -125,7 +125,6 @@ export function buildWhatsAppInvoice({
     ' جنيه';
 
  return `https://wa.me/${supportWhatsapp}?text=${encodeURIComponent(message)}`;
-  );
 }
 
 export function formatMoney(value) {
