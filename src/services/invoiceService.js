@@ -56,63 +56,43 @@ export function buildWhatsAppInvoice({
   const isDelegatedOrder =
     isManagedCustomer && isSalesRepSession;
 
-  const senderBlock = isDelegatedOrder
-    ? `بيانات المندوب
-الاسم: ${session?.sales_rep_name || session?.name || 'غير محدد'}
-الهاتف: ${session?.sales_rep_phone || session?.phone || 'غير محدد'}
+  let senderBlock = '';
 
-━━━━━━━━━━━━━━
-بيانات العميل
-الاسم: ${actingCustomer.name || ''}
-الهاتف: ${actingCustomer.phone || ''}
+  if (isDelegatedOrder) {
+    senderBlock = `المندوب: ${session?.sales_rep_name || session?.name || 'غير محدد'} - ${session?.sales_rep_phone || session?.phone || 'غير محدد'}
 
-العنوان: ${actingCustomer.address || 'غير محدد'}
-اللوكيشن: ${actingCustomer.location || 'غير محدد'}
-`
-    : `بيانات العميل
-الاسم: ${actingCustomer.name || ''}
-الهاتف: ${actingCustomer.phone || ''}
+العميل: ${actingCustomer.name || ''} - ${actingCustomer.address || 'غير محدد'} - ${actingCustomer.phone || ''}
 
-العنوان: ${actingCustomer.address || 'غير محدد'}
-اللوكيشن: ${actingCustomer.location || 'غير محدد'}
-`;
+لوكيشن العميل:
+${actingCustomer.location || 'غير محدد'}`;
+  } else {
+    senderBlock = `العميل: ${actingCustomer.name || ''} - ${actingCustomer.address || 'غير محدد'} - ${actingCustomer.phone || ''}
 
-  let message = `فاتورة طلب شراء
+لوكيشن العميل:
+${actingCustomer.location || 'غير محدد'}`;
+  }
 
-رقم الفاتورة: ${order.order_number || order.invoice_number || order.id}
+  let message = `طلب فاتورة شراء رقم ${order.order_number || order.invoice_number || order.id}
 
-━━━━━━━━━━━━━━
 ${senderBlock}
-━━━━━━━━━━━━━━
-
-الشريحة
-${tierLabel || 'base'}
 
 ━━━━━━━━━━━━━━
-
-تفاصيل الطلب
+بيان الطلب
 `;
 
   for (const item of items) {
     message += `
 ${item.title || item.name || ''}
+كود: ${item.id || item.product_id || ''} | الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
+الكمية: ${item.qty || 1} | السعر: ${formatMoney(item.price)} جنيه
+الإجمالي: ${formatMoney(Number(item.qty || 0) * Number(item.price || 0))} جنيه
 
-كود الصنف: ${item.id || item.product_id || ''}
-الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
-الكمية: ${item.qty || 1}
-سعر الوحدة: ${formatMoney(item.price)} جنيه
-إجمالي الصنف: ${formatMoney(
-  Number(item.qty || 0) * Number(item.price || 0)
-)} جنيه
-
-━━━━━━━━━━━━━━
-`;
+━━━━━━━━━━━━━━`;
   }
 
   message += `
-إجمالي الفاتورة:
-${formatMoney(order.total_amount)} جنيه
-`;
+
+إجمالي الفاتورة: ${formatMoney(order.total_amount)} جنيه`;
 
   return `https://wa.me/${supportWhatsapp}?text=${encodeURIComponent(message)}`;
 }
