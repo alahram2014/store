@@ -58,19 +58,26 @@ export function buildWhatsAppInvoice({
 
   let senderBlock = '';
 
-  if (isDelegatedOrder) {
-    senderBlock = `المندوب: ${session?.sales_rep_name || session?.name || 'غير محدد'} - ${session?.sales_rep_phone || session?.phone || 'غير محدد'}
+  ```js
+if (isDelegatedOrder) {
+  senderBlock =
+    'المندوب: ' +
+    (session?.sales_rep_name || session?.name || 'غير محدد') +
+    ' - ' +
+    (session?.sales_rep_phone || session?.phone || 'غير محدد') +
+    '\n\n' +
+    'العميل: ' +
+    (actingCustomer.name || '') +
+    ' - ' +
+    (actingCustomer.address || 'غير محدد') +
+    ' - ' +
+    (actingCustomer.phone || '') +
+    '\n\n' +
+    'لوكيشن العميل:\n' +
+    (actingCustomer.location || 'غير محدد');
+} else {
+```
 
-العميل: ${actingCustomer.name || ''} - ${actingCustomer.address || 'غير محدد'} - ${actingCustomer.phone || ''}
-
-لوكيشن العميل:
-${actingCustomer.location || 'غير محدد'}`;
-  } else {
-    senderBlock = `العميل: ${actingCustomer.name || ''} - ${actingCustomer.address || 'غير محدد'} - ${actingCustomer.phone || ''}
-
-لوكيشن العميل:
-${actingCustomer.location || 'غير محدد'}`;
-  }
 
   let message = `طلب فاتورة شراء رقم ${order.order_number || order.invoice_number || order.id}
 
