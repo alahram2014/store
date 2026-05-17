@@ -22,10 +22,13 @@ const STATUS_MAP = {
 
 export function formatStatus(status) {
   const normalizedWorkflow = normalizeWorkflowStateKey(status);
+
   if (normalizedWorkflow) {
     return getWorkflowStateLabel(normalizedWorkflow);
   }
+
   const key = String(status || '').trim().toLowerCase();
+
   return STATUS_MAP[key] || String(status || 'غير معروف');
 }
 
@@ -33,14 +36,32 @@ export function persistInvoices(invoices) {
   void invoices;
 }
 
-export function buildWhatsAppInvoice({ order, items, session, customer, tierLabel, supportWhatsapp }) {
+export function buildWhatsAppInvoice({
+  order,
+  items,
+  session,
+  customer,
+  tierLabel,
+  supportWhatsapp,
+}) {
   const actingCustomer = customer || session || {};
 
-  const isRepManagedCustomer =
-    actingCustomer?.customer_type === 'rep'
-    && actingCustomer?.sales_rep_id;
+  const isRepManagedCustomer = !!actingCustomer?.sales_rep_id;
 
-  const senderBlock = `👤 بيانات المرسل
+  const senderBlock = isRepManagedCustomer
+    ? `👨‍💼 بيانات المندوب
+الاسم: ${session?.system_user?.full_name || session?.sales_rep_name || 'غير محدد'}
+الهاتف: ${session?.system_user?.username || session?.sales_rep_phone || 'غير محدد'}
+
+━━━━━━━━━━━━━━
+🏪 بيانات العميل
+الاسم: ${actingCustomer.name || ''}
+الهاتف: ${actingCustomer.phone || ''}
+
+العنوان: ${actingCustomer.address || 'غير محدد'}
+اللوكيشن: ${actingCustomer.location || 'غير محدد'}
+`
+    : `👤 بيانات العميل
 الاسم: ${actingCustomer.name || ''}
 الهاتف: ${actingCustomer.phone || ''}
 
@@ -48,22 +69,12 @@ export function buildWhatsAppInvoice({ order, items, session, customer, tierLabe
 اللوكيشن: ${actingCustomer.location || 'غير محدد'}
 `;
 
-  const repDelegationBlock = isRepManagedCustomer
-    ? `
-━━━━━━━━━━━━━━
-🧾 تم الإرسال نيابة عن
-
-المندوب: ${session?.system_user?.full_name || session?.sales_rep_name || 'مندوب تابع'}
-رقم المندوب: ${session?.system_user?.username || session?.sales_rep_phone || ''}
-`
-    : '';
-
   let message = `📦 فاتورة طلب شراء
 
 رقم الفاتورة: ${order.order_number || order.invoice_number || order.id}
 
 ━━━━━━━━━━━━━━
-${senderBlock}${repDelegationBlock}
+${senderBlock}
 ━━━━━━━━━━━━━━
 
 🏷️ الشريحة
@@ -80,8 +91,8 @@ ${tierLabel || 'base'}
 
 كود: ${item.id || item.product_id || ''}
 الوحدة: ${item.unitLabel || item.unit || 'قطعة'}
-سعر الوحدة: ${formatMoney(item.price)} جنيه
 الكمية: ${item.qty || 1}
+سعر الوحدة: ${formatMoney(item.price)} جنيه
 الإجمالي: ${formatMoney(Number(item.qty || 0) * Number(item.price || 0))} جنيه
 
 ━━━━━━━━━━━━━━
@@ -104,3 +115,4 @@ export function formatMoney(value) {
     maximumFractionDigits: 2,
   }).format(n);
 }
+```
