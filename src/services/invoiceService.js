@@ -1,4 +1,3 @@
-```js
 import { getWorkflowStateLabel, normalizeWorkflowStateKey } from './workflowService.js';
 
 const STATUS_MAP = {
